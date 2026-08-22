@@ -1,0 +1,2325 @@
+=== hermod-coordinator ts=20260427T032328Z ===
+# HELP hermod_messages_ingested_total MQTT messages received by the coordinator (feature-flag independent).
+# TYPE hermod_messages_ingested_total counter
+hermod_messages_ingested_total 0
+# HELP hermod_messages_dropped_total Messages evicted from the ingest channel under DropOldest overflow. Mirror of SystemStats.MessagesDropped.
+# TYPE hermod_messages_dropped_total counter
+hermod_messages_dropped_total 0
+# HELP hermod_device_state_writes_total Device state rows written to Postgres after MQTT telemetry.
+# TYPE hermod_device_state_writes_total counter
+hermod_device_state_writes_total 0
+# HELP hermod_device_state_writes_dropped_total Device state updates evicted from the batched writer channel (pre-flush). Non-zero means the writer cannot keep up with incoming upserts.
+# TYPE hermod_device_state_writes_dropped_total counter
+hermod_device_state_writes_dropped_total 0
+# HELP hermod_device_state_flush_failed_total Device-state batches that failed to flush to Postgres (entire batch lost). Non-zero = PG is unreachable or the INSERT errored; silently dropped rows with no queue-overflow signal.
+# TYPE hermod_device_state_flush_failed_total counter
+hermod_device_state_flush_failed_total 0
+# HELP hermod_message_persistence_writes_total Rows actually written to message_history (post-flush). Previously counted at enqueue time which masked flush failures.
+# TYPE hermod_message_persistence_writes_total counter
+hermod_message_persistence_writes_total 0
+# HELP hermod_message_persistence_dropped_total Rows evicted from the message_history writer channel under DropOldest.
+# TYPE hermod_message_persistence_dropped_total counter
+hermod_message_persistence_dropped_total 0
+# HELP hermod_message_persistence_flush_failed_total message_history batches that failed to flush to Postgres (entire batch lost).
+# TYPE hermod_message_persistence_flush_failed_total counter
+hermod_message_persistence_flush_failed_total 0
+# HELP hermod_message_history_retention_deletes_total Rows deleted by the message_history retention sweeper (post-cutoff age-out, batched DELETE).
+# TYPE hermod_message_history_retention_deletes_total counter
+hermod_message_history_retention_deletes_total 0
+# HELP hermod_message_history_retention_sweep_failed_total Retention sweep cycles that errored (transient PG outage; next interval retries).
+# TYPE hermod_message_history_retention_sweep_failed_total counter
+hermod_message_history_retention_sweep_failed_total 0
+# HELP hermod_rule_cache_hits_total Rule index lookups served from the in-memory cache.
+# TYPE hermod_rule_cache_hits_total counter
+hermod_rule_cache_hits_total 0
+# HELP hermod_rule_cache_misses_total Rule index lookups that had to refetch from Postgres.
+# TYPE hermod_rule_cache_misses_total counter
+hermod_rule_cache_misses_total 0
+# HELP hermod_rule_audit_writes_total Rows enqueued to the rule_audit_log batched writer.
+# TYPE hermod_rule_audit_writes_total counter
+hermod_rule_audit_writes_total 0
+# HELP hermod_rule_audit_dropped_total Rows evicted from the rule_audit_log writer channel under DropOldest.
+# TYPE hermod_rule_audit_dropped_total counter
+hermod_rule_audit_dropped_total 0
+# HELP hermod_rule_audit_flush_failed_total rule_audit_log batches that failed to flush to Postgres (entire batch lost).
+# TYPE hermod_rule_audit_flush_failed_total counter
+hermod_rule_audit_flush_failed_total 0
+# HELP hermod_stats_rollup_writes_total Counter/snapshot flushes to metrics_counters and metrics_snapshots.
+# TYPE hermod_stats_rollup_writes_total counter
+hermod_stats_rollup_writes_total 0
+# HELP hermod_mqtt_outbox_enqueued_total Publishes buffered because the MQTT client was disconnected.
+# TYPE hermod_mqtt_outbox_enqueued_total counter
+hermod_mqtt_outbox_enqueued_total 0
+# HELP hermod_mqtt_outbox_dropped_total Publishes evicted from the outbox under DropOldest overflow.
+# TYPE hermod_mqtt_outbox_dropped_total counter
+hermod_mqtt_outbox_dropped_total 0
+# HELP hermod_mqtt_outbox_drained_total Publishes replayed from the outbox on reconnect.
+# TYPE hermod_mqtt_outbox_drained_total counter
+hermod_mqtt_outbox_drained_total 0
+# HELP hermod_mqtt_reconnects_total Successful broker reconnects by the MqttService supervisor (a flaky broker shows here as a rising slope).
+# TYPE hermod_mqtt_reconnects_total counter
+hermod_mqtt_reconnects_total 0
+# HELP hermod_rule_publish_attempted_total Rule actions that attempted an MQTT publish.
+# TYPE hermod_rule_publish_attempted_total counter
+hermod_rule_publish_attempted_total 0
+# HELP hermod_rule_publish_failed_total Rule actions whose publish threw or was dropped (bounded-channel overflow, MQTT disconnect mid-publish, serializer failure).
+# TYPE hermod_rule_publish_failed_total counter
+hermod_rule_publish_failed_total 0
+# HELP hermod_mqtt_outbox_depth Current number of publishes buffered in the MQTT reconnect outbox.
+# TYPE hermod_mqtt_outbox_depth gauge
+hermod_mqtt_outbox_depth 0
+# HELP hermod_ingest_queue_depth Current number of messages queued in the ingest channel (saturation arrives before drops).
+# TYPE hermod_ingest_queue_depth gauge
+hermod_ingest_queue_depth 0
+# HELP hermod_rule_eval_seconds Rule evaluation latency in seconds.
+# TYPE hermod_rule_eval_seconds histogram
+hermod_rule_eval_seconds_bucket{le="0.0005"} 0
+hermod_rule_eval_seconds_bucket{le="0.001"} 0
+hermod_rule_eval_seconds_bucket{le="0.002"} 0
+hermod_rule_eval_seconds_bucket{le="0.005"} 0
+hermod_rule_eval_seconds_bucket{le="0.01"} 0
+hermod_rule_eval_seconds_bucket{le="0.025"} 0
+hermod_rule_eval_seconds_bucket{le="0.05"} 0
+hermod_rule_eval_seconds_bucket{le="0.1"} 0
+hermod_rule_eval_seconds_bucket{le="0.25"} 0
+hermod_rule_eval_seconds_bucket{le="0.5"} 0
+hermod_rule_eval_seconds_bucket{le="1"} 0
+hermod_rule_eval_seconds_bucket{le="2.5"} 0
+hermod_rule_eval_seconds_bucket{le="5"} 0
+hermod_rule_eval_seconds_bucket{le="10"} 0
+hermod_rule_eval_seconds_bucket{le="+Inf"} 0
+hermod_rule_eval_seconds_sum 0
+hermod_rule_eval_seconds_count 0
+
+=== hermod-coordinator ts=20260427T032339Z ===
+# HELP hermod_messages_ingested_total MQTT messages received by the coordinator (feature-flag independent).
+# TYPE hermod_messages_ingested_total counter
+hermod_messages_ingested_total 0
+# HELP hermod_messages_dropped_total Messages evicted from the ingest channel under DropOldest overflow. Mirror of SystemStats.MessagesDropped.
+# TYPE hermod_messages_dropped_total counter
+hermod_messages_dropped_total 0
+# HELP hermod_device_state_writes_total Device state rows written to Postgres after MQTT telemetry.
+# TYPE hermod_device_state_writes_total counter
+hermod_device_state_writes_total 0
+# HELP hermod_device_state_writes_dropped_total Device state updates evicted from the batched writer channel (pre-flush). Non-zero means the writer cannot keep up with incoming upserts.
+# TYPE hermod_device_state_writes_dropped_total counter
+hermod_device_state_writes_dropped_total 0
+# HELP hermod_device_state_flush_failed_total Device-state batches that failed to flush to Postgres (entire batch lost). Non-zero = PG is unreachable or the INSERT errored; silently dropped rows with no queue-overflow signal.
+# TYPE hermod_device_state_flush_failed_total counter
+hermod_device_state_flush_failed_total 0
+# HELP hermod_message_persistence_writes_total Rows actually written to message_history (post-flush). Previously counted at enqueue time which masked flush failures.
+# TYPE hermod_message_persistence_writes_total counter
+hermod_message_persistence_writes_total 0
+# HELP hermod_message_persistence_dropped_total Rows evicted from the message_history writer channel under DropOldest.
+# TYPE hermod_message_persistence_dropped_total counter
+hermod_message_persistence_dropped_total 0
+# HELP hermod_message_persistence_flush_failed_total message_history batches that failed to flush to Postgres (entire batch lost).
+# TYPE hermod_message_persistence_flush_failed_total counter
+hermod_message_persistence_flush_failed_total 0
+# HELP hermod_message_history_retention_deletes_total Rows deleted by the message_history retention sweeper (post-cutoff age-out, batched DELETE).
+# TYPE hermod_message_history_retention_deletes_total counter
+hermod_message_history_retention_deletes_total 0
+# HELP hermod_message_history_retention_sweep_failed_total Retention sweep cycles that errored (transient PG outage; next interval retries).
+# TYPE hermod_message_history_retention_sweep_failed_total counter
+hermod_message_history_retention_sweep_failed_total 0
+# HELP hermod_rule_cache_hits_total Rule index lookups served from the in-memory cache.
+# TYPE hermod_rule_cache_hits_total counter
+hermod_rule_cache_hits_total 0
+# HELP hermod_rule_cache_misses_total Rule index lookups that had to refetch from Postgres.
+# TYPE hermod_rule_cache_misses_total counter
+hermod_rule_cache_misses_total 0
+# HELP hermod_rule_audit_writes_total Rows enqueued to the rule_audit_log batched writer.
+# TYPE hermod_rule_audit_writes_total counter
+hermod_rule_audit_writes_total 0
+# HELP hermod_rule_audit_dropped_total Rows evicted from the rule_audit_log writer channel under DropOldest.
+# TYPE hermod_rule_audit_dropped_total counter
+hermod_rule_audit_dropped_total 0
+# HELP hermod_rule_audit_flush_failed_total rule_audit_log batches that failed to flush to Postgres (entire batch lost).
+# TYPE hermod_rule_audit_flush_failed_total counter
+hermod_rule_audit_flush_failed_total 0
+# HELP hermod_stats_rollup_writes_total Counter/snapshot flushes to metrics_counters and metrics_snapshots.
+# TYPE hermod_stats_rollup_writes_total counter
+hermod_stats_rollup_writes_total 1
+# HELP hermod_mqtt_outbox_enqueued_total Publishes buffered because the MQTT client was disconnected.
+# TYPE hermod_mqtt_outbox_enqueued_total counter
+hermod_mqtt_outbox_enqueued_total 0
+# HELP hermod_mqtt_outbox_dropped_total Publishes evicted from the outbox under DropOldest overflow.
+# TYPE hermod_mqtt_outbox_dropped_total counter
+hermod_mqtt_outbox_dropped_total 0
+# HELP hermod_mqtt_outbox_drained_total Publishes replayed from the outbox on reconnect.
+# TYPE hermod_mqtt_outbox_drained_total counter
+hermod_mqtt_outbox_drained_total 0
+# HELP hermod_mqtt_reconnects_total Successful broker reconnects by the MqttService supervisor (a flaky broker shows here as a rising slope).
+# TYPE hermod_mqtt_reconnects_total counter
+hermod_mqtt_reconnects_total 0
+# HELP hermod_rule_publish_attempted_total Rule actions that attempted an MQTT publish.
+# TYPE hermod_rule_publish_attempted_total counter
+hermod_rule_publish_attempted_total 0
+# HELP hermod_rule_publish_failed_total Rule actions whose publish threw or was dropped (bounded-channel overflow, MQTT disconnect mid-publish, serializer failure).
+# TYPE hermod_rule_publish_failed_total counter
+hermod_rule_publish_failed_total 0
+# HELP hermod_mqtt_outbox_depth Current number of publishes buffered in the MQTT reconnect outbox.
+# TYPE hermod_mqtt_outbox_depth gauge
+hermod_mqtt_outbox_depth 0
+# HELP hermod_ingest_queue_depth Current number of messages queued in the ingest channel (saturation arrives before drops).
+# TYPE hermod_ingest_queue_depth gauge
+hermod_ingest_queue_depth 0
+# HELP hermod_rule_eval_seconds Rule evaluation latency in seconds.
+# TYPE hermod_rule_eval_seconds histogram
+hermod_rule_eval_seconds_bucket{le="0.0005"} 0
+hermod_rule_eval_seconds_bucket{le="0.001"} 0
+hermod_rule_eval_seconds_bucket{le="0.002"} 0
+hermod_rule_eval_seconds_bucket{le="0.005"} 0
+hermod_rule_eval_seconds_bucket{le="0.01"} 0
+hermod_rule_eval_seconds_bucket{le="0.025"} 0
+hermod_rule_eval_seconds_bucket{le="0.05"} 0
+hermod_rule_eval_seconds_bucket{le="0.1"} 0
+hermod_rule_eval_seconds_bucket{le="0.25"} 0
+hermod_rule_eval_seconds_bucket{le="0.5"} 0
+hermod_rule_eval_seconds_bucket{le="1"} 0
+hermod_rule_eval_seconds_bucket{le="2.5"} 0
+hermod_rule_eval_seconds_bucket{le="5"} 0
+hermod_rule_eval_seconds_bucket{le="10"} 0
+hermod_rule_eval_seconds_bucket{le="+Inf"} 0
+hermod_rule_eval_seconds_sum 0
+hermod_rule_eval_seconds_count 0
+
+=== hermod-coordinator ts=20260427T032352Z ===
+# HELP hermod_messages_ingested_total MQTT messages received by the coordinator (feature-flag independent).
+# TYPE hermod_messages_ingested_total counter
+hermod_messages_ingested_total 6225
+# HELP hermod_messages_dropped_total Messages evicted from the ingest channel under DropOldest overflow. Mirror of SystemStats.MessagesDropped.
+# TYPE hermod_messages_dropped_total counter
+hermod_messages_dropped_total 0
+# HELP hermod_device_state_writes_total Device state rows written to Postgres after MQTT telemetry.
+# TYPE hermod_device_state_writes_total counter
+hermod_device_state_writes_total 0
+# HELP hermod_device_state_writes_dropped_total Device state updates evicted from the batched writer channel (pre-flush). Non-zero means the writer cannot keep up with incoming upserts.
+# TYPE hermod_device_state_writes_dropped_total counter
+hermod_device_state_writes_dropped_total 0
+# HELP hermod_device_state_flush_failed_total Device-state batches that failed to flush to Postgres (entire batch lost). Non-zero = PG is unreachable or the INSERT errored; silently dropped rows with no queue-overflow signal.
+# TYPE hermod_device_state_flush_failed_total counter
+hermod_device_state_flush_failed_total 0
+# HELP hermod_message_persistence_writes_total Rows actually written to message_history (post-flush). Previously counted at enqueue time which masked flush failures.
+# TYPE hermod_message_persistence_writes_total counter
+hermod_message_persistence_writes_total 2816
+# HELP hermod_message_persistence_dropped_total Rows evicted from the message_history writer channel under DropOldest.
+# TYPE hermod_message_persistence_dropped_total counter
+hermod_message_persistence_dropped_total 0
+# HELP hermod_message_persistence_flush_failed_total message_history batches that failed to flush to Postgres (entire batch lost).
+# TYPE hermod_message_persistence_flush_failed_total counter
+hermod_message_persistence_flush_failed_total 0
+# HELP hermod_message_history_retention_deletes_total Rows deleted by the message_history retention sweeper (post-cutoff age-out, batched DELETE).
+# TYPE hermod_message_history_retention_deletes_total counter
+hermod_message_history_retention_deletes_total 0
+# HELP hermod_message_history_retention_sweep_failed_total Retention sweep cycles that errored (transient PG outage; next interval retries).
+# TYPE hermod_message_history_retention_sweep_failed_total counter
+hermod_message_history_retention_sweep_failed_total 0
+# HELP hermod_rule_cache_hits_total Rule index lookups served from the in-memory cache.
+# TYPE hermod_rule_cache_hits_total counter
+hermod_rule_cache_hits_total 4204
+# HELP hermod_rule_cache_misses_total Rule index lookups that had to refetch from Postgres.
+# TYPE hermod_rule_cache_misses_total counter
+hermod_rule_cache_misses_total 1
+# HELP hermod_rule_audit_writes_total Rows enqueued to the rule_audit_log batched writer.
+# TYPE hermod_rule_audit_writes_total counter
+hermod_rule_audit_writes_total 2560
+# HELP hermod_rule_audit_dropped_total Rows evicted from the rule_audit_log writer channel under DropOldest.
+# TYPE hermod_rule_audit_dropped_total counter
+hermod_rule_audit_dropped_total 0
+# HELP hermod_rule_audit_flush_failed_total rule_audit_log batches that failed to flush to Postgres (entire batch lost).
+# TYPE hermod_rule_audit_flush_failed_total counter
+hermod_rule_audit_flush_failed_total 0
+# HELP hermod_stats_rollup_writes_total Counter/snapshot flushes to metrics_counters and metrics_snapshots.
+# TYPE hermod_stats_rollup_writes_total counter
+hermod_stats_rollup_writes_total 2
+# HELP hermod_mqtt_outbox_enqueued_total Publishes buffered because the MQTT client was disconnected.
+# TYPE hermod_mqtt_outbox_enqueued_total counter
+hermod_mqtt_outbox_enqueued_total 0
+# HELP hermod_mqtt_outbox_dropped_total Publishes evicted from the outbox under DropOldest overflow.
+# TYPE hermod_mqtt_outbox_dropped_total counter
+hermod_mqtt_outbox_dropped_total 0
+# HELP hermod_mqtt_outbox_drained_total Publishes replayed from the outbox on reconnect.
+# TYPE hermod_mqtt_outbox_drained_total counter
+hermod_mqtt_outbox_drained_total 0
+# HELP hermod_mqtt_reconnects_total Successful broker reconnects by the MqttService supervisor (a flaky broker shows here as a rising slope).
+# TYPE hermod_mqtt_reconnects_total counter
+hermod_mqtt_reconnects_total 0
+# HELP hermod_rule_publish_attempted_total Rule actions that attempted an MQTT publish.
+# TYPE hermod_rule_publish_attempted_total counter
+hermod_rule_publish_attempted_total 4205
+# HELP hermod_rule_publish_failed_total Rule actions whose publish threw or was dropped (bounded-channel overflow, MQTT disconnect mid-publish, serializer failure).
+# TYPE hermod_rule_publish_failed_total counter
+hermod_rule_publish_failed_total 0
+# HELP hermod_mqtt_outbox_depth Current number of publishes buffered in the MQTT reconnect outbox.
+# TYPE hermod_mqtt_outbox_depth gauge
+hermod_mqtt_outbox_depth 0
+# HELP hermod_ingest_queue_depth Current number of messages queued in the ingest channel (saturation arrives before drops).
+# TYPE hermod_ingest_queue_depth gauge
+hermod_ingest_queue_depth 2020
+# HELP hermod_rule_eval_seconds Rule evaluation latency in seconds.
+# TYPE hermod_rule_eval_seconds histogram
+hermod_rule_eval_seconds_bucket{le="0.0005"} 4130
+hermod_rule_eval_seconds_bucket{le="0.001"} 4168
+hermod_rule_eval_seconds_bucket{le="0.002"} 4182
+hermod_rule_eval_seconds_bucket{le="0.005"} 4196
+hermod_rule_eval_seconds_bucket{le="0.01"} 4199
+hermod_rule_eval_seconds_bucket{le="0.025"} 4200
+hermod_rule_eval_seconds_bucket{le="0.05"} 4203
+hermod_rule_eval_seconds_bucket{le="0.1"} 4204
+hermod_rule_eval_seconds_bucket{le="0.25"} 4204
+hermod_rule_eval_seconds_bucket{le="0.5"} 4204
+hermod_rule_eval_seconds_bucket{le="1"} 4204
+hermod_rule_eval_seconds_bucket{le="2.5"} 4204
+hermod_rule_eval_seconds_bucket{le="5"} 4204
+hermod_rule_eval_seconds_bucket{le="10"} 4204
+hermod_rule_eval_seconds_bucket{le="+Inf"} 4204
+hermod_rule_eval_seconds_sum 0.776114
+hermod_rule_eval_seconds_count 4204
+
+=== hermod-coordinator ts=20260427T032403Z ===
+# HELP hermod_messages_ingested_total MQTT messages received by the coordinator (feature-flag independent).
+# TYPE hermod_messages_ingested_total counter
+hermod_messages_ingested_total 52712
+# HELP hermod_messages_dropped_total Messages evicted from the ingest channel under DropOldest overflow. Mirror of SystemStats.MessagesDropped.
+# TYPE hermod_messages_dropped_total counter
+hermod_messages_dropped_total 0
+# HELP hermod_device_state_writes_total Device state rows written to Postgres after MQTT telemetry.
+# TYPE hermod_device_state_writes_total counter
+hermod_device_state_writes_total 0
+# HELP hermod_device_state_writes_dropped_total Device state updates evicted from the batched writer channel (pre-flush). Non-zero means the writer cannot keep up with incoming upserts.
+# TYPE hermod_device_state_writes_dropped_total counter
+hermod_device_state_writes_dropped_total 0
+# HELP hermod_device_state_flush_failed_total Device-state batches that failed to flush to Postgres (entire batch lost). Non-zero = PG is unreachable or the INSERT errored; silently dropped rows with no queue-overflow signal.
+# TYPE hermod_device_state_flush_failed_total counter
+hermod_device_state_flush_failed_total 0
+# HELP hermod_message_persistence_writes_total Rows actually written to message_history (post-flush). Previously counted at enqueue time which masked flush failures.
+# TYPE hermod_message_persistence_writes_total counter
+hermod_message_persistence_writes_total 51968
+# HELP hermod_message_persistence_dropped_total Rows evicted from the message_history writer channel under DropOldest.
+# TYPE hermod_message_persistence_dropped_total counter
+hermod_message_persistence_dropped_total 0
+# HELP hermod_message_persistence_flush_failed_total message_history batches that failed to flush to Postgres (entire batch lost).
+# TYPE hermod_message_persistence_flush_failed_total counter
+hermod_message_persistence_flush_failed_total 0
+# HELP hermod_message_history_retention_deletes_total Rows deleted by the message_history retention sweeper (post-cutoff age-out, batched DELETE).
+# TYPE hermod_message_history_retention_deletes_total counter
+hermod_message_history_retention_deletes_total 0
+# HELP hermod_message_history_retention_sweep_failed_total Retention sweep cycles that errored (transient PG outage; next interval retries).
+# TYPE hermod_message_history_retention_sweep_failed_total counter
+hermod_message_history_retention_sweep_failed_total 0
+# HELP hermod_rule_cache_hits_total Rule index lookups served from the in-memory cache.
+# TYPE hermod_rule_cache_hits_total counter
+hermod_rule_cache_hits_total 52266
+# HELP hermod_rule_cache_misses_total Rule index lookups that had to refetch from Postgres.
+# TYPE hermod_rule_cache_misses_total counter
+hermod_rule_cache_misses_total 3
+# HELP hermod_rule_audit_writes_total Rows enqueued to the rule_audit_log batched writer.
+# TYPE hermod_rule_audit_writes_total counter
+hermod_rule_audit_writes_total 51968
+# HELP hermod_rule_audit_dropped_total Rows evicted from the rule_audit_log writer channel under DropOldest.
+# TYPE hermod_rule_audit_dropped_total counter
+hermod_rule_audit_dropped_total 0
+# HELP hermod_rule_audit_flush_failed_total rule_audit_log batches that failed to flush to Postgres (entire batch lost).
+# TYPE hermod_rule_audit_flush_failed_total counter
+hermod_rule_audit_flush_failed_total 0
+# HELP hermod_stats_rollup_writes_total Counter/snapshot flushes to metrics_counters and metrics_snapshots.
+# TYPE hermod_stats_rollup_writes_total counter
+hermod_stats_rollup_writes_total 3
+# HELP hermod_mqtt_outbox_enqueued_total Publishes buffered because the MQTT client was disconnected.
+# TYPE hermod_mqtt_outbox_enqueued_total counter
+hermod_mqtt_outbox_enqueued_total 0
+# HELP hermod_mqtt_outbox_dropped_total Publishes evicted from the outbox under DropOldest overflow.
+# TYPE hermod_mqtt_outbox_dropped_total counter
+hermod_mqtt_outbox_dropped_total 0
+# HELP hermod_mqtt_outbox_drained_total Publishes replayed from the outbox on reconnect.
+# TYPE hermod_mqtt_outbox_drained_total counter
+hermod_mqtt_outbox_drained_total 0
+# HELP hermod_mqtt_reconnects_total Successful broker reconnects by the MqttService supervisor (a flaky broker shows here as a rising slope).
+# TYPE hermod_mqtt_reconnects_total counter
+hermod_mqtt_reconnects_total 0
+# HELP hermod_rule_publish_attempted_total Rule actions that attempted an MQTT publish.
+# TYPE hermod_rule_publish_attempted_total counter
+hermod_rule_publish_attempted_total 52269
+# HELP hermod_rule_publish_failed_total Rule actions whose publish threw or was dropped (bounded-channel overflow, MQTT disconnect mid-publish, serializer failure).
+# TYPE hermod_rule_publish_failed_total counter
+hermod_rule_publish_failed_total 0
+# HELP hermod_mqtt_outbox_depth Current number of publishes buffered in the MQTT reconnect outbox.
+# TYPE hermod_mqtt_outbox_depth gauge
+hermod_mqtt_outbox_depth 0
+# HELP hermod_ingest_queue_depth Current number of messages queued in the ingest channel (saturation arrives before drops).
+# TYPE hermod_ingest_queue_depth gauge
+hermod_ingest_queue_depth 442
+# HELP hermod_rule_eval_seconds Rule evaluation latency in seconds.
+# TYPE hermod_rule_eval_seconds histogram
+hermod_rule_eval_seconds_bucket{le="0.0005"} 51086
+hermod_rule_eval_seconds_bucket{le="0.001"} 51698
+hermod_rule_eval_seconds_bucket{le="0.002"} 52016
+hermod_rule_eval_seconds_bucket{le="0.005"} 52193
+hermod_rule_eval_seconds_bucket{le="0.01"} 52212
+hermod_rule_eval_seconds_bucket{le="0.025"} 52231
+hermod_rule_eval_seconds_bucket{le="0.05"} 52268
+hermod_rule_eval_seconds_bucket{le="0.1"} 52269
+hermod_rule_eval_seconds_bucket{le="0.25"} 52269
+hermod_rule_eval_seconds_bucket{le="0.5"} 52269
+hermod_rule_eval_seconds_bucket{le="1"} 52269
+hermod_rule_eval_seconds_bucket{le="2.5"} 52269
+hermod_rule_eval_seconds_bucket{le="5"} 52269
+hermod_rule_eval_seconds_bucket{le="10"} 52269
+hermod_rule_eval_seconds_bucket{le="+Inf"} 52269
+hermod_rule_eval_seconds_sum 7.95173
+hermod_rule_eval_seconds_count 52269
+
+=== hermod-coordinator ts=20260427T032415Z ===
+# HELP hermod_messages_ingested_total MQTT messages received by the coordinator (feature-flag independent).
+# TYPE hermod_messages_ingested_total counter
+hermod_messages_ingested_total 98291
+# HELP hermod_messages_dropped_total Messages evicted from the ingest channel under DropOldest overflow. Mirror of SystemStats.MessagesDropped.
+# TYPE hermod_messages_dropped_total counter
+hermod_messages_dropped_total 0
+# HELP hermod_device_state_writes_total Device state rows written to Postgres after MQTT telemetry.
+# TYPE hermod_device_state_writes_total counter
+hermod_device_state_writes_total 0
+# HELP hermod_device_state_writes_dropped_total Device state updates evicted from the batched writer channel (pre-flush). Non-zero means the writer cannot keep up with incoming upserts.
+# TYPE hermod_device_state_writes_dropped_total counter
+hermod_device_state_writes_dropped_total 0
+# HELP hermod_device_state_flush_failed_total Device-state batches that failed to flush to Postgres (entire batch lost). Non-zero = PG is unreachable or the INSERT errored; silently dropped rows with no queue-overflow signal.
+# TYPE hermod_device_state_flush_failed_total counter
+hermod_device_state_flush_failed_total 0
+# HELP hermod_message_persistence_writes_total Rows actually written to message_history (post-flush). Previously counted at enqueue time which masked flush failures.
+# TYPE hermod_message_persistence_writes_total counter
+hermod_message_persistence_writes_total 98048
+# HELP hermod_message_persistence_dropped_total Rows evicted from the message_history writer channel under DropOldest.
+# TYPE hermod_message_persistence_dropped_total counter
+hermod_message_persistence_dropped_total 0
+# HELP hermod_message_persistence_flush_failed_total message_history batches that failed to flush to Postgres (entire batch lost).
+# TYPE hermod_message_persistence_flush_failed_total counter
+hermod_message_persistence_flush_failed_total 0
+# HELP hermod_message_history_retention_deletes_total Rows deleted by the message_history retention sweeper (post-cutoff age-out, batched DELETE).
+# TYPE hermod_message_history_retention_deletes_total counter
+hermod_message_history_retention_deletes_total 0
+# HELP hermod_message_history_retention_sweep_failed_total Retention sweep cycles that errored (transient PG outage; next interval retries).
+# TYPE hermod_message_history_retention_sweep_failed_total counter
+hermod_message_history_retention_sweep_failed_total 0
+# HELP hermod_rule_cache_hits_total Rule index lookups served from the in-memory cache.
+# TYPE hermod_rule_cache_hits_total counter
+hermod_rule_cache_hits_total 98283
+# HELP hermod_rule_cache_misses_total Rule index lookups that had to refetch from Postgres.
+# TYPE hermod_rule_cache_misses_total counter
+hermod_rule_cache_misses_total 5
+# HELP hermod_rule_audit_writes_total Rows enqueued to the rule_audit_log batched writer.
+# TYPE hermod_rule_audit_writes_total counter
+hermod_rule_audit_writes_total 98048
+# HELP hermod_rule_audit_dropped_total Rows evicted from the rule_audit_log writer channel under DropOldest.
+# TYPE hermod_rule_audit_dropped_total counter
+hermod_rule_audit_dropped_total 0
+# HELP hermod_rule_audit_flush_failed_total rule_audit_log batches that failed to flush to Postgres (entire batch lost).
+# TYPE hermod_rule_audit_flush_failed_total counter
+hermod_rule_audit_flush_failed_total 0
+# HELP hermod_stats_rollup_writes_total Counter/snapshot flushes to metrics_counters and metrics_snapshots.
+# TYPE hermod_stats_rollup_writes_total counter
+hermod_stats_rollup_writes_total 3
+# HELP hermod_mqtt_outbox_enqueued_total Publishes buffered because the MQTT client was disconnected.
+# TYPE hermod_mqtt_outbox_enqueued_total counter
+hermod_mqtt_outbox_enqueued_total 0
+# HELP hermod_mqtt_outbox_dropped_total Publishes evicted from the outbox under DropOldest overflow.
+# TYPE hermod_mqtt_outbox_dropped_total counter
+hermod_mqtt_outbox_dropped_total 0
+# HELP hermod_mqtt_outbox_drained_total Publishes replayed from the outbox on reconnect.
+# TYPE hermod_mqtt_outbox_drained_total counter
+hermod_mqtt_outbox_drained_total 0
+# HELP hermod_mqtt_reconnects_total Successful broker reconnects by the MqttService supervisor (a flaky broker shows here as a rising slope).
+# TYPE hermod_mqtt_reconnects_total counter
+hermod_mqtt_reconnects_total 0
+# HELP hermod_rule_publish_attempted_total Rule actions that attempted an MQTT publish.
+# TYPE hermod_rule_publish_attempted_total counter
+hermod_rule_publish_attempted_total 98288
+# HELP hermod_rule_publish_failed_total Rule actions whose publish threw or was dropped (bounded-channel overflow, MQTT disconnect mid-publish, serializer failure).
+# TYPE hermod_rule_publish_failed_total counter
+hermod_rule_publish_failed_total 0
+# HELP hermod_mqtt_outbox_depth Current number of publishes buffered in the MQTT reconnect outbox.
+# TYPE hermod_mqtt_outbox_depth gauge
+hermod_mqtt_outbox_depth 0
+# HELP hermod_ingest_queue_depth Current number of messages queued in the ingest channel (saturation arrives before drops).
+# TYPE hermod_ingest_queue_depth gauge
+hermod_ingest_queue_depth 3
+# HELP hermod_rule_eval_seconds Rule evaluation latency in seconds.
+# TYPE hermod_rule_eval_seconds histogram
+hermod_rule_eval_seconds_bucket{le="0.0005"} 96645
+hermod_rule_eval_seconds_bucket{le="0.001"} 97521
+hermod_rule_eval_seconds_bucket{le="0.002"} 97975
+hermod_rule_eval_seconds_bucket{le="0.005"} 98205
+hermod_rule_eval_seconds_bucket{le="0.01"} 98226
+hermod_rule_eval_seconds_bucket{le="0.025"} 98248
+hermod_rule_eval_seconds_bucket{le="0.05"} 98286
+hermod_rule_eval_seconds_bucket{le="0.1"} 98287
+hermod_rule_eval_seconds_bucket{le="0.25"} 98287
+hermod_rule_eval_seconds_bucket{le="0.5"} 98287
+hermod_rule_eval_seconds_bucket{le="1"} 98287
+hermod_rule_eval_seconds_bucket{le="2.5"} 98287
+hermod_rule_eval_seconds_bucket{le="5"} 98287
+hermod_rule_eval_seconds_bucket{le="10"} 98287
+hermod_rule_eval_seconds_bucket{le="+Inf"} 98287
+hermod_rule_eval_seconds_sum 12.469917
+hermod_rule_eval_seconds_count 98287
+
+=== hermod-coordinator ts=20260427T032426Z ===
+# HELP hermod_messages_ingested_total MQTT messages received by the coordinator (feature-flag independent).
+# TYPE hermod_messages_ingested_total counter
+hermod_messages_ingested_total 120001
+# HELP hermod_messages_dropped_total Messages evicted from the ingest channel under DropOldest overflow. Mirror of SystemStats.MessagesDropped.
+# TYPE hermod_messages_dropped_total counter
+hermod_messages_dropped_total 0
+# HELP hermod_device_state_writes_total Device state rows written to Postgres after MQTT telemetry.
+# TYPE hermod_device_state_writes_total counter
+hermod_device_state_writes_total 0
+# HELP hermod_device_state_writes_dropped_total Device state updates evicted from the batched writer channel (pre-flush). Non-zero means the writer cannot keep up with incoming upserts.
+# TYPE hermod_device_state_writes_dropped_total counter
+hermod_device_state_writes_dropped_total 0
+# HELP hermod_device_state_flush_failed_total Device-state batches that failed to flush to Postgres (entire batch lost). Non-zero = PG is unreachable or the INSERT errored; silently dropped rows with no queue-overflow signal.
+# TYPE hermod_device_state_flush_failed_total counter
+hermod_device_state_flush_failed_total 0
+# HELP hermod_message_persistence_writes_total Rows actually written to message_history (post-flush). Previously counted at enqueue time which masked flush failures.
+# TYPE hermod_message_persistence_writes_total counter
+hermod_message_persistence_writes_total 120001
+# HELP hermod_message_persistence_dropped_total Rows evicted from the message_history writer channel under DropOldest.
+# TYPE hermod_message_persistence_dropped_total counter
+hermod_message_persistence_dropped_total 0
+# HELP hermod_message_persistence_flush_failed_total message_history batches that failed to flush to Postgres (entire batch lost).
+# TYPE hermod_message_persistence_flush_failed_total counter
+hermod_message_persistence_flush_failed_total 0
+# HELP hermod_message_history_retention_deletes_total Rows deleted by the message_history retention sweeper (post-cutoff age-out, batched DELETE).
+# TYPE hermod_message_history_retention_deletes_total counter
+hermod_message_history_retention_deletes_total 0
+# HELP hermod_message_history_retention_sweep_failed_total Retention sweep cycles that errored (transient PG outage; next interval retries).
+# TYPE hermod_message_history_retention_sweep_failed_total counter
+hermod_message_history_retention_sweep_failed_total 0
+# HELP hermod_rule_cache_hits_total Rule index lookups served from the in-memory cache.
+# TYPE hermod_rule_cache_hits_total counter
+hermod_rule_cache_hits_total 119995
+# HELP hermod_rule_cache_misses_total Rule index lookups that had to refetch from Postgres.
+# TYPE hermod_rule_cache_misses_total counter
+hermod_rule_cache_misses_total 6
+# HELP hermod_rule_audit_writes_total Rows enqueued to the rule_audit_log batched writer.
+# TYPE hermod_rule_audit_writes_total counter
+hermod_rule_audit_writes_total 120001
+# HELP hermod_rule_audit_dropped_total Rows evicted from the rule_audit_log writer channel under DropOldest.
+# TYPE hermod_rule_audit_dropped_total counter
+hermod_rule_audit_dropped_total 0
+# HELP hermod_rule_audit_flush_failed_total rule_audit_log batches that failed to flush to Postgres (entire batch lost).
+# TYPE hermod_rule_audit_flush_failed_total counter
+hermod_rule_audit_flush_failed_total 0
+# HELP hermod_stats_rollup_writes_total Counter/snapshot flushes to metrics_counters and metrics_snapshots.
+# TYPE hermod_stats_rollup_writes_total counter
+hermod_stats_rollup_writes_total 4
+# HELP hermod_mqtt_outbox_enqueued_total Publishes buffered because the MQTT client was disconnected.
+# TYPE hermod_mqtt_outbox_enqueued_total counter
+hermod_mqtt_outbox_enqueued_total 0
+# HELP hermod_mqtt_outbox_dropped_total Publishes evicted from the outbox under DropOldest overflow.
+# TYPE hermod_mqtt_outbox_dropped_total counter
+hermod_mqtt_outbox_dropped_total 0
+# HELP hermod_mqtt_outbox_drained_total Publishes replayed from the outbox on reconnect.
+# TYPE hermod_mqtt_outbox_drained_total counter
+hermod_mqtt_outbox_drained_total 0
+# HELP hermod_mqtt_reconnects_total Successful broker reconnects by the MqttService supervisor (a flaky broker shows here as a rising slope).
+# TYPE hermod_mqtt_reconnects_total counter
+hermod_mqtt_reconnects_total 0
+# HELP hermod_rule_publish_attempted_total Rule actions that attempted an MQTT publish.
+# TYPE hermod_rule_publish_attempted_total counter
+hermod_rule_publish_attempted_total 120001
+# HELP hermod_rule_publish_failed_total Rule actions whose publish threw or was dropped (bounded-channel overflow, MQTT disconnect mid-publish, serializer failure).
+# TYPE hermod_rule_publish_failed_total counter
+hermod_rule_publish_failed_total 0
+# HELP hermod_mqtt_outbox_depth Current number of publishes buffered in the MQTT reconnect outbox.
+# TYPE hermod_mqtt_outbox_depth gauge
+hermod_mqtt_outbox_depth 0
+# HELP hermod_ingest_queue_depth Current number of messages queued in the ingest channel (saturation arrives before drops).
+# TYPE hermod_ingest_queue_depth gauge
+hermod_ingest_queue_depth 0
+# HELP hermod_rule_eval_seconds Rule evaluation latency in seconds.
+# TYPE hermod_rule_eval_seconds histogram
+hermod_rule_eval_seconds_bucket{le="0.0005"} 117978
+hermod_rule_eval_seconds_bucket{le="0.001"} 119101
+hermod_rule_eval_seconds_bucket{le="0.002"} 119643
+hermod_rule_eval_seconds_bucket{le="0.005"} 119909
+hermod_rule_eval_seconds_bucket{le="0.01"} 119935
+hermod_rule_eval_seconds_bucket{le="0.025"} 119960
+hermod_rule_eval_seconds_bucket{le="0.05"} 120000
+hermod_rule_eval_seconds_bucket{le="0.1"} 120001
+hermod_rule_eval_seconds_bucket{le="0.25"} 120001
+hermod_rule_eval_seconds_bucket{le="0.5"} 120001
+hermod_rule_eval_seconds_bucket{le="1"} 120001
+hermod_rule_eval_seconds_bucket{le="2.5"} 120001
+hermod_rule_eval_seconds_bucket{le="5"} 120001
+hermod_rule_eval_seconds_bucket{le="10"} 120001
+hermod_rule_eval_seconds_bucket{le="+Inf"} 120001
+hermod_rule_eval_seconds_sum 14.91079
+hermod_rule_eval_seconds_count 120001
+
+=== hermod-coordinator ts=20260427T032437Z ===
+# HELP hermod_messages_ingested_total MQTT messages received by the coordinator (feature-flag independent).
+# TYPE hermod_messages_ingested_total counter
+hermod_messages_ingested_total 120001
+# HELP hermod_messages_dropped_total Messages evicted from the ingest channel under DropOldest overflow. Mirror of SystemStats.MessagesDropped.
+# TYPE hermod_messages_dropped_total counter
+hermod_messages_dropped_total 0
+# HELP hermod_device_state_writes_total Device state rows written to Postgres after MQTT telemetry.
+# TYPE hermod_device_state_writes_total counter
+hermod_device_state_writes_total 0
+# HELP hermod_device_state_writes_dropped_total Device state updates evicted from the batched writer channel (pre-flush). Non-zero means the writer cannot keep up with incoming upserts.
+# TYPE hermod_device_state_writes_dropped_total counter
+hermod_device_state_writes_dropped_total 0
+# HELP hermod_device_state_flush_failed_total Device-state batches that failed to flush to Postgres (entire batch lost). Non-zero = PG is unreachable or the INSERT errored; silently dropped rows with no queue-overflow signal.
+# TYPE hermod_device_state_flush_failed_total counter
+hermod_device_state_flush_failed_total 0
+# HELP hermod_message_persistence_writes_total Rows actually written to message_history (post-flush). Previously counted at enqueue time which masked flush failures.
+# TYPE hermod_message_persistence_writes_total counter
+hermod_message_persistence_writes_total 120001
+# HELP hermod_message_persistence_dropped_total Rows evicted from the message_history writer channel under DropOldest.
+# TYPE hermod_message_persistence_dropped_total counter
+hermod_message_persistence_dropped_total 0
+# HELP hermod_message_persistence_flush_failed_total message_history batches that failed to flush to Postgres (entire batch lost).
+# TYPE hermod_message_persistence_flush_failed_total counter
+hermod_message_persistence_flush_failed_total 0
+# HELP hermod_message_history_retention_deletes_total Rows deleted by the message_history retention sweeper (post-cutoff age-out, batched DELETE).
+# TYPE hermod_message_history_retention_deletes_total counter
+hermod_message_history_retention_deletes_total 0
+# HELP hermod_message_history_retention_sweep_failed_total Retention sweep cycles that errored (transient PG outage; next interval retries).
+# TYPE hermod_message_history_retention_sweep_failed_total counter
+hermod_message_history_retention_sweep_failed_total 0
+# HELP hermod_rule_cache_hits_total Rule index lookups served from the in-memory cache.
+# TYPE hermod_rule_cache_hits_total counter
+hermod_rule_cache_hits_total 119995
+# HELP hermod_rule_cache_misses_total Rule index lookups that had to refetch from Postgres.
+# TYPE hermod_rule_cache_misses_total counter
+hermod_rule_cache_misses_total 6
+# HELP hermod_rule_audit_writes_total Rows enqueued to the rule_audit_log batched writer.
+# TYPE hermod_rule_audit_writes_total counter
+hermod_rule_audit_writes_total 120001
+# HELP hermod_rule_audit_dropped_total Rows evicted from the rule_audit_log writer channel under DropOldest.
+# TYPE hermod_rule_audit_dropped_total counter
+hermod_rule_audit_dropped_total 0
+# HELP hermod_rule_audit_flush_failed_total rule_audit_log batches that failed to flush to Postgres (entire batch lost).
+# TYPE hermod_rule_audit_flush_failed_total counter
+hermod_rule_audit_flush_failed_total 0
+# HELP hermod_stats_rollup_writes_total Counter/snapshot flushes to metrics_counters and metrics_snapshots.
+# TYPE hermod_stats_rollup_writes_total counter
+hermod_stats_rollup_writes_total 5
+# HELP hermod_mqtt_outbox_enqueued_total Publishes buffered because the MQTT client was disconnected.
+# TYPE hermod_mqtt_outbox_enqueued_total counter
+hermod_mqtt_outbox_enqueued_total 0
+# HELP hermod_mqtt_outbox_dropped_total Publishes evicted from the outbox under DropOldest overflow.
+# TYPE hermod_mqtt_outbox_dropped_total counter
+hermod_mqtt_outbox_dropped_total 0
+# HELP hermod_mqtt_outbox_drained_total Publishes replayed from the outbox on reconnect.
+# TYPE hermod_mqtt_outbox_drained_total counter
+hermod_mqtt_outbox_drained_total 0
+# HELP hermod_mqtt_reconnects_total Successful broker reconnects by the MqttService supervisor (a flaky broker shows here as a rising slope).
+# TYPE hermod_mqtt_reconnects_total counter
+hermod_mqtt_reconnects_total 0
+# HELP hermod_rule_publish_attempted_total Rule actions that attempted an MQTT publish.
+# TYPE hermod_rule_publish_attempted_total counter
+hermod_rule_publish_attempted_total 120001
+# HELP hermod_rule_publish_failed_total Rule actions whose publish threw or was dropped (bounded-channel overflow, MQTT disconnect mid-publish, serializer failure).
+# TYPE hermod_rule_publish_failed_total counter
+hermod_rule_publish_failed_total 0
+# HELP hermod_mqtt_outbox_depth Current number of publishes buffered in the MQTT reconnect outbox.
+# TYPE hermod_mqtt_outbox_depth gauge
+hermod_mqtt_outbox_depth 0
+# HELP hermod_ingest_queue_depth Current number of messages queued in the ingest channel (saturation arrives before drops).
+# TYPE hermod_ingest_queue_depth gauge
+hermod_ingest_queue_depth 0
+# HELP hermod_rule_eval_seconds Rule evaluation latency in seconds.
+# TYPE hermod_rule_eval_seconds histogram
+hermod_rule_eval_seconds_bucket{le="0.0005"} 117978
+hermod_rule_eval_seconds_bucket{le="0.001"} 119101
+hermod_rule_eval_seconds_bucket{le="0.002"} 119643
+hermod_rule_eval_seconds_bucket{le="0.005"} 119909
+hermod_rule_eval_seconds_bucket{le="0.01"} 119935
+hermod_rule_eval_seconds_bucket{le="0.025"} 119960
+hermod_rule_eval_seconds_bucket{le="0.05"} 120000
+hermod_rule_eval_seconds_bucket{le="0.1"} 120001
+hermod_rule_eval_seconds_bucket{le="0.25"} 120001
+hermod_rule_eval_seconds_bucket{le="0.5"} 120001
+hermod_rule_eval_seconds_bucket{le="1"} 120001
+hermod_rule_eval_seconds_bucket{le="2.5"} 120001
+hermod_rule_eval_seconds_bucket{le="5"} 120001
+hermod_rule_eval_seconds_bucket{le="10"} 120001
+hermod_rule_eval_seconds_bucket{le="+Inf"} 120001
+hermod_rule_eval_seconds_sum 14.91079
+hermod_rule_eval_seconds_count 120001
+
+=== hermod-coordinator ts=20260427T032448Z ===
+# HELP hermod_messages_ingested_total MQTT messages received by the coordinator (feature-flag independent).
+# TYPE hermod_messages_ingested_total counter
+hermod_messages_ingested_total 148620
+# HELP hermod_messages_dropped_total Messages evicted from the ingest channel under DropOldest overflow. Mirror of SystemStats.MessagesDropped.
+# TYPE hermod_messages_dropped_total counter
+hermod_messages_dropped_total 0
+# HELP hermod_device_state_writes_total Device state rows written to Postgres after MQTT telemetry.
+# TYPE hermod_device_state_writes_total counter
+hermod_device_state_writes_total 0
+# HELP hermod_device_state_writes_dropped_total Device state updates evicted from the batched writer channel (pre-flush). Non-zero means the writer cannot keep up with incoming upserts.
+# TYPE hermod_device_state_writes_dropped_total counter
+hermod_device_state_writes_dropped_total 0
+# HELP hermod_device_state_flush_failed_total Device-state batches that failed to flush to Postgres (entire batch lost). Non-zero = PG is unreachable or the INSERT errored; silently dropped rows with no queue-overflow signal.
+# TYPE hermod_device_state_flush_failed_total counter
+hermod_device_state_flush_failed_total 0
+# HELP hermod_message_persistence_writes_total Rows actually written to message_history (post-flush). Previously counted at enqueue time which masked flush failures.
+# TYPE hermod_message_persistence_writes_total counter
+hermod_message_persistence_writes_total 148417
+# HELP hermod_message_persistence_dropped_total Rows evicted from the message_history writer channel under DropOldest.
+# TYPE hermod_message_persistence_dropped_total counter
+hermod_message_persistence_dropped_total 0
+# HELP hermod_message_persistence_flush_failed_total message_history batches that failed to flush to Postgres (entire batch lost).
+# TYPE hermod_message_persistence_flush_failed_total counter
+hermod_message_persistence_flush_failed_total 0
+# HELP hermod_message_history_retention_deletes_total Rows deleted by the message_history retention sweeper (post-cutoff age-out, batched DELETE).
+# TYPE hermod_message_history_retention_deletes_total counter
+hermod_message_history_retention_deletes_total 0
+# HELP hermod_message_history_retention_sweep_failed_total Retention sweep cycles that errored (transient PG outage; next interval retries).
+# TYPE hermod_message_history_retention_sweep_failed_total counter
+hermod_message_history_retention_sweep_failed_total 0
+# HELP hermod_rule_cache_hits_total Rule index lookups served from the in-memory cache.
+# TYPE hermod_rule_cache_hits_total counter
+hermod_rule_cache_hits_total 148611
+# HELP hermod_rule_cache_misses_total Rule index lookups that had to refetch from Postgres.
+# TYPE hermod_rule_cache_misses_total counter
+hermod_rule_cache_misses_total 8
+# HELP hermod_rule_audit_writes_total Rows enqueued to the rule_audit_log batched writer.
+# TYPE hermod_rule_audit_writes_total counter
+hermod_rule_audit_writes_total 148417
+# HELP hermod_rule_audit_dropped_total Rows evicted from the rule_audit_log writer channel under DropOldest.
+# TYPE hermod_rule_audit_dropped_total counter
+hermod_rule_audit_dropped_total 0
+# HELP hermod_rule_audit_flush_failed_total rule_audit_log batches that failed to flush to Postgres (entire batch lost).
+# TYPE hermod_rule_audit_flush_failed_total counter
+hermod_rule_audit_flush_failed_total 0
+# HELP hermod_stats_rollup_writes_total Counter/snapshot flushes to metrics_counters and metrics_snapshots.
+# TYPE hermod_stats_rollup_writes_total counter
+hermod_stats_rollup_writes_total 6
+# HELP hermod_mqtt_outbox_enqueued_total Publishes buffered because the MQTT client was disconnected.
+# TYPE hermod_mqtt_outbox_enqueued_total counter
+hermod_mqtt_outbox_enqueued_total 0
+# HELP hermod_mqtt_outbox_dropped_total Publishes evicted from the outbox under DropOldest overflow.
+# TYPE hermod_mqtt_outbox_dropped_total counter
+hermod_mqtt_outbox_dropped_total 0
+# HELP hermod_mqtt_outbox_drained_total Publishes replayed from the outbox on reconnect.
+# TYPE hermod_mqtt_outbox_drained_total counter
+hermod_mqtt_outbox_drained_total 0
+# HELP hermod_mqtt_reconnects_total Successful broker reconnects by the MqttService supervisor (a flaky broker shows here as a rising slope).
+# TYPE hermod_mqtt_reconnects_total counter
+hermod_mqtt_reconnects_total 0
+# HELP hermod_rule_publish_attempted_total Rule actions that attempted an MQTT publish.
+# TYPE hermod_rule_publish_attempted_total counter
+hermod_rule_publish_attempted_total 148618
+# HELP hermod_rule_publish_failed_total Rule actions whose publish threw or was dropped (bounded-channel overflow, MQTT disconnect mid-publish, serializer failure).
+# TYPE hermod_rule_publish_failed_total counter
+hermod_rule_publish_failed_total 0
+# HELP hermod_mqtt_outbox_depth Current number of publishes buffered in the MQTT reconnect outbox.
+# TYPE hermod_mqtt_outbox_depth gauge
+hermod_mqtt_outbox_depth 0
+# HELP hermod_ingest_queue_depth Current number of messages queued in the ingest channel (saturation arrives before drops).
+# TYPE hermod_ingest_queue_depth gauge
+hermod_ingest_queue_depth 1
+# HELP hermod_rule_eval_seconds Rule evaluation latency in seconds.
+# TYPE hermod_rule_eval_seconds histogram
+hermod_rule_eval_seconds_bucket{le="0.0005"} 146271
+hermod_rule_eval_seconds_bucket{le="0.001"} 147579
+hermod_rule_eval_seconds_bucket{le="0.002"} 148215
+hermod_rule_eval_seconds_bucket{le="0.005"} 148517
+hermod_rule_eval_seconds_bucket{le="0.01"} 148544
+hermod_rule_eval_seconds_bucket{le="0.025"} 148575
+hermod_rule_eval_seconds_bucket{le="0.05"} 148617
+hermod_rule_eval_seconds_bucket{le="0.1"} 148618
+hermod_rule_eval_seconds_bucket{le="0.25"} 148618
+hermod_rule_eval_seconds_bucket{le="0.5"} 148618
+hermod_rule_eval_seconds_bucket{le="1"} 148618
+hermod_rule_eval_seconds_bucket{le="2.5"} 148618
+hermod_rule_eval_seconds_bucket{le="5"} 148618
+hermod_rule_eval_seconds_bucket{le="10"} 148618
+hermod_rule_eval_seconds_bucket{le="+Inf"} 148618
+hermod_rule_eval_seconds_sum 17.876803
+hermod_rule_eval_seconds_count 148618
+
+=== hermod-coordinator ts=20260427T032500Z ===
+# HELP hermod_messages_ingested_total MQTT messages received by the coordinator (feature-flag independent).
+# TYPE hermod_messages_ingested_total counter
+hermod_messages_ingested_total 196394
+# HELP hermod_messages_dropped_total Messages evicted from the ingest channel under DropOldest overflow. Mirror of SystemStats.MessagesDropped.
+# TYPE hermod_messages_dropped_total counter
+hermod_messages_dropped_total 0
+# HELP hermod_device_state_writes_total Device state rows written to Postgres after MQTT telemetry.
+# TYPE hermod_device_state_writes_total counter
+hermod_device_state_writes_total 0
+# HELP hermod_device_state_writes_dropped_total Device state updates evicted from the batched writer channel (pre-flush). Non-zero means the writer cannot keep up with incoming upserts.
+# TYPE hermod_device_state_writes_dropped_total counter
+hermod_device_state_writes_dropped_total 0
+# HELP hermod_device_state_flush_failed_total Device-state batches that failed to flush to Postgres (entire batch lost). Non-zero = PG is unreachable or the INSERT errored; silently dropped rows with no queue-overflow signal.
+# TYPE hermod_device_state_flush_failed_total counter
+hermod_device_state_flush_failed_total 0
+# HELP hermod_message_persistence_writes_total Rows actually written to message_history (post-flush). Previously counted at enqueue time which masked flush failures.
+# TYPE hermod_message_persistence_writes_total counter
+hermod_message_persistence_writes_total 196289
+# HELP hermod_message_persistence_dropped_total Rows evicted from the message_history writer channel under DropOldest.
+# TYPE hermod_message_persistence_dropped_total counter
+hermod_message_persistence_dropped_total 0
+# HELP hermod_message_persistence_flush_failed_total message_history batches that failed to flush to Postgres (entire batch lost).
+# TYPE hermod_message_persistence_flush_failed_total counter
+hermod_message_persistence_flush_failed_total 0
+# HELP hermod_message_history_retention_deletes_total Rows deleted by the message_history retention sweeper (post-cutoff age-out, batched DELETE).
+# TYPE hermod_message_history_retention_deletes_total counter
+hermod_message_history_retention_deletes_total 0
+# HELP hermod_message_history_retention_sweep_failed_total Retention sweep cycles that errored (transient PG outage; next interval retries).
+# TYPE hermod_message_history_retention_sweep_failed_total counter
+hermod_message_history_retention_sweep_failed_total 0
+# HELP hermod_rule_cache_hits_total Rule index lookups served from the in-memory cache.
+# TYPE hermod_rule_cache_hits_total counter
+hermod_rule_cache_hits_total 196357
+# HELP hermod_rule_cache_misses_total Rule index lookups that had to refetch from Postgres.
+# TYPE hermod_rule_cache_misses_total counter
+hermod_rule_cache_misses_total 10
+# HELP hermod_rule_audit_writes_total Rows enqueued to the rule_audit_log batched writer.
+# TYPE hermod_rule_audit_writes_total counter
+hermod_rule_audit_writes_total 196289
+# HELP hermod_rule_audit_dropped_total Rows evicted from the rule_audit_log writer channel under DropOldest.
+# TYPE hermod_rule_audit_dropped_total counter
+hermod_rule_audit_dropped_total 0
+# HELP hermod_rule_audit_flush_failed_total rule_audit_log batches that failed to flush to Postgres (entire batch lost).
+# TYPE hermod_rule_audit_flush_failed_total counter
+hermod_rule_audit_flush_failed_total 0
+# HELP hermod_stats_rollup_writes_total Counter/snapshot flushes to metrics_counters and metrics_snapshots.
+# TYPE hermod_stats_rollup_writes_total counter
+hermod_stats_rollup_writes_total 7
+# HELP hermod_mqtt_outbox_enqueued_total Publishes buffered because the MQTT client was disconnected.
+# TYPE hermod_mqtt_outbox_enqueued_total counter
+hermod_mqtt_outbox_enqueued_total 0
+# HELP hermod_mqtt_outbox_dropped_total Publishes evicted from the outbox under DropOldest overflow.
+# TYPE hermod_mqtt_outbox_dropped_total counter
+hermod_mqtt_outbox_dropped_total 0
+# HELP hermod_mqtt_outbox_drained_total Publishes replayed from the outbox on reconnect.
+# TYPE hermod_mqtt_outbox_drained_total counter
+hermod_mqtt_outbox_drained_total 0
+# HELP hermod_mqtt_reconnects_total Successful broker reconnects by the MqttService supervisor (a flaky broker shows here as a rising slope).
+# TYPE hermod_mqtt_reconnects_total counter
+hermod_mqtt_reconnects_total 0
+# HELP hermod_rule_publish_attempted_total Rule actions that attempted an MQTT publish.
+# TYPE hermod_rule_publish_attempted_total counter
+hermod_rule_publish_attempted_total 196367
+# HELP hermod_rule_publish_failed_total Rule actions whose publish threw or was dropped (bounded-channel overflow, MQTT disconnect mid-publish, serializer failure).
+# TYPE hermod_rule_publish_failed_total counter
+hermod_rule_publish_failed_total 0
+# HELP hermod_mqtt_outbox_depth Current number of publishes buffered in the MQTT reconnect outbox.
+# TYPE hermod_mqtt_outbox_depth gauge
+hermod_mqtt_outbox_depth 0
+# HELP hermod_ingest_queue_depth Current number of messages queued in the ingest channel (saturation arrives before drops).
+# TYPE hermod_ingest_queue_depth gauge
+hermod_ingest_queue_depth 26
+# HELP hermod_rule_eval_seconds Rule evaluation latency in seconds.
+# TYPE hermod_rule_eval_seconds histogram
+hermod_rule_eval_seconds_bucket{le="0.0005"} 193546
+hermod_rule_eval_seconds_bucket{le="0.001"} 195144
+hermod_rule_eval_seconds_bucket{le="0.002"} 195893
+hermod_rule_eval_seconds_bucket{le="0.005"} 196250
+hermod_rule_eval_seconds_bucket{le="0.01"} 196285
+hermod_rule_eval_seconds_bucket{le="0.025"} 196323
+hermod_rule_eval_seconds_bucket{le="0.05"} 196366
+hermod_rule_eval_seconds_bucket{le="0.1"} 196367
+hermod_rule_eval_seconds_bucket{le="0.25"} 196367
+hermod_rule_eval_seconds_bucket{le="0.5"} 196367
+hermod_rule_eval_seconds_bucket{le="1"} 196367
+hermod_rule_eval_seconds_bucket{le="2.5"} 196367
+hermod_rule_eval_seconds_bucket{le="5"} 196367
+hermod_rule_eval_seconds_bucket{le="10"} 196367
+hermod_rule_eval_seconds_bucket{le="+Inf"} 196367
+hermod_rule_eval_seconds_sum 22.684296
+hermod_rule_eval_seconds_count 196367
+
+=== hermod-coordinator ts=20260427T032512Z ===
+# HELP hermod_messages_ingested_total MQTT messages received by the coordinator (feature-flag independent).
+# TYPE hermod_messages_ingested_total counter
+hermod_messages_ingested_total 239994
+# HELP hermod_messages_dropped_total Messages evicted from the ingest channel under DropOldest overflow. Mirror of SystemStats.MessagesDropped.
+# TYPE hermod_messages_dropped_total counter
+hermod_messages_dropped_total 0
+# HELP hermod_device_state_writes_total Device state rows written to Postgres after MQTT telemetry.
+# TYPE hermod_device_state_writes_total counter
+hermod_device_state_writes_total 0
+# HELP hermod_device_state_writes_dropped_total Device state updates evicted from the batched writer channel (pre-flush). Non-zero means the writer cannot keep up with incoming upserts.
+# TYPE hermod_device_state_writes_dropped_total counter
+hermod_device_state_writes_dropped_total 0
+# HELP hermod_device_state_flush_failed_total Device-state batches that failed to flush to Postgres (entire batch lost). Non-zero = PG is unreachable or the INSERT errored; silently dropped rows with no queue-overflow signal.
+# TYPE hermod_device_state_flush_failed_total counter
+hermod_device_state_flush_failed_total 0
+# HELP hermod_message_persistence_writes_total Rows actually written to message_history (post-flush). Previously counted at enqueue time which masked flush failures.
+# TYPE hermod_message_persistence_writes_total counter
+hermod_message_persistence_writes_total 239809
+# HELP hermod_message_persistence_dropped_total Rows evicted from the message_history writer channel under DropOldest.
+# TYPE hermod_message_persistence_dropped_total counter
+hermod_message_persistence_dropped_total 0
+# HELP hermod_message_persistence_flush_failed_total message_history batches that failed to flush to Postgres (entire batch lost).
+# TYPE hermod_message_persistence_flush_failed_total counter
+hermod_message_persistence_flush_failed_total 0
+# HELP hermod_message_history_retention_deletes_total Rows deleted by the message_history retention sweeper (post-cutoff age-out, batched DELETE).
+# TYPE hermod_message_history_retention_deletes_total counter
+hermod_message_history_retention_deletes_total 0
+# HELP hermod_message_history_retention_sweep_failed_total Retention sweep cycles that errored (transient PG outage; next interval retries).
+# TYPE hermod_message_history_retention_sweep_failed_total counter
+hermod_message_history_retention_sweep_failed_total 0
+# HELP hermod_rule_cache_hits_total Rule index lookups served from the in-memory cache.
+# TYPE hermod_rule_cache_hits_total counter
+hermod_rule_cache_hits_total 239982
+# HELP hermod_rule_cache_misses_total Rule index lookups that had to refetch from Postgres.
+# TYPE hermod_rule_cache_misses_total counter
+hermod_rule_cache_misses_total 12
+# HELP hermod_rule_audit_writes_total Rows enqueued to the rule_audit_log batched writer.
+# TYPE hermod_rule_audit_writes_total counter
+hermod_rule_audit_writes_total 239809
+# HELP hermod_rule_audit_dropped_total Rows evicted from the rule_audit_log writer channel under DropOldest.
+# TYPE hermod_rule_audit_dropped_total counter
+hermod_rule_audit_dropped_total 0
+# HELP hermod_rule_audit_flush_failed_total rule_audit_log batches that failed to flush to Postgres (entire batch lost).
+# TYPE hermod_rule_audit_flush_failed_total counter
+hermod_rule_audit_flush_failed_total 0
+# HELP hermod_stats_rollup_writes_total Counter/snapshot flushes to metrics_counters and metrics_snapshots.
+# TYPE hermod_stats_rollup_writes_total counter
+hermod_stats_rollup_writes_total 7
+# HELP hermod_mqtt_outbox_enqueued_total Publishes buffered because the MQTT client was disconnected.
+# TYPE hermod_mqtt_outbox_enqueued_total counter
+hermod_mqtt_outbox_enqueued_total 0
+# HELP hermod_mqtt_outbox_dropped_total Publishes evicted from the outbox under DropOldest overflow.
+# TYPE hermod_mqtt_outbox_dropped_total counter
+hermod_mqtt_outbox_dropped_total 0
+# HELP hermod_mqtt_outbox_drained_total Publishes replayed from the outbox on reconnect.
+# TYPE hermod_mqtt_outbox_drained_total counter
+hermod_mqtt_outbox_drained_total 0
+# HELP hermod_mqtt_reconnects_total Successful broker reconnects by the MqttService supervisor (a flaky broker shows here as a rising slope).
+# TYPE hermod_mqtt_reconnects_total counter
+hermod_mqtt_reconnects_total 0
+# HELP hermod_rule_publish_attempted_total Rule actions that attempted an MQTT publish.
+# TYPE hermod_rule_publish_attempted_total counter
+hermod_rule_publish_attempted_total 239994
+# HELP hermod_rule_publish_failed_total Rule actions whose publish threw or was dropped (bounded-channel overflow, MQTT disconnect mid-publish, serializer failure).
+# TYPE hermod_rule_publish_failed_total counter
+hermod_rule_publish_failed_total 0
+# HELP hermod_mqtt_outbox_depth Current number of publishes buffered in the MQTT reconnect outbox.
+# TYPE hermod_mqtt_outbox_depth gauge
+hermod_mqtt_outbox_depth 0
+# HELP hermod_ingest_queue_depth Current number of messages queued in the ingest channel (saturation arrives before drops).
+# TYPE hermod_ingest_queue_depth gauge
+hermod_ingest_queue_depth 0
+# HELP hermod_rule_eval_seconds Rule evaluation latency in seconds.
+# TYPE hermod_rule_eval_seconds histogram
+hermod_rule_eval_seconds_bucket{le="0.0005"} 236727
+hermod_rule_eval_seconds_bucket{le="0.001"} 238585
+hermod_rule_eval_seconds_bucket{le="0.002"} 239463
+hermod_rule_eval_seconds_bucket{le="0.005"} 239868
+hermod_rule_eval_seconds_bucket{le="0.01"} 239906
+hermod_rule_eval_seconds_bucket{le="0.025"} 239949
+hermod_rule_eval_seconds_bucket{le="0.05"} 239993
+hermod_rule_eval_seconds_bucket{le="0.1"} 239994
+hermod_rule_eval_seconds_bucket{le="0.25"} 239994
+hermod_rule_eval_seconds_bucket{le="0.5"} 239994
+hermod_rule_eval_seconds_bucket{le="1"} 239994
+hermod_rule_eval_seconds_bucket{le="2.5"} 239994
+hermod_rule_eval_seconds_bucket{le="5"} 239994
+hermod_rule_eval_seconds_bucket{le="10"} 239994
+hermod_rule_eval_seconds_bucket{le="+Inf"} 239994
+hermod_rule_eval_seconds_sum 27.028644
+hermod_rule_eval_seconds_count 239994
+
+=== hermod-coordinator ts=20260427T032523Z ===
+# HELP hermod_messages_ingested_total MQTT messages received by the coordinator (feature-flag independent).
+# TYPE hermod_messages_ingested_total counter
+hermod_messages_ingested_total 239994
+# HELP hermod_messages_dropped_total Messages evicted from the ingest channel under DropOldest overflow. Mirror of SystemStats.MessagesDropped.
+# TYPE hermod_messages_dropped_total counter
+hermod_messages_dropped_total 0
+# HELP hermod_device_state_writes_total Device state rows written to Postgres after MQTT telemetry.
+# TYPE hermod_device_state_writes_total counter
+hermod_device_state_writes_total 0
+# HELP hermod_device_state_writes_dropped_total Device state updates evicted from the batched writer channel (pre-flush). Non-zero means the writer cannot keep up with incoming upserts.
+# TYPE hermod_device_state_writes_dropped_total counter
+hermod_device_state_writes_dropped_total 0
+# HELP hermod_device_state_flush_failed_total Device-state batches that failed to flush to Postgres (entire batch lost). Non-zero = PG is unreachable or the INSERT errored; silently dropped rows with no queue-overflow signal.
+# TYPE hermod_device_state_flush_failed_total counter
+hermod_device_state_flush_failed_total 0
+# HELP hermod_message_persistence_writes_total Rows actually written to message_history (post-flush). Previously counted at enqueue time which masked flush failures.
+# TYPE hermod_message_persistence_writes_total counter
+hermod_message_persistence_writes_total 239994
+# HELP hermod_message_persistence_dropped_total Rows evicted from the message_history writer channel under DropOldest.
+# TYPE hermod_message_persistence_dropped_total counter
+hermod_message_persistence_dropped_total 0
+# HELP hermod_message_persistence_flush_failed_total message_history batches that failed to flush to Postgres (entire batch lost).
+# TYPE hermod_message_persistence_flush_failed_total counter
+hermod_message_persistence_flush_failed_total 0
+# HELP hermod_message_history_retention_deletes_total Rows deleted by the message_history retention sweeper (post-cutoff age-out, batched DELETE).
+# TYPE hermod_message_history_retention_deletes_total counter
+hermod_message_history_retention_deletes_total 0
+# HELP hermod_message_history_retention_sweep_failed_total Retention sweep cycles that errored (transient PG outage; next interval retries).
+# TYPE hermod_message_history_retention_sweep_failed_total counter
+hermod_message_history_retention_sweep_failed_total 0
+# HELP hermod_rule_cache_hits_total Rule index lookups served from the in-memory cache.
+# TYPE hermod_rule_cache_hits_total counter
+hermod_rule_cache_hits_total 239982
+# HELP hermod_rule_cache_misses_total Rule index lookups that had to refetch from Postgres.
+# TYPE hermod_rule_cache_misses_total counter
+hermod_rule_cache_misses_total 12
+# HELP hermod_rule_audit_writes_total Rows enqueued to the rule_audit_log batched writer.
+# TYPE hermod_rule_audit_writes_total counter
+hermod_rule_audit_writes_total 239994
+# HELP hermod_rule_audit_dropped_total Rows evicted from the rule_audit_log writer channel under DropOldest.
+# TYPE hermod_rule_audit_dropped_total counter
+hermod_rule_audit_dropped_total 0
+# HELP hermod_rule_audit_flush_failed_total rule_audit_log batches that failed to flush to Postgres (entire batch lost).
+# TYPE hermod_rule_audit_flush_failed_total counter
+hermod_rule_audit_flush_failed_total 0
+# HELP hermod_stats_rollup_writes_total Counter/snapshot flushes to metrics_counters and metrics_snapshots.
+# TYPE hermod_stats_rollup_writes_total counter
+hermod_stats_rollup_writes_total 8
+# HELP hermod_mqtt_outbox_enqueued_total Publishes buffered because the MQTT client was disconnected.
+# TYPE hermod_mqtt_outbox_enqueued_total counter
+hermod_mqtt_outbox_enqueued_total 0
+# HELP hermod_mqtt_outbox_dropped_total Publishes evicted from the outbox under DropOldest overflow.
+# TYPE hermod_mqtt_outbox_dropped_total counter
+hermod_mqtt_outbox_dropped_total 0
+# HELP hermod_mqtt_outbox_drained_total Publishes replayed from the outbox on reconnect.
+# TYPE hermod_mqtt_outbox_drained_total counter
+hermod_mqtt_outbox_drained_total 0
+# HELP hermod_mqtt_reconnects_total Successful broker reconnects by the MqttService supervisor (a flaky broker shows here as a rising slope).
+# TYPE hermod_mqtt_reconnects_total counter
+hermod_mqtt_reconnects_total 0
+# HELP hermod_rule_publish_attempted_total Rule actions that attempted an MQTT publish.
+# TYPE hermod_rule_publish_attempted_total counter
+hermod_rule_publish_attempted_total 239994
+# HELP hermod_rule_publish_failed_total Rule actions whose publish threw or was dropped (bounded-channel overflow, MQTT disconnect mid-publish, serializer failure).
+# TYPE hermod_rule_publish_failed_total counter
+hermod_rule_publish_failed_total 0
+# HELP hermod_mqtt_outbox_depth Current number of publishes buffered in the MQTT reconnect outbox.
+# TYPE hermod_mqtt_outbox_depth gauge
+hermod_mqtt_outbox_depth 0
+# HELP hermod_ingest_queue_depth Current number of messages queued in the ingest channel (saturation arrives before drops).
+# TYPE hermod_ingest_queue_depth gauge
+hermod_ingest_queue_depth 0
+# HELP hermod_rule_eval_seconds Rule evaluation latency in seconds.
+# TYPE hermod_rule_eval_seconds histogram
+hermod_rule_eval_seconds_bucket{le="0.0005"} 236727
+hermod_rule_eval_seconds_bucket{le="0.001"} 238585
+hermod_rule_eval_seconds_bucket{le="0.002"} 239463
+hermod_rule_eval_seconds_bucket{le="0.005"} 239868
+hermod_rule_eval_seconds_bucket{le="0.01"} 239906
+hermod_rule_eval_seconds_bucket{le="0.025"} 239949
+hermod_rule_eval_seconds_bucket{le="0.05"} 239993
+hermod_rule_eval_seconds_bucket{le="0.1"} 239994
+hermod_rule_eval_seconds_bucket{le="0.25"} 239994
+hermod_rule_eval_seconds_bucket{le="0.5"} 239994
+hermod_rule_eval_seconds_bucket{le="1"} 239994
+hermod_rule_eval_seconds_bucket{le="2.5"} 239994
+hermod_rule_eval_seconds_bucket{le="5"} 239994
+hermod_rule_eval_seconds_bucket{le="10"} 239994
+hermod_rule_eval_seconds_bucket{le="+Inf"} 239994
+hermod_rule_eval_seconds_sum 27.028644
+hermod_rule_eval_seconds_count 239994
+
+=== hermod-coordinator ts=20260427T032534Z ===
+# HELP hermod_messages_ingested_total MQTT messages received by the coordinator (feature-flag independent).
+# TYPE hermod_messages_ingested_total counter
+hermod_messages_ingested_total 246907
+# HELP hermod_messages_dropped_total Messages evicted from the ingest channel under DropOldest overflow. Mirror of SystemStats.MessagesDropped.
+# TYPE hermod_messages_dropped_total counter
+hermod_messages_dropped_total 0
+# HELP hermod_device_state_writes_total Device state rows written to Postgres after MQTT telemetry.
+# TYPE hermod_device_state_writes_total counter
+hermod_device_state_writes_total 0
+# HELP hermod_device_state_writes_dropped_total Device state updates evicted from the batched writer channel (pre-flush). Non-zero means the writer cannot keep up with incoming upserts.
+# TYPE hermod_device_state_writes_dropped_total counter
+hermod_device_state_writes_dropped_total 0
+# HELP hermod_device_state_flush_failed_total Device-state batches that failed to flush to Postgres (entire batch lost). Non-zero = PG is unreachable or the INSERT errored; silently dropped rows with no queue-overflow signal.
+# TYPE hermod_device_state_flush_failed_total counter
+hermod_device_state_flush_failed_total 0
+# HELP hermod_message_persistence_writes_total Rows actually written to message_history (post-flush). Previously counted at enqueue time which masked flush failures.
+# TYPE hermod_message_persistence_writes_total counter
+hermod_message_persistence_writes_total 246650
+# HELP hermod_message_persistence_dropped_total Rows evicted from the message_history writer channel under DropOldest.
+# TYPE hermod_message_persistence_dropped_total counter
+hermod_message_persistence_dropped_total 0
+# HELP hermod_message_persistence_flush_failed_total message_history batches that failed to flush to Postgres (entire batch lost).
+# TYPE hermod_message_persistence_flush_failed_total counter
+hermod_message_persistence_flush_failed_total 0
+# HELP hermod_message_history_retention_deletes_total Rows deleted by the message_history retention sweeper (post-cutoff age-out, batched DELETE).
+# TYPE hermod_message_history_retention_deletes_total counter
+hermod_message_history_retention_deletes_total 0
+# HELP hermod_message_history_retention_sweep_failed_total Retention sweep cycles that errored (transient PG outage; next interval retries).
+# TYPE hermod_message_history_retention_sweep_failed_total counter
+hermod_message_history_retention_sweep_failed_total 0
+# HELP hermod_rule_cache_hits_total Rule index lookups served from the in-memory cache.
+# TYPE hermod_rule_cache_hits_total counter
+hermod_rule_cache_hits_total 246894
+# HELP hermod_rule_cache_misses_total Rule index lookups that had to refetch from Postgres.
+# TYPE hermod_rule_cache_misses_total counter
+hermod_rule_cache_misses_total 13
+# HELP hermod_rule_audit_writes_total Rows enqueued to the rule_audit_log batched writer.
+# TYPE hermod_rule_audit_writes_total counter
+hermod_rule_audit_writes_total 246650
+# HELP hermod_rule_audit_dropped_total Rows evicted from the rule_audit_log writer channel under DropOldest.
+# TYPE hermod_rule_audit_dropped_total counter
+hermod_rule_audit_dropped_total 0
+# HELP hermod_rule_audit_flush_failed_total rule_audit_log batches that failed to flush to Postgres (entire batch lost).
+# TYPE hermod_rule_audit_flush_failed_total counter
+hermod_rule_audit_flush_failed_total 0
+# HELP hermod_stats_rollup_writes_total Counter/snapshot flushes to metrics_counters and metrics_snapshots.
+# TYPE hermod_stats_rollup_writes_total counter
+hermod_stats_rollup_writes_total 9
+# HELP hermod_mqtt_outbox_enqueued_total Publishes buffered because the MQTT client was disconnected.
+# TYPE hermod_mqtt_outbox_enqueued_total counter
+hermod_mqtt_outbox_enqueued_total 0
+# HELP hermod_mqtt_outbox_dropped_total Publishes evicted from the outbox under DropOldest overflow.
+# TYPE hermod_mqtt_outbox_dropped_total counter
+hermod_mqtt_outbox_dropped_total 0
+# HELP hermod_mqtt_outbox_drained_total Publishes replayed from the outbox on reconnect.
+# TYPE hermod_mqtt_outbox_drained_total counter
+hermod_mqtt_outbox_drained_total 0
+# HELP hermod_mqtt_reconnects_total Successful broker reconnects by the MqttService supervisor (a flaky broker shows here as a rising slope).
+# TYPE hermod_mqtt_reconnects_total counter
+hermod_mqtt_reconnects_total 0
+# HELP hermod_rule_publish_attempted_total Rule actions that attempted an MQTT publish.
+# TYPE hermod_rule_publish_attempted_total counter
+hermod_rule_publish_attempted_total 246907
+# HELP hermod_rule_publish_failed_total Rule actions whose publish threw or was dropped (bounded-channel overflow, MQTT disconnect mid-publish, serializer failure).
+# TYPE hermod_rule_publish_failed_total counter
+hermod_rule_publish_failed_total 0
+# HELP hermod_mqtt_outbox_depth Current number of publishes buffered in the MQTT reconnect outbox.
+# TYPE hermod_mqtt_outbox_depth gauge
+hermod_mqtt_outbox_depth 0
+# HELP hermod_ingest_queue_depth Current number of messages queued in the ingest channel (saturation arrives before drops).
+# TYPE hermod_ingest_queue_depth gauge
+hermod_ingest_queue_depth 0
+# HELP hermod_rule_eval_seconds Rule evaluation latency in seconds.
+# TYPE hermod_rule_eval_seconds histogram
+hermod_rule_eval_seconds_bucket{le="0.0005"} 243431
+hermod_rule_eval_seconds_bucket{le="0.001"} 245411
+hermod_rule_eval_seconds_bucket{le="0.002"} 246347
+hermod_rule_eval_seconds_bucket{le="0.005"} 246775
+hermod_rule_eval_seconds_bucket{le="0.01"} 246817
+hermod_rule_eval_seconds_bucket{le="0.025"} 246861
+hermod_rule_eval_seconds_bucket{le="0.05"} 246905
+hermod_rule_eval_seconds_bucket{le="0.1"} 246906
+hermod_rule_eval_seconds_bucket{le="0.25"} 246906
+hermod_rule_eval_seconds_bucket{le="0.5"} 246906
+hermod_rule_eval_seconds_bucket{le="1"} 246906
+hermod_rule_eval_seconds_bucket{le="2.5"} 246906
+hermod_rule_eval_seconds_bucket{le="5"} 246906
+hermod_rule_eval_seconds_bucket{le="10"} 246906
+hermod_rule_eval_seconds_bucket{le="+Inf"} 246906
+hermod_rule_eval_seconds_sum 27.896538
+hermod_rule_eval_seconds_count 246906
+
+=== hermod-coordinator ts=20260427T032546Z ===
+# HELP hermod_messages_ingested_total MQTT messages received by the coordinator (feature-flag independent).
+# TYPE hermod_messages_ingested_total counter
+hermod_messages_ingested_total 292717
+# HELP hermod_messages_dropped_total Messages evicted from the ingest channel under DropOldest overflow. Mirror of SystemStats.MessagesDropped.
+# TYPE hermod_messages_dropped_total counter
+hermod_messages_dropped_total 0
+# HELP hermod_device_state_writes_total Device state rows written to Postgres after MQTT telemetry.
+# TYPE hermod_device_state_writes_total counter
+hermod_device_state_writes_total 0
+# HELP hermod_device_state_writes_dropped_total Device state updates evicted from the batched writer channel (pre-flush). Non-zero means the writer cannot keep up with incoming upserts.
+# TYPE hermod_device_state_writes_dropped_total counter
+hermod_device_state_writes_dropped_total 0
+# HELP hermod_device_state_flush_failed_total Device-state batches that failed to flush to Postgres (entire batch lost). Non-zero = PG is unreachable or the INSERT errored; silently dropped rows with no queue-overflow signal.
+# TYPE hermod_device_state_flush_failed_total counter
+hermod_device_state_flush_failed_total 0
+# HELP hermod_message_persistence_writes_total Rows actually written to message_history (post-flush). Previously counted at enqueue time which masked flush failures.
+# TYPE hermod_message_persistence_writes_total counter
+hermod_message_persistence_writes_total 292474
+# HELP hermod_message_persistence_dropped_total Rows evicted from the message_history writer channel under DropOldest.
+# TYPE hermod_message_persistence_dropped_total counter
+hermod_message_persistence_dropped_total 0
+# HELP hermod_message_persistence_flush_failed_total message_history batches that failed to flush to Postgres (entire batch lost).
+# TYPE hermod_message_persistence_flush_failed_total counter
+hermod_message_persistence_flush_failed_total 0
+# HELP hermod_message_history_retention_deletes_total Rows deleted by the message_history retention sweeper (post-cutoff age-out, batched DELETE).
+# TYPE hermod_message_history_retention_deletes_total counter
+hermod_message_history_retention_deletes_total 0
+# HELP hermod_message_history_retention_sweep_failed_total Retention sweep cycles that errored (transient PG outage; next interval retries).
+# TYPE hermod_message_history_retention_sweep_failed_total counter
+hermod_message_history_retention_sweep_failed_total 0
+# HELP hermod_rule_cache_hits_total Rule index lookups served from the in-memory cache.
+# TYPE hermod_rule_cache_hits_total counter
+hermod_rule_cache_hits_total 292626
+# HELP hermod_rule_cache_misses_total Rule index lookups that had to refetch from Postgres.
+# TYPE hermod_rule_cache_misses_total counter
+hermod_rule_cache_misses_total 15
+# HELP hermod_rule_audit_writes_total Rows enqueued to the rule_audit_log batched writer.
+# TYPE hermod_rule_audit_writes_total counter
+hermod_rule_audit_writes_total 292474
+# HELP hermod_rule_audit_dropped_total Rows evicted from the rule_audit_log writer channel under DropOldest.
+# TYPE hermod_rule_audit_dropped_total counter
+hermod_rule_audit_dropped_total 0
+# HELP hermod_rule_audit_flush_failed_total rule_audit_log batches that failed to flush to Postgres (entire batch lost).
+# TYPE hermod_rule_audit_flush_failed_total counter
+hermod_rule_audit_flush_failed_total 0
+# HELP hermod_stats_rollup_writes_total Counter/snapshot flushes to metrics_counters and metrics_snapshots.
+# TYPE hermod_stats_rollup_writes_total counter
+hermod_stats_rollup_writes_total 10
+# HELP hermod_mqtt_outbox_enqueued_total Publishes buffered because the MQTT client was disconnected.
+# TYPE hermod_mqtt_outbox_enqueued_total counter
+hermod_mqtt_outbox_enqueued_total 0
+# HELP hermod_mqtt_outbox_dropped_total Publishes evicted from the outbox under DropOldest overflow.
+# TYPE hermod_mqtt_outbox_dropped_total counter
+hermod_mqtt_outbox_dropped_total 0
+# HELP hermod_mqtt_outbox_drained_total Publishes replayed from the outbox on reconnect.
+# TYPE hermod_mqtt_outbox_drained_total counter
+hermod_mqtt_outbox_drained_total 0
+# HELP hermod_mqtt_reconnects_total Successful broker reconnects by the MqttService supervisor (a flaky broker shows here as a rising slope).
+# TYPE hermod_mqtt_reconnects_total counter
+hermod_mqtt_reconnects_total 0
+# HELP hermod_rule_publish_attempted_total Rule actions that attempted an MQTT publish.
+# TYPE hermod_rule_publish_attempted_total counter
+hermod_rule_publish_attempted_total 292641
+# HELP hermod_rule_publish_failed_total Rule actions whose publish threw or was dropped (bounded-channel overflow, MQTT disconnect mid-publish, serializer failure).
+# TYPE hermod_rule_publish_failed_total counter
+hermod_rule_publish_failed_total 0
+# HELP hermod_mqtt_outbox_depth Current number of publishes buffered in the MQTT reconnect outbox.
+# TYPE hermod_mqtt_outbox_depth gauge
+hermod_mqtt_outbox_depth 0
+# HELP hermod_ingest_queue_depth Current number of messages queued in the ingest channel (saturation arrives before drops).
+# TYPE hermod_ingest_queue_depth gauge
+hermod_ingest_queue_depth 76
+# HELP hermod_rule_eval_seconds Rule evaluation latency in seconds.
+# TYPE hermod_rule_eval_seconds histogram
+hermod_rule_eval_seconds_bucket{le="0.0005"} 288348
+hermod_rule_eval_seconds_bucket{le="0.001"} 290791
+hermod_rule_eval_seconds_bucket{le="0.002"} 291941
+hermod_rule_eval_seconds_bucket{le="0.005"} 292482
+hermod_rule_eval_seconds_bucket{le="0.01"} 292533
+hermod_rule_eval_seconds_bucket{le="0.025"} 292592
+hermod_rule_eval_seconds_bucket{le="0.05"} 292639
+hermod_rule_eval_seconds_bucket{le="0.1"} 292640
+hermod_rule_eval_seconds_bucket{le="0.25"} 292640
+hermod_rule_eval_seconds_bucket{le="0.5"} 292640
+hermod_rule_eval_seconds_bucket{le="1"} 292640
+hermod_rule_eval_seconds_bucket{le="2.5"} 292640
+hermod_rule_eval_seconds_bucket{le="5"} 292640
+hermod_rule_eval_seconds_bucket{le="10"} 292640
+hermod_rule_eval_seconds_bucket{le="+Inf"} 292640
+hermod_rule_eval_seconds_sum 33.146662
+hermod_rule_eval_seconds_count 292640
+
+=== hermod-coordinator ts=20260427T032557Z ===
+# HELP hermod_messages_ingested_total MQTT messages received by the coordinator (feature-flag independent).
+# TYPE hermod_messages_ingested_total counter
+hermod_messages_ingested_total 338463
+# HELP hermod_messages_dropped_total Messages evicted from the ingest channel under DropOldest overflow. Mirror of SystemStats.MessagesDropped.
+# TYPE hermod_messages_dropped_total counter
+hermod_messages_dropped_total 0
+# HELP hermod_device_state_writes_total Device state rows written to Postgres after MQTT telemetry.
+# TYPE hermod_device_state_writes_total counter
+hermod_device_state_writes_total 0
+# HELP hermod_device_state_writes_dropped_total Device state updates evicted from the batched writer channel (pre-flush). Non-zero means the writer cannot keep up with incoming upserts.
+# TYPE hermod_device_state_writes_dropped_total counter
+hermod_device_state_writes_dropped_total 0
+# HELP hermod_device_state_flush_failed_total Device-state batches that failed to flush to Postgres (entire batch lost). Non-zero = PG is unreachable or the INSERT errored; silently dropped rows with no queue-overflow signal.
+# TYPE hermod_device_state_flush_failed_total counter
+hermod_device_state_flush_failed_total 0
+# HELP hermod_message_persistence_writes_total Rows actually written to message_history (post-flush). Previously counted at enqueue time which masked flush failures.
+# TYPE hermod_message_persistence_writes_total counter
+hermod_message_persistence_writes_total 338042
+# HELP hermod_message_persistence_dropped_total Rows evicted from the message_history writer channel under DropOldest.
+# TYPE hermod_message_persistence_dropped_total counter
+hermod_message_persistence_dropped_total 0
+# HELP hermod_message_persistence_flush_failed_total message_history batches that failed to flush to Postgres (entire batch lost).
+# TYPE hermod_message_persistence_flush_failed_total counter
+hermod_message_persistence_flush_failed_total 0
+# HELP hermod_message_history_retention_deletes_total Rows deleted by the message_history retention sweeper (post-cutoff age-out, batched DELETE).
+# TYPE hermod_message_history_retention_deletes_total counter
+hermod_message_history_retention_deletes_total 0
+# HELP hermod_message_history_retention_sweep_failed_total Retention sweep cycles that errored (transient PG outage; next interval retries).
+# TYPE hermod_message_history_retention_sweep_failed_total counter
+hermod_message_history_retention_sweep_failed_total 0
+# HELP hermod_rule_cache_hits_total Rule index lookups served from the in-memory cache.
+# TYPE hermod_rule_cache_hits_total counter
+hermod_rule_cache_hits_total 338192
+# HELP hermod_rule_cache_misses_total Rule index lookups that had to refetch from Postgres.
+# TYPE hermod_rule_cache_misses_total counter
+hermod_rule_cache_misses_total 17
+# HELP hermod_rule_audit_writes_total Rows enqueued to the rule_audit_log batched writer.
+# TYPE hermod_rule_audit_writes_total counter
+hermod_rule_audit_writes_total 338042
+# HELP hermod_rule_audit_dropped_total Rows evicted from the rule_audit_log writer channel under DropOldest.
+# TYPE hermod_rule_audit_dropped_total counter
+hermod_rule_audit_dropped_total 0
+# HELP hermod_rule_audit_flush_failed_total rule_audit_log batches that failed to flush to Postgres (entire batch lost).
+# TYPE hermod_rule_audit_flush_failed_total counter
+hermod_rule_audit_flush_failed_total 0
+# HELP hermod_stats_rollup_writes_total Counter/snapshot flushes to metrics_counters and metrics_snapshots.
+# TYPE hermod_stats_rollup_writes_total counter
+hermod_stats_rollup_writes_total 10
+# HELP hermod_mqtt_outbox_enqueued_total Publishes buffered because the MQTT client was disconnected.
+# TYPE hermod_mqtt_outbox_enqueued_total counter
+hermod_mqtt_outbox_enqueued_total 0
+# HELP hermod_mqtt_outbox_dropped_total Publishes evicted from the outbox under DropOldest overflow.
+# TYPE hermod_mqtt_outbox_dropped_total counter
+hermod_mqtt_outbox_dropped_total 0
+# HELP hermod_mqtt_outbox_drained_total Publishes replayed from the outbox on reconnect.
+# TYPE hermod_mqtt_outbox_drained_total counter
+hermod_mqtt_outbox_drained_total 0
+# HELP hermod_mqtt_reconnects_total Successful broker reconnects by the MqttService supervisor (a flaky broker shows here as a rising slope).
+# TYPE hermod_mqtt_reconnects_total counter
+hermod_mqtt_reconnects_total 0
+# HELP hermod_rule_publish_attempted_total Rule actions that attempted an MQTT publish.
+# TYPE hermod_rule_publish_attempted_total counter
+hermod_rule_publish_attempted_total 338209
+# HELP hermod_rule_publish_failed_total Rule actions whose publish threw or was dropped (bounded-channel overflow, MQTT disconnect mid-publish, serializer failure).
+# TYPE hermod_rule_publish_failed_total counter
+hermod_rule_publish_failed_total 0
+# HELP hermod_mqtt_outbox_depth Current number of publishes buffered in the MQTT reconnect outbox.
+# TYPE hermod_mqtt_outbox_depth gauge
+hermod_mqtt_outbox_depth 0
+# HELP hermod_ingest_queue_depth Current number of messages queued in the ingest channel (saturation arrives before drops).
+# TYPE hermod_ingest_queue_depth gauge
+hermod_ingest_queue_depth 254
+# HELP hermod_rule_eval_seconds Rule evaluation latency in seconds.
+# TYPE hermod_rule_eval_seconds histogram
+hermod_rule_eval_seconds_bucket{le="0.0005"} 333087
+hermod_rule_eval_seconds_bucket{le="0.001"} 336010
+hermod_rule_eval_seconds_bucket{le="0.002"} 337364
+hermod_rule_eval_seconds_bucket{le="0.005"} 338015
+hermod_rule_eval_seconds_bucket{le="0.01"} 338079
+hermod_rule_eval_seconds_bucket{le="0.025"} 338155
+hermod_rule_eval_seconds_bucket{le="0.05"} 338207
+hermod_rule_eval_seconds_bucket{le="0.1"} 338208
+hermod_rule_eval_seconds_bucket{le="0.25"} 338208
+hermod_rule_eval_seconds_bucket{le="0.5"} 338208
+hermod_rule_eval_seconds_bucket{le="1"} 338208
+hermod_rule_eval_seconds_bucket{le="2.5"} 338208
+hermod_rule_eval_seconds_bucket{le="5"} 338208
+hermod_rule_eval_seconds_bucket{le="10"} 338208
+hermod_rule_eval_seconds_bucket{le="+Inf"} 338208
+hermod_rule_eval_seconds_sum 38.42318
+hermod_rule_eval_seconds_count 338208
+
+=== hermod-coordinator ts=20260427T032609Z ===
+# HELP hermod_messages_ingested_total MQTT messages received by the coordinator (feature-flag independent).
+# TYPE hermod_messages_ingested_total counter
+hermod_messages_ingested_total 359995
+# HELP hermod_messages_dropped_total Messages evicted from the ingest channel under DropOldest overflow. Mirror of SystemStats.MessagesDropped.
+# TYPE hermod_messages_dropped_total counter
+hermod_messages_dropped_total 0
+# HELP hermod_device_state_writes_total Device state rows written to Postgres after MQTT telemetry.
+# TYPE hermod_device_state_writes_total counter
+hermod_device_state_writes_total 0
+# HELP hermod_device_state_writes_dropped_total Device state updates evicted from the batched writer channel (pre-flush). Non-zero means the writer cannot keep up with incoming upserts.
+# TYPE hermod_device_state_writes_dropped_total counter
+hermod_device_state_writes_dropped_total 0
+# HELP hermod_device_state_flush_failed_total Device-state batches that failed to flush to Postgres (entire batch lost). Non-zero = PG is unreachable or the INSERT errored; silently dropped rows with no queue-overflow signal.
+# TYPE hermod_device_state_flush_failed_total counter
+hermod_device_state_flush_failed_total 0
+# HELP hermod_message_persistence_writes_total Rows actually written to message_history (post-flush). Previously counted at enqueue time which masked flush failures.
+# TYPE hermod_message_persistence_writes_total counter
+hermod_message_persistence_writes_total 359995
+# HELP hermod_message_persistence_dropped_total Rows evicted from the message_history writer channel under DropOldest.
+# TYPE hermod_message_persistence_dropped_total counter
+hermod_message_persistence_dropped_total 0
+# HELP hermod_message_persistence_flush_failed_total message_history batches that failed to flush to Postgres (entire batch lost).
+# TYPE hermod_message_persistence_flush_failed_total counter
+hermod_message_persistence_flush_failed_total 0
+# HELP hermod_message_history_retention_deletes_total Rows deleted by the message_history retention sweeper (post-cutoff age-out, batched DELETE).
+# TYPE hermod_message_history_retention_deletes_total counter
+hermod_message_history_retention_deletes_total 0
+# HELP hermod_message_history_retention_sweep_failed_total Retention sweep cycles that errored (transient PG outage; next interval retries).
+# TYPE hermod_message_history_retention_sweep_failed_total counter
+hermod_message_history_retention_sweep_failed_total 0
+# HELP hermod_rule_cache_hits_total Rule index lookups served from the in-memory cache.
+# TYPE hermod_rule_cache_hits_total counter
+hermod_rule_cache_hits_total 359977
+# HELP hermod_rule_cache_misses_total Rule index lookups that had to refetch from Postgres.
+# TYPE hermod_rule_cache_misses_total counter
+hermod_rule_cache_misses_total 18
+# HELP hermod_rule_audit_writes_total Rows enqueued to the rule_audit_log batched writer.
+# TYPE hermod_rule_audit_writes_total counter
+hermod_rule_audit_writes_total 359995
+# HELP hermod_rule_audit_dropped_total Rows evicted from the rule_audit_log writer channel under DropOldest.
+# TYPE hermod_rule_audit_dropped_total counter
+hermod_rule_audit_dropped_total 0
+# HELP hermod_rule_audit_flush_failed_total rule_audit_log batches that failed to flush to Postgres (entire batch lost).
+# TYPE hermod_rule_audit_flush_failed_total counter
+hermod_rule_audit_flush_failed_total 0
+# HELP hermod_stats_rollup_writes_total Counter/snapshot flushes to metrics_counters and metrics_snapshots.
+# TYPE hermod_stats_rollup_writes_total counter
+hermod_stats_rollup_writes_total 11
+# HELP hermod_mqtt_outbox_enqueued_total Publishes buffered because the MQTT client was disconnected.
+# TYPE hermod_mqtt_outbox_enqueued_total counter
+hermod_mqtt_outbox_enqueued_total 0
+# HELP hermod_mqtt_outbox_dropped_total Publishes evicted from the outbox under DropOldest overflow.
+# TYPE hermod_mqtt_outbox_dropped_total counter
+hermod_mqtt_outbox_dropped_total 0
+# HELP hermod_mqtt_outbox_drained_total Publishes replayed from the outbox on reconnect.
+# TYPE hermod_mqtt_outbox_drained_total counter
+hermod_mqtt_outbox_drained_total 0
+# HELP hermod_mqtt_reconnects_total Successful broker reconnects by the MqttService supervisor (a flaky broker shows here as a rising slope).
+# TYPE hermod_mqtt_reconnects_total counter
+hermod_mqtt_reconnects_total 0
+# HELP hermod_rule_publish_attempted_total Rule actions that attempted an MQTT publish.
+# TYPE hermod_rule_publish_attempted_total counter
+hermod_rule_publish_attempted_total 359995
+# HELP hermod_rule_publish_failed_total Rule actions whose publish threw or was dropped (bounded-channel overflow, MQTT disconnect mid-publish, serializer failure).
+# TYPE hermod_rule_publish_failed_total counter
+hermod_rule_publish_failed_total 0
+# HELP hermod_mqtt_outbox_depth Current number of publishes buffered in the MQTT reconnect outbox.
+# TYPE hermod_mqtt_outbox_depth gauge
+hermod_mqtt_outbox_depth 0
+# HELP hermod_ingest_queue_depth Current number of messages queued in the ingest channel (saturation arrives before drops).
+# TYPE hermod_ingest_queue_depth gauge
+hermod_ingest_queue_depth 0
+# HELP hermod_rule_eval_seconds Rule evaluation latency in seconds.
+# TYPE hermod_rule_eval_seconds histogram
+hermod_rule_eval_seconds_bucket{le="0.0005"} 354518
+hermod_rule_eval_seconds_bucket{le="0.001"} 357658
+hermod_rule_eval_seconds_bucket{le="0.002"} 359105
+hermod_rule_eval_seconds_bucket{le="0.005"} 359784
+hermod_rule_eval_seconds_bucket{le="0.01"} 359851
+hermod_rule_eval_seconds_bucket{le="0.025"} 359939
+hermod_rule_eval_seconds_bucket{le="0.05"} 359994
+hermod_rule_eval_seconds_bucket{le="0.1"} 359995
+hermod_rule_eval_seconds_bucket{le="0.25"} 359995
+hermod_rule_eval_seconds_bucket{le="0.5"} 359995
+hermod_rule_eval_seconds_bucket{le="1"} 359995
+hermod_rule_eval_seconds_bucket{le="2.5"} 359995
+hermod_rule_eval_seconds_bucket{le="5"} 359995
+hermod_rule_eval_seconds_bucket{le="10"} 359995
+hermod_rule_eval_seconds_bucket{le="+Inf"} 359995
+hermod_rule_eval_seconds_sum 40.90345
+hermod_rule_eval_seconds_count 359995
+
+=== hermod-coordinator ts=20260427T032620Z ===
+# HELP hermod_messages_ingested_total MQTT messages received by the coordinator (feature-flag independent).
+# TYPE hermod_messages_ingested_total counter
+hermod_messages_ingested_total 359995
+# HELP hermod_messages_dropped_total Messages evicted from the ingest channel under DropOldest overflow. Mirror of SystemStats.MessagesDropped.
+# TYPE hermod_messages_dropped_total counter
+hermod_messages_dropped_total 0
+# HELP hermod_device_state_writes_total Device state rows written to Postgres after MQTT telemetry.
+# TYPE hermod_device_state_writes_total counter
+hermod_device_state_writes_total 0
+# HELP hermod_device_state_writes_dropped_total Device state updates evicted from the batched writer channel (pre-flush). Non-zero means the writer cannot keep up with incoming upserts.
+# TYPE hermod_device_state_writes_dropped_total counter
+hermod_device_state_writes_dropped_total 0
+# HELP hermod_device_state_flush_failed_total Device-state batches that failed to flush to Postgres (entire batch lost). Non-zero = PG is unreachable or the INSERT errored; silently dropped rows with no queue-overflow signal.
+# TYPE hermod_device_state_flush_failed_total counter
+hermod_device_state_flush_failed_total 0
+# HELP hermod_message_persistence_writes_total Rows actually written to message_history (post-flush). Previously counted at enqueue time which masked flush failures.
+# TYPE hermod_message_persistence_writes_total counter
+hermod_message_persistence_writes_total 359995
+# HELP hermod_message_persistence_dropped_total Rows evicted from the message_history writer channel under DropOldest.
+# TYPE hermod_message_persistence_dropped_total counter
+hermod_message_persistence_dropped_total 0
+# HELP hermod_message_persistence_flush_failed_total message_history batches that failed to flush to Postgres (entire batch lost).
+# TYPE hermod_message_persistence_flush_failed_total counter
+hermod_message_persistence_flush_failed_total 0
+# HELP hermod_message_history_retention_deletes_total Rows deleted by the message_history retention sweeper (post-cutoff age-out, batched DELETE).
+# TYPE hermod_message_history_retention_deletes_total counter
+hermod_message_history_retention_deletes_total 0
+# HELP hermod_message_history_retention_sweep_failed_total Retention sweep cycles that errored (transient PG outage; next interval retries).
+# TYPE hermod_message_history_retention_sweep_failed_total counter
+hermod_message_history_retention_sweep_failed_total 0
+# HELP hermod_rule_cache_hits_total Rule index lookups served from the in-memory cache.
+# TYPE hermod_rule_cache_hits_total counter
+hermod_rule_cache_hits_total 359977
+# HELP hermod_rule_cache_misses_total Rule index lookups that had to refetch from Postgres.
+# TYPE hermod_rule_cache_misses_total counter
+hermod_rule_cache_misses_total 18
+# HELP hermod_rule_audit_writes_total Rows enqueued to the rule_audit_log batched writer.
+# TYPE hermod_rule_audit_writes_total counter
+hermod_rule_audit_writes_total 359995
+# HELP hermod_rule_audit_dropped_total Rows evicted from the rule_audit_log writer channel under DropOldest.
+# TYPE hermod_rule_audit_dropped_total counter
+hermod_rule_audit_dropped_total 0
+# HELP hermod_rule_audit_flush_failed_total rule_audit_log batches that failed to flush to Postgres (entire batch lost).
+# TYPE hermod_rule_audit_flush_failed_total counter
+hermod_rule_audit_flush_failed_total 0
+# HELP hermod_stats_rollup_writes_total Counter/snapshot flushes to metrics_counters and metrics_snapshots.
+# TYPE hermod_stats_rollup_writes_total counter
+hermod_stats_rollup_writes_total 12
+# HELP hermod_mqtt_outbox_enqueued_total Publishes buffered because the MQTT client was disconnected.
+# TYPE hermod_mqtt_outbox_enqueued_total counter
+hermod_mqtt_outbox_enqueued_total 0
+# HELP hermod_mqtt_outbox_dropped_total Publishes evicted from the outbox under DropOldest overflow.
+# TYPE hermod_mqtt_outbox_dropped_total counter
+hermod_mqtt_outbox_dropped_total 0
+# HELP hermod_mqtt_outbox_drained_total Publishes replayed from the outbox on reconnect.
+# TYPE hermod_mqtt_outbox_drained_total counter
+hermod_mqtt_outbox_drained_total 0
+# HELP hermod_mqtt_reconnects_total Successful broker reconnects by the MqttService supervisor (a flaky broker shows here as a rising slope).
+# TYPE hermod_mqtt_reconnects_total counter
+hermod_mqtt_reconnects_total 0
+# HELP hermod_rule_publish_attempted_total Rule actions that attempted an MQTT publish.
+# TYPE hermod_rule_publish_attempted_total counter
+hermod_rule_publish_attempted_total 359995
+# HELP hermod_rule_publish_failed_total Rule actions whose publish threw or was dropped (bounded-channel overflow, MQTT disconnect mid-publish, serializer failure).
+# TYPE hermod_rule_publish_failed_total counter
+hermod_rule_publish_failed_total 0
+# HELP hermod_mqtt_outbox_depth Current number of publishes buffered in the MQTT reconnect outbox.
+# TYPE hermod_mqtt_outbox_depth gauge
+hermod_mqtt_outbox_depth 0
+# HELP hermod_ingest_queue_depth Current number of messages queued in the ingest channel (saturation arrives before drops).
+# TYPE hermod_ingest_queue_depth gauge
+hermod_ingest_queue_depth 0
+# HELP hermod_rule_eval_seconds Rule evaluation latency in seconds.
+# TYPE hermod_rule_eval_seconds histogram
+hermod_rule_eval_seconds_bucket{le="0.0005"} 354518
+hermod_rule_eval_seconds_bucket{le="0.001"} 357658
+hermod_rule_eval_seconds_bucket{le="0.002"} 359105
+hermod_rule_eval_seconds_bucket{le="0.005"} 359784
+hermod_rule_eval_seconds_bucket{le="0.01"} 359851
+hermod_rule_eval_seconds_bucket{le="0.025"} 359939
+hermod_rule_eval_seconds_bucket{le="0.05"} 359994
+hermod_rule_eval_seconds_bucket{le="0.1"} 359995
+hermod_rule_eval_seconds_bucket{le="0.25"} 359995
+hermod_rule_eval_seconds_bucket{le="0.5"} 359995
+hermod_rule_eval_seconds_bucket{le="1"} 359995
+hermod_rule_eval_seconds_bucket{le="2.5"} 359995
+hermod_rule_eval_seconds_bucket{le="5"} 359995
+hermod_rule_eval_seconds_bucket{le="10"} 359995
+hermod_rule_eval_seconds_bucket{le="+Inf"} 359995
+hermod_rule_eval_seconds_sum 40.90345
+hermod_rule_eval_seconds_count 359995
+
+=== hermod-coordinator ts=20260427T032631Z ===
+# HELP hermod_messages_ingested_total MQTT messages received by the coordinator (feature-flag independent).
+# TYPE hermod_messages_ingested_total counter
+hermod_messages_ingested_total 388114
+# HELP hermod_messages_dropped_total Messages evicted from the ingest channel under DropOldest overflow. Mirror of SystemStats.MessagesDropped.
+# TYPE hermod_messages_dropped_total counter
+hermod_messages_dropped_total 0
+# HELP hermod_device_state_writes_total Device state rows written to Postgres after MQTT telemetry.
+# TYPE hermod_device_state_writes_total counter
+hermod_device_state_writes_total 0
+# HELP hermod_device_state_writes_dropped_total Device state updates evicted from the batched writer channel (pre-flush). Non-zero means the writer cannot keep up with incoming upserts.
+# TYPE hermod_device_state_writes_dropped_total counter
+hermod_device_state_writes_dropped_total 0
+# HELP hermod_device_state_flush_failed_total Device-state batches that failed to flush to Postgres (entire batch lost). Non-zero = PG is unreachable or the INSERT errored; silently dropped rows with no queue-overflow signal.
+# TYPE hermod_device_state_flush_failed_total counter
+hermod_device_state_flush_failed_total 0
+# HELP hermod_message_persistence_writes_total Rows actually written to message_history (post-flush). Previously counted at enqueue time which masked flush failures.
+# TYPE hermod_message_persistence_writes_total counter
+hermod_message_persistence_writes_total 387899
+# HELP hermod_message_persistence_dropped_total Rows evicted from the message_history writer channel under DropOldest.
+# TYPE hermod_message_persistence_dropped_total counter
+hermod_message_persistence_dropped_total 0
+# HELP hermod_message_persistence_flush_failed_total message_history batches that failed to flush to Postgres (entire batch lost).
+# TYPE hermod_message_persistence_flush_failed_total counter
+hermod_message_persistence_flush_failed_total 0
+# HELP hermod_message_history_retention_deletes_total Rows deleted by the message_history retention sweeper (post-cutoff age-out, batched DELETE).
+# TYPE hermod_message_history_retention_deletes_total counter
+hermod_message_history_retention_deletes_total 0
+# HELP hermod_message_history_retention_sweep_failed_total Retention sweep cycles that errored (transient PG outage; next interval retries).
+# TYPE hermod_message_history_retention_sweep_failed_total counter
+hermod_message_history_retention_sweep_failed_total 0
+# HELP hermod_rule_cache_hits_total Rule index lookups served from the in-memory cache.
+# TYPE hermod_rule_cache_hits_total counter
+hermod_rule_cache_hits_total 388093
+# HELP hermod_rule_cache_misses_total Rule index lookups that had to refetch from Postgres.
+# TYPE hermod_rule_cache_misses_total counter
+hermod_rule_cache_misses_total 20
+# HELP hermod_rule_audit_writes_total Rows enqueued to the rule_audit_log batched writer.
+# TYPE hermod_rule_audit_writes_total counter
+hermod_rule_audit_writes_total 387899
+# HELP hermod_rule_audit_dropped_total Rows evicted from the rule_audit_log writer channel under DropOldest.
+# TYPE hermod_rule_audit_dropped_total counter
+hermod_rule_audit_dropped_total 0
+# HELP hermod_rule_audit_flush_failed_total rule_audit_log batches that failed to flush to Postgres (entire batch lost).
+# TYPE hermod_rule_audit_flush_failed_total counter
+hermod_rule_audit_flush_failed_total 0
+# HELP hermod_stats_rollup_writes_total Counter/snapshot flushes to metrics_counters and metrics_snapshots.
+# TYPE hermod_stats_rollup_writes_total counter
+hermod_stats_rollup_writes_total 13
+# HELP hermod_mqtt_outbox_enqueued_total Publishes buffered because the MQTT client was disconnected.
+# TYPE hermod_mqtt_outbox_enqueued_total counter
+hermod_mqtt_outbox_enqueued_total 0
+# HELP hermod_mqtt_outbox_dropped_total Publishes evicted from the outbox under DropOldest overflow.
+# TYPE hermod_mqtt_outbox_dropped_total counter
+hermod_mqtt_outbox_dropped_total 0
+# HELP hermod_mqtt_outbox_drained_total Publishes replayed from the outbox on reconnect.
+# TYPE hermod_mqtt_outbox_drained_total counter
+hermod_mqtt_outbox_drained_total 0
+# HELP hermod_mqtt_reconnects_total Successful broker reconnects by the MqttService supervisor (a flaky broker shows here as a rising slope).
+# TYPE hermod_mqtt_reconnects_total counter
+hermod_mqtt_reconnects_total 0
+# HELP hermod_rule_publish_attempted_total Rule actions that attempted an MQTT publish.
+# TYPE hermod_rule_publish_attempted_total counter
+hermod_rule_publish_attempted_total 388113
+# HELP hermod_rule_publish_failed_total Rule actions whose publish threw or was dropped (bounded-channel overflow, MQTT disconnect mid-publish, serializer failure).
+# TYPE hermod_rule_publish_failed_total counter
+hermod_rule_publish_failed_total 0
+# HELP hermod_mqtt_outbox_depth Current number of publishes buffered in the MQTT reconnect outbox.
+# TYPE hermod_mqtt_outbox_depth gauge
+hermod_mqtt_outbox_depth 0
+# HELP hermod_ingest_queue_depth Current number of messages queued in the ingest channel (saturation arrives before drops).
+# TYPE hermod_ingest_queue_depth gauge
+hermod_ingest_queue_depth 0
+# HELP hermod_rule_eval_seconds Rule evaluation latency in seconds.
+# TYPE hermod_rule_eval_seconds histogram
+hermod_rule_eval_seconds_bucket{le="0.0005"} 382233
+hermod_rule_eval_seconds_bucket{le="0.001"} 385634
+hermod_rule_eval_seconds_bucket{le="0.002"} 387168
+hermod_rule_eval_seconds_bucket{le="0.005"} 387886
+hermod_rule_eval_seconds_bucket{le="0.01"} 387960
+hermod_rule_eval_seconds_bucket{le="0.025"} 388054
+hermod_rule_eval_seconds_bucket{le="0.05"} 388112
+hermod_rule_eval_seconds_bucket{le="0.1"} 388113
+hermod_rule_eval_seconds_bucket{le="0.25"} 388113
+hermod_rule_eval_seconds_bucket{le="0.5"} 388113
+hermod_rule_eval_seconds_bucket{le="1"} 388113
+hermod_rule_eval_seconds_bucket{le="2.5"} 388113
+hermod_rule_eval_seconds_bucket{le="5"} 388113
+hermod_rule_eval_seconds_bucket{le="10"} 388113
+hermod_rule_eval_seconds_bucket{le="+Inf"} 388113
+hermod_rule_eval_seconds_sum 43.943041
+hermod_rule_eval_seconds_count 388113
+
+=== hermod-coordinator ts=20260427T032643Z ===
+# HELP hermod_messages_ingested_total MQTT messages received by the coordinator (feature-flag independent).
+# TYPE hermod_messages_ingested_total counter
+hermod_messages_ingested_total 433427
+# HELP hermod_messages_dropped_total Messages evicted from the ingest channel under DropOldest overflow. Mirror of SystemStats.MessagesDropped.
+# TYPE hermod_messages_dropped_total counter
+hermod_messages_dropped_total 0
+# HELP hermod_device_state_writes_total Device state rows written to Postgres after MQTT telemetry.
+# TYPE hermod_device_state_writes_total counter
+hermod_device_state_writes_total 0
+# HELP hermod_device_state_writes_dropped_total Device state updates evicted from the batched writer channel (pre-flush). Non-zero means the writer cannot keep up with incoming upserts.
+# TYPE hermod_device_state_writes_dropped_total counter
+hermod_device_state_writes_dropped_total 0
+# HELP hermod_device_state_flush_failed_total Device-state batches that failed to flush to Postgres (entire batch lost). Non-zero = PG is unreachable or the INSERT errored; silently dropped rows with no queue-overflow signal.
+# TYPE hermod_device_state_flush_failed_total counter
+hermod_device_state_flush_failed_total 0
+# HELP hermod_message_persistence_writes_total Rows actually written to message_history (post-flush). Previously counted at enqueue time which masked flush failures.
+# TYPE hermod_message_persistence_writes_total counter
+hermod_message_persistence_writes_total 433211
+# HELP hermod_message_persistence_dropped_total Rows evicted from the message_history writer channel under DropOldest.
+# TYPE hermod_message_persistence_dropped_total counter
+hermod_message_persistence_dropped_total 0
+# HELP hermod_message_persistence_flush_failed_total message_history batches that failed to flush to Postgres (entire batch lost).
+# TYPE hermod_message_persistence_flush_failed_total counter
+hermod_message_persistence_flush_failed_total 0
+# HELP hermod_message_history_retention_deletes_total Rows deleted by the message_history retention sweeper (post-cutoff age-out, batched DELETE).
+# TYPE hermod_message_history_retention_deletes_total counter
+hermod_message_history_retention_deletes_total 0
+# HELP hermod_message_history_retention_sweep_failed_total Retention sweep cycles that errored (transient PG outage; next interval retries).
+# TYPE hermod_message_history_retention_sweep_failed_total counter
+hermod_message_history_retention_sweep_failed_total 0
+# HELP hermod_rule_cache_hits_total Rule index lookups served from the in-memory cache.
+# TYPE hermod_rule_cache_hits_total counter
+hermod_rule_cache_hits_total 433399
+# HELP hermod_rule_cache_misses_total Rule index lookups that had to refetch from Postgres.
+# TYPE hermod_rule_cache_misses_total counter
+hermod_rule_cache_misses_total 22
+# HELP hermod_rule_audit_writes_total Rows enqueued to the rule_audit_log batched writer.
+# TYPE hermod_rule_audit_writes_total counter
+hermod_rule_audit_writes_total 433211
+# HELP hermod_rule_audit_dropped_total Rows evicted from the rule_audit_log writer channel under DropOldest.
+# TYPE hermod_rule_audit_dropped_total counter
+hermod_rule_audit_dropped_total 0
+# HELP hermod_rule_audit_flush_failed_total rule_audit_log batches that failed to flush to Postgres (entire batch lost).
+# TYPE hermod_rule_audit_flush_failed_total counter
+hermod_rule_audit_flush_failed_total 0
+# HELP hermod_stats_rollup_writes_total Counter/snapshot flushes to metrics_counters and metrics_snapshots.
+# TYPE hermod_stats_rollup_writes_total counter
+hermod_stats_rollup_writes_total 13
+# HELP hermod_mqtt_outbox_enqueued_total Publishes buffered because the MQTT client was disconnected.
+# TYPE hermod_mqtt_outbox_enqueued_total counter
+hermod_mqtt_outbox_enqueued_total 0
+# HELP hermod_mqtt_outbox_dropped_total Publishes evicted from the outbox under DropOldest overflow.
+# TYPE hermod_mqtt_outbox_dropped_total counter
+hermod_mqtt_outbox_dropped_total 0
+# HELP hermod_mqtt_outbox_drained_total Publishes replayed from the outbox on reconnect.
+# TYPE hermod_mqtt_outbox_drained_total counter
+hermod_mqtt_outbox_drained_total 0
+# HELP hermod_mqtt_reconnects_total Successful broker reconnects by the MqttService supervisor (a flaky broker shows here as a rising slope).
+# TYPE hermod_mqtt_reconnects_total counter
+hermod_mqtt_reconnects_total 0
+# HELP hermod_rule_publish_attempted_total Rule actions that attempted an MQTT publish.
+# TYPE hermod_rule_publish_attempted_total counter
+hermod_rule_publish_attempted_total 433421
+# HELP hermod_rule_publish_failed_total Rule actions whose publish threw or was dropped (bounded-channel overflow, MQTT disconnect mid-publish, serializer failure).
+# TYPE hermod_rule_publish_failed_total counter
+hermod_rule_publish_failed_total 0
+# HELP hermod_mqtt_outbox_depth Current number of publishes buffered in the MQTT reconnect outbox.
+# TYPE hermod_mqtt_outbox_depth gauge
+hermod_mqtt_outbox_depth 0
+# HELP hermod_ingest_queue_depth Current number of messages queued in the ingest channel (saturation arrives before drops).
+# TYPE hermod_ingest_queue_depth gauge
+hermod_ingest_queue_depth 5
+# HELP hermod_rule_eval_seconds Rule evaluation latency in seconds.
+# TYPE hermod_rule_eval_seconds histogram
+hermod_rule_eval_seconds_bucket{le="0.0005"} 427099
+hermod_rule_eval_seconds_bucket{le="0.001"} 430784
+hermod_rule_eval_seconds_bucket{le="0.002"} 432423
+hermod_rule_eval_seconds_bucket{le="0.005"} 433187
+hermod_rule_eval_seconds_bucket{le="0.01"} 433265
+hermod_rule_eval_seconds_bucket{le="0.025"} 433361
+hermod_rule_eval_seconds_bucket{le="0.05"} 433420
+hermod_rule_eval_seconds_bucket{le="0.1"} 433421
+hermod_rule_eval_seconds_bucket{le="0.25"} 433421
+hermod_rule_eval_seconds_bucket{le="0.5"} 433421
+hermod_rule_eval_seconds_bucket{le="1"} 433421
+hermod_rule_eval_seconds_bucket{le="2.5"} 433421
+hermod_rule_eval_seconds_bucket{le="5"} 433421
+hermod_rule_eval_seconds_bucket{le="10"} 433421
+hermod_rule_eval_seconds_bucket{le="+Inf"} 433421
+hermod_rule_eval_seconds_sum 48.31813
+hermod_rule_eval_seconds_count 433421
+
+=== hermod-coordinator ts=20260427T032654Z ===
+# HELP hermod_messages_ingested_total MQTT messages received by the coordinator (feature-flag independent).
+# TYPE hermod_messages_ingested_total counter
+hermod_messages_ingested_total 478816
+# HELP hermod_messages_dropped_total Messages evicted from the ingest channel under DropOldest overflow. Mirror of SystemStats.MessagesDropped.
+# TYPE hermod_messages_dropped_total counter
+hermod_messages_dropped_total 0
+# HELP hermod_device_state_writes_total Device state rows written to Postgres after MQTT telemetry.
+# TYPE hermod_device_state_writes_total counter
+hermod_device_state_writes_total 0
+# HELP hermod_device_state_writes_dropped_total Device state updates evicted from the batched writer channel (pre-flush). Non-zero means the writer cannot keep up with incoming upserts.
+# TYPE hermod_device_state_writes_dropped_total counter
+hermod_device_state_writes_dropped_total 0
+# HELP hermod_device_state_flush_failed_total Device-state batches that failed to flush to Postgres (entire batch lost). Non-zero = PG is unreachable or the INSERT errored; silently dropped rows with no queue-overflow signal.
+# TYPE hermod_device_state_flush_failed_total counter
+hermod_device_state_flush_failed_total 0
+# HELP hermod_message_persistence_writes_total Rows actually written to message_history (post-flush). Previously counted at enqueue time which masked flush failures.
+# TYPE hermod_message_persistence_writes_total counter
+hermod_message_persistence_writes_total 478523
+# HELP hermod_message_persistence_dropped_total Rows evicted from the message_history writer channel under DropOldest.
+# TYPE hermod_message_persistence_dropped_total counter
+hermod_message_persistence_dropped_total 0
+# HELP hermod_message_persistence_flush_failed_total message_history batches that failed to flush to Postgres (entire batch lost).
+# TYPE hermod_message_persistence_flush_failed_total counter
+hermod_message_persistence_flush_failed_total 0
+# HELP hermod_message_history_retention_deletes_total Rows deleted by the message_history retention sweeper (post-cutoff age-out, batched DELETE).
+# TYPE hermod_message_history_retention_deletes_total counter
+hermod_message_history_retention_deletes_total 0
+# HELP hermod_message_history_retention_sweep_failed_total Retention sweep cycles that errored (transient PG outage; next interval retries).
+# TYPE hermod_message_history_retention_sweep_failed_total counter
+hermod_message_history_retention_sweep_failed_total 0
+# HELP hermod_rule_cache_hits_total Rule index lookups served from the in-memory cache.
+# TYPE hermod_rule_cache_hits_total counter
+hermod_rule_cache_hits_total 478768
+# HELP hermod_rule_cache_misses_total Rule index lookups that had to refetch from Postgres.
+# TYPE hermod_rule_cache_misses_total counter
+hermod_rule_cache_misses_total 24
+# HELP hermod_rule_audit_writes_total Rows enqueued to the rule_audit_log batched writer.
+# TYPE hermod_rule_audit_writes_total counter
+hermod_rule_audit_writes_total 478523
+# HELP hermod_rule_audit_dropped_total Rows evicted from the rule_audit_log writer channel under DropOldest.
+# TYPE hermod_rule_audit_dropped_total counter
+hermod_rule_audit_dropped_total 0
+# HELP hermod_rule_audit_flush_failed_total rule_audit_log batches that failed to flush to Postgres (entire batch lost).
+# TYPE hermod_rule_audit_flush_failed_total counter
+hermod_rule_audit_flush_failed_total 0
+# HELP hermod_stats_rollup_writes_total Counter/snapshot flushes to metrics_counters and metrics_snapshots.
+# TYPE hermod_stats_rollup_writes_total counter
+hermod_stats_rollup_writes_total 14
+# HELP hermod_mqtt_outbox_enqueued_total Publishes buffered because the MQTT client was disconnected.
+# TYPE hermod_mqtt_outbox_enqueued_total counter
+hermod_mqtt_outbox_enqueued_total 0
+# HELP hermod_mqtt_outbox_dropped_total Publishes evicted from the outbox under DropOldest overflow.
+# TYPE hermod_mqtt_outbox_dropped_total counter
+hermod_mqtt_outbox_dropped_total 0
+# HELP hermod_mqtt_outbox_drained_total Publishes replayed from the outbox on reconnect.
+# TYPE hermod_mqtt_outbox_drained_total counter
+hermod_mqtt_outbox_drained_total 0
+# HELP hermod_mqtt_reconnects_total Successful broker reconnects by the MqttService supervisor (a flaky broker shows here as a rising slope).
+# TYPE hermod_mqtt_reconnects_total counter
+hermod_mqtt_reconnects_total 0
+# HELP hermod_rule_publish_attempted_total Rule actions that attempted an MQTT publish.
+# TYPE hermod_rule_publish_attempted_total counter
+hermod_rule_publish_attempted_total 478792
+# HELP hermod_rule_publish_failed_total Rule actions whose publish threw or was dropped (bounded-channel overflow, MQTT disconnect mid-publish, serializer failure).
+# TYPE hermod_rule_publish_failed_total counter
+hermod_rule_publish_failed_total 0
+# HELP hermod_mqtt_outbox_depth Current number of publishes buffered in the MQTT reconnect outbox.
+# TYPE hermod_mqtt_outbox_depth gauge
+hermod_mqtt_outbox_depth 0
+# HELP hermod_ingest_queue_depth Current number of messages queued in the ingest channel (saturation arrives before drops).
+# TYPE hermod_ingest_queue_depth gauge
+hermod_ingest_queue_depth 24
+# HELP hermod_rule_eval_seconds Rule evaluation latency in seconds.
+# TYPE hermod_rule_eval_seconds histogram
+hermod_rule_eval_seconds_bucket{le="0.0005"} 471994
+hermod_rule_eval_seconds_bucket{le="0.001"} 475941
+hermod_rule_eval_seconds_bucket{le="0.002"} 477717
+hermod_rule_eval_seconds_bucket{le="0.005"} 478546
+hermod_rule_eval_seconds_bucket{le="0.01"} 478633
+hermod_rule_eval_seconds_bucket{le="0.025"} 478732
+hermod_rule_eval_seconds_bucket{le="0.05"} 478791
+hermod_rule_eval_seconds_bucket{le="0.1"} 478792
+hermod_rule_eval_seconds_bucket{le="0.25"} 478792
+hermod_rule_eval_seconds_bucket{le="0.5"} 478792
+hermod_rule_eval_seconds_bucket{le="1"} 478792
+hermod_rule_eval_seconds_bucket{le="2.5"} 478792
+hermod_rule_eval_seconds_bucket{le="5"} 478792
+hermod_rule_eval_seconds_bucket{le="10"} 478792
+hermod_rule_eval_seconds_bucket{le="+Inf"} 478792
+hermod_rule_eval_seconds_sum 52.806788
+hermod_rule_eval_seconds_count 478792
+
+=== hermod-coordinator ts=20260427T032705Z ===
+# HELP hermod_messages_ingested_total MQTT messages received by the coordinator (feature-flag independent).
+# TYPE hermod_messages_ingested_total counter
+hermod_messages_ingested_total 479996
+# HELP hermod_messages_dropped_total Messages evicted from the ingest channel under DropOldest overflow. Mirror of SystemStats.MessagesDropped.
+# TYPE hermod_messages_dropped_total counter
+hermod_messages_dropped_total 0
+# HELP hermod_device_state_writes_total Device state rows written to Postgres after MQTT telemetry.
+# TYPE hermod_device_state_writes_total counter
+hermod_device_state_writes_total 0
+# HELP hermod_device_state_writes_dropped_total Device state updates evicted from the batched writer channel (pre-flush). Non-zero means the writer cannot keep up with incoming upserts.
+# TYPE hermod_device_state_writes_dropped_total counter
+hermod_device_state_writes_dropped_total 0
+# HELP hermod_device_state_flush_failed_total Device-state batches that failed to flush to Postgres (entire batch lost). Non-zero = PG is unreachable or the INSERT errored; silently dropped rows with no queue-overflow signal.
+# TYPE hermod_device_state_flush_failed_total counter
+hermod_device_state_flush_failed_total 0
+# HELP hermod_message_persistence_writes_total Rows actually written to message_history (post-flush). Previously counted at enqueue time which masked flush failures.
+# TYPE hermod_message_persistence_writes_total counter
+hermod_message_persistence_writes_total 479996
+# HELP hermod_message_persistence_dropped_total Rows evicted from the message_history writer channel under DropOldest.
+# TYPE hermod_message_persistence_dropped_total counter
+hermod_message_persistence_dropped_total 0
+# HELP hermod_message_persistence_flush_failed_total message_history batches that failed to flush to Postgres (entire batch lost).
+# TYPE hermod_message_persistence_flush_failed_total counter
+hermod_message_persistence_flush_failed_total 0
+# HELP hermod_message_history_retention_deletes_total Rows deleted by the message_history retention sweeper (post-cutoff age-out, batched DELETE).
+# TYPE hermod_message_history_retention_deletes_total counter
+hermod_message_history_retention_deletes_total 0
+# HELP hermod_message_history_retention_sweep_failed_total Retention sweep cycles that errored (transient PG outage; next interval retries).
+# TYPE hermod_message_history_retention_sweep_failed_total counter
+hermod_message_history_retention_sweep_failed_total 0
+# HELP hermod_rule_cache_hits_total Rule index lookups served from the in-memory cache.
+# TYPE hermod_rule_cache_hits_total counter
+hermod_rule_cache_hits_total 479972
+# HELP hermod_rule_cache_misses_total Rule index lookups that had to refetch from Postgres.
+# TYPE hermod_rule_cache_misses_total counter
+hermod_rule_cache_misses_total 24
+# HELP hermod_rule_audit_writes_total Rows enqueued to the rule_audit_log batched writer.
+# TYPE hermod_rule_audit_writes_total counter
+hermod_rule_audit_writes_total 479996
+# HELP hermod_rule_audit_dropped_total Rows evicted from the rule_audit_log writer channel under DropOldest.
+# TYPE hermod_rule_audit_dropped_total counter
+hermod_rule_audit_dropped_total 0
+# HELP hermod_rule_audit_flush_failed_total rule_audit_log batches that failed to flush to Postgres (entire batch lost).
+# TYPE hermod_rule_audit_flush_failed_total counter
+hermod_rule_audit_flush_failed_total 0
+# HELP hermod_stats_rollup_writes_total Counter/snapshot flushes to metrics_counters and metrics_snapshots.
+# TYPE hermod_stats_rollup_writes_total counter
+hermod_stats_rollup_writes_total 15
+# HELP hermod_mqtt_outbox_enqueued_total Publishes buffered because the MQTT client was disconnected.
+# TYPE hermod_mqtt_outbox_enqueued_total counter
+hermod_mqtt_outbox_enqueued_total 0
+# HELP hermod_mqtt_outbox_dropped_total Publishes evicted from the outbox under DropOldest overflow.
+# TYPE hermod_mqtt_outbox_dropped_total counter
+hermod_mqtt_outbox_dropped_total 0
+# HELP hermod_mqtt_outbox_drained_total Publishes replayed from the outbox on reconnect.
+# TYPE hermod_mqtt_outbox_drained_total counter
+hermod_mqtt_outbox_drained_total 0
+# HELP hermod_mqtt_reconnects_total Successful broker reconnects by the MqttService supervisor (a flaky broker shows here as a rising slope).
+# TYPE hermod_mqtt_reconnects_total counter
+hermod_mqtt_reconnects_total 0
+# HELP hermod_rule_publish_attempted_total Rule actions that attempted an MQTT publish.
+# TYPE hermod_rule_publish_attempted_total counter
+hermod_rule_publish_attempted_total 479996
+# HELP hermod_rule_publish_failed_total Rule actions whose publish threw or was dropped (bounded-channel overflow, MQTT disconnect mid-publish, serializer failure).
+# TYPE hermod_rule_publish_failed_total counter
+hermod_rule_publish_failed_total 0
+# HELP hermod_mqtt_outbox_depth Current number of publishes buffered in the MQTT reconnect outbox.
+# TYPE hermod_mqtt_outbox_depth gauge
+hermod_mqtt_outbox_depth 0
+# HELP hermod_ingest_queue_depth Current number of messages queued in the ingest channel (saturation arrives before drops).
+# TYPE hermod_ingest_queue_depth gauge
+hermod_ingest_queue_depth 0
+# HELP hermod_rule_eval_seconds Rule evaluation latency in seconds.
+# TYPE hermod_rule_eval_seconds histogram
+hermod_rule_eval_seconds_bucket{le="0.0005"} 473189
+hermod_rule_eval_seconds_bucket{le="0.001"} 477142
+hermod_rule_eval_seconds_bucket{le="0.002"} 478921
+hermod_rule_eval_seconds_bucket{le="0.005"} 479750
+hermod_rule_eval_seconds_bucket{le="0.01"} 479837
+hermod_rule_eval_seconds_bucket{le="0.025"} 479936
+hermod_rule_eval_seconds_bucket{le="0.05"} 479995
+hermod_rule_eval_seconds_bucket{le="0.1"} 479996
+hermod_rule_eval_seconds_bucket{le="0.25"} 479996
+hermod_rule_eval_seconds_bucket{le="0.5"} 479996
+hermod_rule_eval_seconds_bucket{le="1"} 479996
+hermod_rule_eval_seconds_bucket{le="2.5"} 479996
+hermod_rule_eval_seconds_bucket{le="5"} 479996
+hermod_rule_eval_seconds_bucket{le="10"} 479996
+hermod_rule_eval_seconds_bucket{le="+Inf"} 479996
+hermod_rule_eval_seconds_sum 52.911625
+hermod_rule_eval_seconds_count 479996
+
+=== hermod-coordinator ts=20260427T032717Z ===
+# HELP hermod_messages_ingested_total MQTT messages received by the coordinator (feature-flag independent).
+# TYPE hermod_messages_ingested_total counter
+hermod_messages_ingested_total 487692
+# HELP hermod_messages_dropped_total Messages evicted from the ingest channel under DropOldest overflow. Mirror of SystemStats.MessagesDropped.
+# TYPE hermod_messages_dropped_total counter
+hermod_messages_dropped_total 0
+# HELP hermod_device_state_writes_total Device state rows written to Postgres after MQTT telemetry.
+# TYPE hermod_device_state_writes_total counter
+hermod_device_state_writes_total 0
+# HELP hermod_device_state_writes_dropped_total Device state updates evicted from the batched writer channel (pre-flush). Non-zero means the writer cannot keep up with incoming upserts.
+# TYPE hermod_device_state_writes_dropped_total counter
+hermod_device_state_writes_dropped_total 0
+# HELP hermod_device_state_flush_failed_total Device-state batches that failed to flush to Postgres (entire batch lost). Non-zero = PG is unreachable or the INSERT errored; silently dropped rows with no queue-overflow signal.
+# TYPE hermod_device_state_flush_failed_total counter
+hermod_device_state_flush_failed_total 0
+# HELP hermod_message_persistence_writes_total Rows actually written to message_history (post-flush). Previously counted at enqueue time which masked flush failures.
+# TYPE hermod_message_persistence_writes_total counter
+hermod_message_persistence_writes_total 487676
+# HELP hermod_message_persistence_dropped_total Rows evicted from the message_history writer channel under DropOldest.
+# TYPE hermod_message_persistence_dropped_total counter
+hermod_message_persistence_dropped_total 0
+# HELP hermod_message_persistence_flush_failed_total message_history batches that failed to flush to Postgres (entire batch lost).
+# TYPE hermod_message_persistence_flush_failed_total counter
+hermod_message_persistence_flush_failed_total 0
+# HELP hermod_message_history_retention_deletes_total Rows deleted by the message_history retention sweeper (post-cutoff age-out, batched DELETE).
+# TYPE hermod_message_history_retention_deletes_total counter
+hermod_message_history_retention_deletes_total 0
+# HELP hermod_message_history_retention_sweep_failed_total Retention sweep cycles that errored (transient PG outage; next interval retries).
+# TYPE hermod_message_history_retention_sweep_failed_total counter
+hermod_message_history_retention_sweep_failed_total 0
+# HELP hermod_rule_cache_hits_total Rule index lookups served from the in-memory cache.
+# TYPE hermod_rule_cache_hits_total counter
+hermod_rule_cache_hits_total 487667
+# HELP hermod_rule_cache_misses_total Rule index lookups that had to refetch from Postgres.
+# TYPE hermod_rule_cache_misses_total counter
+hermod_rule_cache_misses_total 25
+# HELP hermod_rule_audit_writes_total Rows enqueued to the rule_audit_log batched writer.
+# TYPE hermod_rule_audit_writes_total counter
+hermod_rule_audit_writes_total 487420
+# HELP hermod_rule_audit_dropped_total Rows evicted from the rule_audit_log writer channel under DropOldest.
+# TYPE hermod_rule_audit_dropped_total counter
+hermod_rule_audit_dropped_total 0
+# HELP hermod_rule_audit_flush_failed_total rule_audit_log batches that failed to flush to Postgres (entire batch lost).
+# TYPE hermod_rule_audit_flush_failed_total counter
+hermod_rule_audit_flush_failed_total 0
+# HELP hermod_stats_rollup_writes_total Counter/snapshot flushes to metrics_counters and metrics_snapshots.
+# TYPE hermod_stats_rollup_writes_total counter
+hermod_stats_rollup_writes_total 16
+# HELP hermod_mqtt_outbox_enqueued_total Publishes buffered because the MQTT client was disconnected.
+# TYPE hermod_mqtt_outbox_enqueued_total counter
+hermod_mqtt_outbox_enqueued_total 0
+# HELP hermod_mqtt_outbox_dropped_total Publishes evicted from the outbox under DropOldest overflow.
+# TYPE hermod_mqtt_outbox_dropped_total counter
+hermod_mqtt_outbox_dropped_total 0
+# HELP hermod_mqtt_outbox_drained_total Publishes replayed from the outbox on reconnect.
+# TYPE hermod_mqtt_outbox_drained_total counter
+hermod_mqtt_outbox_drained_total 0
+# HELP hermod_mqtt_reconnects_total Successful broker reconnects by the MqttService supervisor (a flaky broker shows here as a rising slope).
+# TYPE hermod_mqtt_reconnects_total counter
+hermod_mqtt_reconnects_total 0
+# HELP hermod_rule_publish_attempted_total Rule actions that attempted an MQTT publish.
+# TYPE hermod_rule_publish_attempted_total counter
+hermod_rule_publish_attempted_total 487692
+# HELP hermod_rule_publish_failed_total Rule actions whose publish threw or was dropped (bounded-channel overflow, MQTT disconnect mid-publish, serializer failure).
+# TYPE hermod_rule_publish_failed_total counter
+hermod_rule_publish_failed_total 0
+# HELP hermod_mqtt_outbox_depth Current number of publishes buffered in the MQTT reconnect outbox.
+# TYPE hermod_mqtt_outbox_depth gauge
+hermod_mqtt_outbox_depth 0
+# HELP hermod_ingest_queue_depth Current number of messages queued in the ingest channel (saturation arrives before drops).
+# TYPE hermod_ingest_queue_depth gauge
+hermod_ingest_queue_depth 0
+# HELP hermod_rule_eval_seconds Rule evaluation latency in seconds.
+# TYPE hermod_rule_eval_seconds histogram
+hermod_rule_eval_seconds_bucket{le="0.0005"} 480612
+hermod_rule_eval_seconds_bucket{le="0.001"} 484718
+hermod_rule_eval_seconds_bucket{le="0.002"} 486580
+hermod_rule_eval_seconds_bucket{le="0.005"} 487438
+hermod_rule_eval_seconds_bucket{le="0.01"} 487532
+hermod_rule_eval_seconds_bucket{le="0.025"} 487631
+hermod_rule_eval_seconds_bucket{le="0.05"} 487691
+hermod_rule_eval_seconds_bucket{le="0.1"} 487692
+hermod_rule_eval_seconds_bucket{le="0.25"} 487692
+hermod_rule_eval_seconds_bucket{le="0.5"} 487692
+hermod_rule_eval_seconds_bucket{le="1"} 487692
+hermod_rule_eval_seconds_bucket{le="2.5"} 487692
+hermod_rule_eval_seconds_bucket{le="5"} 487692
+hermod_rule_eval_seconds_bucket{le="10"} 487692
+hermod_rule_eval_seconds_bucket{le="+Inf"} 487692
+hermod_rule_eval_seconds_sum 54.005279
+hermod_rule_eval_seconds_count 487692
+
+=== hermod-coordinator ts=20260427T032729Z ===
+# HELP hermod_messages_ingested_total MQTT messages received by the coordinator (feature-flag independent).
+# TYPE hermod_messages_ingested_total counter
+hermod_messages_ingested_total 533044
+# HELP hermod_messages_dropped_total Messages evicted from the ingest channel under DropOldest overflow. Mirror of SystemStats.MessagesDropped.
+# TYPE hermod_messages_dropped_total counter
+hermod_messages_dropped_total 0
+# HELP hermod_device_state_writes_total Device state rows written to Postgres after MQTT telemetry.
+# TYPE hermod_device_state_writes_total counter
+hermod_device_state_writes_total 0
+# HELP hermod_device_state_writes_dropped_total Device state updates evicted from the batched writer channel (pre-flush). Non-zero means the writer cannot keep up with incoming upserts.
+# TYPE hermod_device_state_writes_dropped_total counter
+hermod_device_state_writes_dropped_total 0
+# HELP hermod_device_state_flush_failed_total Device-state batches that failed to flush to Postgres (entire batch lost). Non-zero = PG is unreachable or the INSERT errored; silently dropped rows with no queue-overflow signal.
+# TYPE hermod_device_state_flush_failed_total counter
+hermod_device_state_flush_failed_total 0
+# HELP hermod_message_persistence_writes_total Rows actually written to message_history (post-flush). Previously counted at enqueue time which masked flush failures.
+# TYPE hermod_message_persistence_writes_total counter
+hermod_message_persistence_writes_total 532732
+# HELP hermod_message_persistence_dropped_total Rows evicted from the message_history writer channel under DropOldest.
+# TYPE hermod_message_persistence_dropped_total counter
+hermod_message_persistence_dropped_total 0
+# HELP hermod_message_persistence_flush_failed_total message_history batches that failed to flush to Postgres (entire batch lost).
+# TYPE hermod_message_persistence_flush_failed_total counter
+hermod_message_persistence_flush_failed_total 0
+# HELP hermod_message_history_retention_deletes_total Rows deleted by the message_history retention sweeper (post-cutoff age-out, batched DELETE).
+# TYPE hermod_message_history_retention_deletes_total counter
+hermod_message_history_retention_deletes_total 0
+# HELP hermod_message_history_retention_sweep_failed_total Retention sweep cycles that errored (transient PG outage; next interval retries).
+# TYPE hermod_message_history_retention_sweep_failed_total counter
+hermod_message_history_retention_sweep_failed_total 0
+# HELP hermod_rule_cache_hits_total Rule index lookups served from the in-memory cache.
+# TYPE hermod_rule_cache_hits_total counter
+hermod_rule_cache_hits_total 532935
+# HELP hermod_rule_cache_misses_total Rule index lookups that had to refetch from Postgres.
+# TYPE hermod_rule_cache_misses_total counter
+hermod_rule_cache_misses_total 27
+# HELP hermod_rule_audit_writes_total Rows enqueued to the rule_audit_log batched writer.
+# TYPE hermod_rule_audit_writes_total counter
+hermod_rule_audit_writes_total 532732
+# HELP hermod_rule_audit_dropped_total Rows evicted from the rule_audit_log writer channel under DropOldest.
+# TYPE hermod_rule_audit_dropped_total counter
+hermod_rule_audit_dropped_total 0
+# HELP hermod_rule_audit_flush_failed_total rule_audit_log batches that failed to flush to Postgres (entire batch lost).
+# TYPE hermod_rule_audit_flush_failed_total counter
+hermod_rule_audit_flush_failed_total 0
+# HELP hermod_stats_rollup_writes_total Counter/snapshot flushes to metrics_counters and metrics_snapshots.
+# TYPE hermod_stats_rollup_writes_total counter
+hermod_stats_rollup_writes_total 16
+# HELP hermod_mqtt_outbox_enqueued_total Publishes buffered because the MQTT client was disconnected.
+# TYPE hermod_mqtt_outbox_enqueued_total counter
+hermod_mqtt_outbox_enqueued_total 0
+# HELP hermod_mqtt_outbox_dropped_total Publishes evicted from the outbox under DropOldest overflow.
+# TYPE hermod_mqtt_outbox_dropped_total counter
+hermod_mqtt_outbox_dropped_total 0
+# HELP hermod_mqtt_outbox_drained_total Publishes replayed from the outbox on reconnect.
+# TYPE hermod_mqtt_outbox_drained_total counter
+hermod_mqtt_outbox_drained_total 0
+# HELP hermod_mqtt_reconnects_total Successful broker reconnects by the MqttService supervisor (a flaky broker shows here as a rising slope).
+# TYPE hermod_mqtt_reconnects_total counter
+hermod_mqtt_reconnects_total 0
+# HELP hermod_rule_publish_attempted_total Rule actions that attempted an MQTT publish.
+# TYPE hermod_rule_publish_attempted_total counter
+hermod_rule_publish_attempted_total 532962
+# HELP hermod_rule_publish_failed_total Rule actions whose publish threw or was dropped (bounded-channel overflow, MQTT disconnect mid-publish, serializer failure).
+# TYPE hermod_rule_publish_failed_total counter
+hermod_rule_publish_failed_total 0
+# HELP hermod_mqtt_outbox_depth Current number of publishes buffered in the MQTT reconnect outbox.
+# TYPE hermod_mqtt_outbox_depth gauge
+hermod_mqtt_outbox_depth 0
+# HELP hermod_ingest_queue_depth Current number of messages queued in the ingest channel (saturation arrives before drops).
+# TYPE hermod_ingest_queue_depth gauge
+hermod_ingest_queue_depth 81
+# HELP hermod_rule_eval_seconds Rule evaluation latency in seconds.
+# TYPE hermod_rule_eval_seconds histogram
+hermod_rule_eval_seconds_bucket{le="0.0005"} 525335
+hermod_rule_eval_seconds_bucket{le="0.001"} 529769
+hermod_rule_eval_seconds_bucket{le="0.002"} 531777
+hermod_rule_eval_seconds_bucket{le="0.005"} 532687
+hermod_rule_eval_seconds_bucket{le="0.01"} 532791
+hermod_rule_eval_seconds_bucket{le="0.025"} 532897
+hermod_rule_eval_seconds_bucket{le="0.05"} 532961
+hermod_rule_eval_seconds_bucket{le="0.1"} 532962
+hermod_rule_eval_seconds_bucket{le="0.25"} 532962
+hermod_rule_eval_seconds_bucket{le="0.5"} 532962
+hermod_rule_eval_seconds_bucket{le="1"} 532962
+hermod_rule_eval_seconds_bucket{le="2.5"} 532962
+hermod_rule_eval_seconds_bucket{le="5"} 532962
+hermod_rule_eval_seconds_bucket{le="10"} 532962
+hermod_rule_eval_seconds_bucket{le="+Inf"} 532962
+hermod_rule_eval_seconds_sum 58.668188
+hermod_rule_eval_seconds_count 532962
+
+=== hermod-coordinator ts=20260427T032740Z ===
+# HELP hermod_messages_ingested_total MQTT messages received by the coordinator (feature-flag independent).
+# TYPE hermod_messages_ingested_total counter
+hermod_messages_ingested_total 578365
+# HELP hermod_messages_dropped_total Messages evicted from the ingest channel under DropOldest overflow. Mirror of SystemStats.MessagesDropped.
+# TYPE hermod_messages_dropped_total counter
+hermod_messages_dropped_total 0
+# HELP hermod_device_state_writes_total Device state rows written to Postgres after MQTT telemetry.
+# TYPE hermod_device_state_writes_total counter
+hermod_device_state_writes_total 0
+# HELP hermod_device_state_writes_dropped_total Device state updates evicted from the batched writer channel (pre-flush). Non-zero means the writer cannot keep up with incoming upserts.
+# TYPE hermod_device_state_writes_dropped_total counter
+hermod_device_state_writes_dropped_total 0
+# HELP hermod_device_state_flush_failed_total Device-state batches that failed to flush to Postgres (entire batch lost). Non-zero = PG is unreachable or the INSERT errored; silently dropped rows with no queue-overflow signal.
+# TYPE hermod_device_state_flush_failed_total counter
+hermod_device_state_flush_failed_total 0
+# HELP hermod_message_persistence_writes_total Rows actually written to message_history (post-flush). Previously counted at enqueue time which masked flush failures.
+# TYPE hermod_message_persistence_writes_total counter
+hermod_message_persistence_writes_total 578044
+# HELP hermod_message_persistence_dropped_total Rows evicted from the message_history writer channel under DropOldest.
+# TYPE hermod_message_persistence_dropped_total counter
+hermod_message_persistence_dropped_total 0
+# HELP hermod_message_persistence_flush_failed_total message_history batches that failed to flush to Postgres (entire batch lost).
+# TYPE hermod_message_persistence_flush_failed_total counter
+hermod_message_persistence_flush_failed_total 0
+# HELP hermod_message_history_retention_deletes_total Rows deleted by the message_history retention sweeper (post-cutoff age-out, batched DELETE).
+# TYPE hermod_message_history_retention_deletes_total counter
+hermod_message_history_retention_deletes_total 0
+# HELP hermod_message_history_retention_sweep_failed_total Retention sweep cycles that errored (transient PG outage; next interval retries).
+# TYPE hermod_message_history_retention_sweep_failed_total counter
+hermod_message_history_retention_sweep_failed_total 0
+# HELP hermod_rule_cache_hits_total Rule index lookups served from the in-memory cache.
+# TYPE hermod_rule_cache_hits_total counter
+hermod_rule_cache_hits_total 578304
+# HELP hermod_rule_cache_misses_total Rule index lookups that had to refetch from Postgres.
+# TYPE hermod_rule_cache_misses_total counter
+hermod_rule_cache_misses_total 29
+# HELP hermod_rule_audit_writes_total Rows enqueued to the rule_audit_log batched writer.
+# TYPE hermod_rule_audit_writes_total counter
+hermod_rule_audit_writes_total 578044
+# HELP hermod_rule_audit_dropped_total Rows evicted from the rule_audit_log writer channel under DropOldest.
+# TYPE hermod_rule_audit_dropped_total counter
+hermod_rule_audit_dropped_total 0
+# HELP hermod_rule_audit_flush_failed_total rule_audit_log batches that failed to flush to Postgres (entire batch lost).
+# TYPE hermod_rule_audit_flush_failed_total counter
+hermod_rule_audit_flush_failed_total 0
+# HELP hermod_stats_rollup_writes_total Counter/snapshot flushes to metrics_counters and metrics_snapshots.
+# TYPE hermod_stats_rollup_writes_total counter
+hermod_stats_rollup_writes_total 17
+# HELP hermod_mqtt_outbox_enqueued_total Publishes buffered because the MQTT client was disconnected.
+# TYPE hermod_mqtt_outbox_enqueued_total counter
+hermod_mqtt_outbox_enqueued_total 0
+# HELP hermod_mqtt_outbox_dropped_total Publishes evicted from the outbox under DropOldest overflow.
+# TYPE hermod_mqtt_outbox_dropped_total counter
+hermod_mqtt_outbox_dropped_total 0
+# HELP hermod_mqtt_outbox_drained_total Publishes replayed from the outbox on reconnect.
+# TYPE hermod_mqtt_outbox_drained_total counter
+hermod_mqtt_outbox_drained_total 0
+# HELP hermod_mqtt_reconnects_total Successful broker reconnects by the MqttService supervisor (a flaky broker shows here as a rising slope).
+# TYPE hermod_mqtt_reconnects_total counter
+hermod_mqtt_reconnects_total 0
+# HELP hermod_rule_publish_attempted_total Rule actions that attempted an MQTT publish.
+# TYPE hermod_rule_publish_attempted_total counter
+hermod_rule_publish_attempted_total 578333
+# HELP hermod_rule_publish_failed_total Rule actions whose publish threw or was dropped (bounded-channel overflow, MQTT disconnect mid-publish, serializer failure).
+# TYPE hermod_rule_publish_failed_total counter
+hermod_rule_publish_failed_total 0
+# HELP hermod_mqtt_outbox_depth Current number of publishes buffered in the MQTT reconnect outbox.
+# TYPE hermod_mqtt_outbox_depth gauge
+hermod_mqtt_outbox_depth 0
+# HELP hermod_ingest_queue_depth Current number of messages queued in the ingest channel (saturation arrives before drops).
+# TYPE hermod_ingest_queue_depth gauge
+hermod_ingest_queue_depth 32
+# HELP hermod_rule_eval_seconds Rule evaluation latency in seconds.
+# TYPE hermod_rule_eval_seconds histogram
+hermod_rule_eval_seconds_bucket{le="0.0005"} 570201
+hermod_rule_eval_seconds_bucket{le="0.001"} 574942
+hermod_rule_eval_seconds_bucket{le="0.002"} 577075
+hermod_rule_eval_seconds_bucket{le="0.005"} 578046
+hermod_rule_eval_seconds_bucket{le="0.01"} 578156
+hermod_rule_eval_seconds_bucket{le="0.025"} 578265
+hermod_rule_eval_seconds_bucket{le="0.05"} 578331
+hermod_rule_eval_seconds_bucket{le="0.1"} 578332
+hermod_rule_eval_seconds_bucket{le="0.25"} 578332
+hermod_rule_eval_seconds_bucket{le="0.5"} 578332
+hermod_rule_eval_seconds_bucket{le="1"} 578332
+hermod_rule_eval_seconds_bucket{le="2.5"} 578332
+hermod_rule_eval_seconds_bucket{le="5"} 578332
+hermod_rule_eval_seconds_bucket{le="10"} 578332
+hermod_rule_eval_seconds_bucket{le="+Inf"} 578332
+hermod_rule_eval_seconds_sum 63.183968
+hermod_rule_eval_seconds_count 578333
+
+=== hermod-coordinator ts=20260427T032751Z ===
+# HELP hermod_messages_ingested_total MQTT messages received by the coordinator (feature-flag independent).
+# TYPE hermod_messages_ingested_total counter
+hermod_messages_ingested_total 599997
+# HELP hermod_messages_dropped_total Messages evicted from the ingest channel under DropOldest overflow. Mirror of SystemStats.MessagesDropped.
+# TYPE hermod_messages_dropped_total counter
+hermod_messages_dropped_total 0
+# HELP hermod_device_state_writes_total Device state rows written to Postgres after MQTT telemetry.
+# TYPE hermod_device_state_writes_total counter
+hermod_device_state_writes_total 0
+# HELP hermod_device_state_writes_dropped_total Device state updates evicted from the batched writer channel (pre-flush). Non-zero means the writer cannot keep up with incoming upserts.
+# TYPE hermod_device_state_writes_dropped_total counter
+hermod_device_state_writes_dropped_total 0
+# HELP hermod_device_state_flush_failed_total Device-state batches that failed to flush to Postgres (entire batch lost). Non-zero = PG is unreachable or the INSERT errored; silently dropped rows with no queue-overflow signal.
+# TYPE hermod_device_state_flush_failed_total counter
+hermod_device_state_flush_failed_total 0
+# HELP hermod_message_persistence_writes_total Rows actually written to message_history (post-flush). Previously counted at enqueue time which masked flush failures.
+# TYPE hermod_message_persistence_writes_total counter
+hermod_message_persistence_writes_total 599997
+# HELP hermod_message_persistence_dropped_total Rows evicted from the message_history writer channel under DropOldest.
+# TYPE hermod_message_persistence_dropped_total counter
+hermod_message_persistence_dropped_total 0
+# HELP hermod_message_persistence_flush_failed_total message_history batches that failed to flush to Postgres (entire batch lost).
+# TYPE hermod_message_persistence_flush_failed_total counter
+hermod_message_persistence_flush_failed_total 0
+# HELP hermod_message_history_retention_deletes_total Rows deleted by the message_history retention sweeper (post-cutoff age-out, batched DELETE).
+# TYPE hermod_message_history_retention_deletes_total counter
+hermod_message_history_retention_deletes_total 0
+# HELP hermod_message_history_retention_sweep_failed_total Retention sweep cycles that errored (transient PG outage; next interval retries).
+# TYPE hermod_message_history_retention_sweep_failed_total counter
+hermod_message_history_retention_sweep_failed_total 0
+# HELP hermod_rule_cache_hits_total Rule index lookups served from the in-memory cache.
+# TYPE hermod_rule_cache_hits_total counter
+hermod_rule_cache_hits_total 599967
+# HELP hermod_rule_cache_misses_total Rule index lookups that had to refetch from Postgres.
+# TYPE hermod_rule_cache_misses_total counter
+hermod_rule_cache_misses_total 30
+# HELP hermod_rule_audit_writes_total Rows enqueued to the rule_audit_log batched writer.
+# TYPE hermod_rule_audit_writes_total counter
+hermod_rule_audit_writes_total 599997
+# HELP hermod_rule_audit_dropped_total Rows evicted from the rule_audit_log writer channel under DropOldest.
+# TYPE hermod_rule_audit_dropped_total counter
+hermod_rule_audit_dropped_total 0
+# HELP hermod_rule_audit_flush_failed_total rule_audit_log batches that failed to flush to Postgres (entire batch lost).
+# TYPE hermod_rule_audit_flush_failed_total counter
+hermod_rule_audit_flush_failed_total 0
+# HELP hermod_stats_rollup_writes_total Counter/snapshot flushes to metrics_counters and metrics_snapshots.
+# TYPE hermod_stats_rollup_writes_total counter
+hermod_stats_rollup_writes_total 18
+# HELP hermod_mqtt_outbox_enqueued_total Publishes buffered because the MQTT client was disconnected.
+# TYPE hermod_mqtt_outbox_enqueued_total counter
+hermod_mqtt_outbox_enqueued_total 0
+# HELP hermod_mqtt_outbox_dropped_total Publishes evicted from the outbox under DropOldest overflow.
+# TYPE hermod_mqtt_outbox_dropped_total counter
+hermod_mqtt_outbox_dropped_total 0
+# HELP hermod_mqtt_outbox_drained_total Publishes replayed from the outbox on reconnect.
+# TYPE hermod_mqtt_outbox_drained_total counter
+hermod_mqtt_outbox_drained_total 0
+# HELP hermod_mqtt_reconnects_total Successful broker reconnects by the MqttService supervisor (a flaky broker shows here as a rising slope).
+# TYPE hermod_mqtt_reconnects_total counter
+hermod_mqtt_reconnects_total 0
+# HELP hermod_rule_publish_attempted_total Rule actions that attempted an MQTT publish.
+# TYPE hermod_rule_publish_attempted_total counter
+hermod_rule_publish_attempted_total 599997
+# HELP hermod_rule_publish_failed_total Rule actions whose publish threw or was dropped (bounded-channel overflow, MQTT disconnect mid-publish, serializer failure).
+# TYPE hermod_rule_publish_failed_total counter
+hermod_rule_publish_failed_total 0
+# HELP hermod_mqtt_outbox_depth Current number of publishes buffered in the MQTT reconnect outbox.
+# TYPE hermod_mqtt_outbox_depth gauge
+hermod_mqtt_outbox_depth 0
+# HELP hermod_ingest_queue_depth Current number of messages queued in the ingest channel (saturation arrives before drops).
+# TYPE hermod_ingest_queue_depth gauge
+hermod_ingest_queue_depth 0
+# HELP hermod_rule_eval_seconds Rule evaluation latency in seconds.
+# TYPE hermod_rule_eval_seconds histogram
+hermod_rule_eval_seconds_bucket{le="0.0005"} 591608
+hermod_rule_eval_seconds_bucket{le="0.001"} 596501
+hermod_rule_eval_seconds_bucket{le="0.002"} 598695
+hermod_rule_eval_seconds_bucket{le="0.005"} 599699
+hermod_rule_eval_seconds_bucket{le="0.01"} 599817
+hermod_rule_eval_seconds_bucket{le="0.025"} 599929
+hermod_rule_eval_seconds_bucket{le="0.05"} 599996
+hermod_rule_eval_seconds_bucket{le="0.1"} 599997
+hermod_rule_eval_seconds_bucket{le="0.25"} 599997
+hermod_rule_eval_seconds_bucket{le="0.5"} 599997
+hermod_rule_eval_seconds_bucket{le="1"} 599997
+hermod_rule_eval_seconds_bucket{le="2.5"} 599997
+hermod_rule_eval_seconds_bucket{le="5"} 599997
+hermod_rule_eval_seconds_bucket{le="10"} 599997
+hermod_rule_eval_seconds_bucket{le="+Inf"} 599997
+hermod_rule_eval_seconds_sum 65.444398
+hermod_rule_eval_seconds_count 599997
+
+=== hermod-coordinator ts=20260427T032802Z ===
+# HELP hermod_messages_ingested_total MQTT messages received by the coordinator (feature-flag independent).
+# TYPE hermod_messages_ingested_total counter
+hermod_messages_ingested_total 599997
+# HELP hermod_messages_dropped_total Messages evicted from the ingest channel under DropOldest overflow. Mirror of SystemStats.MessagesDropped.
+# TYPE hermod_messages_dropped_total counter
+hermod_messages_dropped_total 0
+# HELP hermod_device_state_writes_total Device state rows written to Postgres after MQTT telemetry.
+# TYPE hermod_device_state_writes_total counter
+hermod_device_state_writes_total 0
+# HELP hermod_device_state_writes_dropped_total Device state updates evicted from the batched writer channel (pre-flush). Non-zero means the writer cannot keep up with incoming upserts.
+# TYPE hermod_device_state_writes_dropped_total counter
+hermod_device_state_writes_dropped_total 0
+# HELP hermod_device_state_flush_failed_total Device-state batches that failed to flush to Postgres (entire batch lost). Non-zero = PG is unreachable or the INSERT errored; silently dropped rows with no queue-overflow signal.
+# TYPE hermod_device_state_flush_failed_total counter
+hermod_device_state_flush_failed_total 0
+# HELP hermod_message_persistence_writes_total Rows actually written to message_history (post-flush). Previously counted at enqueue time which masked flush failures.
+# TYPE hermod_message_persistence_writes_total counter
+hermod_message_persistence_writes_total 599997
+# HELP hermod_message_persistence_dropped_total Rows evicted from the message_history writer channel under DropOldest.
+# TYPE hermod_message_persistence_dropped_total counter
+hermod_message_persistence_dropped_total 0
+# HELP hermod_message_persistence_flush_failed_total message_history batches that failed to flush to Postgres (entire batch lost).
+# TYPE hermod_message_persistence_flush_failed_total counter
+hermod_message_persistence_flush_failed_total 0
+# HELP hermod_message_history_retention_deletes_total Rows deleted by the message_history retention sweeper (post-cutoff age-out, batched DELETE).
+# TYPE hermod_message_history_retention_deletes_total counter
+hermod_message_history_retention_deletes_total 0
+# HELP hermod_message_history_retention_sweep_failed_total Retention sweep cycles that errored (transient PG outage; next interval retries).
+# TYPE hermod_message_history_retention_sweep_failed_total counter
+hermod_message_history_retention_sweep_failed_total 0
+# HELP hermod_rule_cache_hits_total Rule index lookups served from the in-memory cache.
+# TYPE hermod_rule_cache_hits_total counter
+hermod_rule_cache_hits_total 599967
+# HELP hermod_rule_cache_misses_total Rule index lookups that had to refetch from Postgres.
+# TYPE hermod_rule_cache_misses_total counter
+hermod_rule_cache_misses_total 30
+# HELP hermod_rule_audit_writes_total Rows enqueued to the rule_audit_log batched writer.
+# TYPE hermod_rule_audit_writes_total counter
+hermod_rule_audit_writes_total 599997
+# HELP hermod_rule_audit_dropped_total Rows evicted from the rule_audit_log writer channel under DropOldest.
+# TYPE hermod_rule_audit_dropped_total counter
+hermod_rule_audit_dropped_total 0
+# HELP hermod_rule_audit_flush_failed_total rule_audit_log batches that failed to flush to Postgres (entire batch lost).
+# TYPE hermod_rule_audit_flush_failed_total counter
+hermod_rule_audit_flush_failed_total 0
+# HELP hermod_stats_rollup_writes_total Counter/snapshot flushes to metrics_counters and metrics_snapshots.
+# TYPE hermod_stats_rollup_writes_total counter
+hermod_stats_rollup_writes_total 19
+# HELP hermod_mqtt_outbox_enqueued_total Publishes buffered because the MQTT client was disconnected.
+# TYPE hermod_mqtt_outbox_enqueued_total counter
+hermod_mqtt_outbox_enqueued_total 0
+# HELP hermod_mqtt_outbox_dropped_total Publishes evicted from the outbox under DropOldest overflow.
+# TYPE hermod_mqtt_outbox_dropped_total counter
+hermod_mqtt_outbox_dropped_total 0
+# HELP hermod_mqtt_outbox_drained_total Publishes replayed from the outbox on reconnect.
+# TYPE hermod_mqtt_outbox_drained_total counter
+hermod_mqtt_outbox_drained_total 0
+# HELP hermod_mqtt_reconnects_total Successful broker reconnects by the MqttService supervisor (a flaky broker shows here as a rising slope).
+# TYPE hermod_mqtt_reconnects_total counter
+hermod_mqtt_reconnects_total 0
+# HELP hermod_rule_publish_attempted_total Rule actions that attempted an MQTT publish.
+# TYPE hermod_rule_publish_attempted_total counter
+hermod_rule_publish_attempted_total 599997
+# HELP hermod_rule_publish_failed_total Rule actions whose publish threw or was dropped (bounded-channel overflow, MQTT disconnect mid-publish, serializer failure).
+# TYPE hermod_rule_publish_failed_total counter
+hermod_rule_publish_failed_total 0
+# HELP hermod_mqtt_outbox_depth Current number of publishes buffered in the MQTT reconnect outbox.
+# TYPE hermod_mqtt_outbox_depth gauge
+hermod_mqtt_outbox_depth 0
+# HELP hermod_ingest_queue_depth Current number of messages queued in the ingest channel (saturation arrives before drops).
+# TYPE hermod_ingest_queue_depth gauge
+hermod_ingest_queue_depth 0
+# HELP hermod_rule_eval_seconds Rule evaluation latency in seconds.
+# TYPE hermod_rule_eval_seconds histogram
+hermod_rule_eval_seconds_bucket{le="0.0005"} 591608
+hermod_rule_eval_seconds_bucket{le="0.001"} 596501
+hermod_rule_eval_seconds_bucket{le="0.002"} 598695
+hermod_rule_eval_seconds_bucket{le="0.005"} 599699
+hermod_rule_eval_seconds_bucket{le="0.01"} 599817
+hermod_rule_eval_seconds_bucket{le="0.025"} 599929
+hermod_rule_eval_seconds_bucket{le="0.05"} 599996
+hermod_rule_eval_seconds_bucket{le="0.1"} 599997
+hermod_rule_eval_seconds_bucket{le="0.25"} 599997
+hermod_rule_eval_seconds_bucket{le="0.5"} 599997
+hermod_rule_eval_seconds_bucket{le="1"} 599997
+hermod_rule_eval_seconds_bucket{le="2.5"} 599997
+hermod_rule_eval_seconds_bucket{le="5"} 599997
+hermod_rule_eval_seconds_bucket{le="10"} 599997
+hermod_rule_eval_seconds_bucket{le="+Inf"} 599997
+hermod_rule_eval_seconds_sum 65.444398
+hermod_rule_eval_seconds_count 599997
+

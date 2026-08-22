@@ -1,0 +1,21 @@
+# 30% on real Pi 5 8GB. OOM floor on ARM64.
+name: breaking-pi5-live-8gb
+description: Pi 5 8GB with ~30% memory/CPU budget. Expected to OOM.
+# EXPECTED DROPS + OOM-RESTART: YES on real Pi 5 8GB. This is the
+# primary evidence site for "coord degrades via DropOldest, or
+# OOMKills and restarts cleanly, rather than corrupting state". Either
+# outcome (heavy drops OR OOM-restart with fresh manifest) supports
+# the claim — compare-runs captures both via hermod_messages_dropped
+# + manifest.pod_restart_delta.
+inherits_from: baseline-pi5-live-8gb
+claims: [C1, O5]
+resources:
+  hermod-coordinator:
+    requests: { memory: "48Mi", cpu: "50m" }
+    limits:   { memory: "160Mi", cpu: "400m" }
+  nanomq:
+    requests: { memory: "12Mi", cpu: "50m" }
+    limits:   { memory: "48Mi", cpu: "200m" }
+  postgres:
+    requests: { memory: "96Mi", cpu: "100m" }
+    limits:   { memory: "320Mi", cpu: "700m" }

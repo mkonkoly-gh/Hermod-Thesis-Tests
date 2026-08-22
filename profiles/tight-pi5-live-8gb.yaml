@@ -1,0 +1,21 @@
+# 60% budget on real Pi 5 8GB. Pairs with baseline-pi5-live-8gb to
+# prove the kind-8gb degradation curve holds on ARM64 hardware.
+name: tight-pi5-live-8gb
+description: Pi 5 8GB with ~60% memory/CPU budget. Degradation test.
+# EXPECTED DROPS: YES. Unlike the laptop-kind tight twin (where the
+# 64GB host absorbs the cgroup mem pressure cheaply), on real Pi 5
+# cgroup limit == host pressure, so DropOldest fires. This profile is
+# the PRIMARY evidence site for the O5 thesis claim (graceful degradation
+# via DropOldest). Non-zero drops here are expected and measured.
+inherits_from: baseline-pi5-live-8gb
+claims: [C1, O5]
+resources:
+  hermod-coordinator:
+    requests: { memory: "96Mi", cpu: "80m" }
+    limits:   { memory: "320Mi", cpu: "700m" }
+  nanomq:
+    requests: { memory: "24Mi", cpu: "80m" }
+    limits:   { memory: "96Mi",  cpu: "350m" }
+  postgres:
+    requests: { memory: "192Mi", cpu: "150m" }
+    limits:   { memory: "640Mi", cpu: "1000m" }

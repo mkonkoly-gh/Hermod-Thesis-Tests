@@ -1,0 +1,65 @@
+# pgbench-only profile. Hand-written, frozen.
+# Single workload: postgres. pgbench drives it directly to baseline DB
+# write capacity. No Coord, no broker.
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: pgbench-only
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: hermod-secrets
+  namespace: pgbench-only
+type: Opaque
+stringData:
+  postgres-superuser-password: postgres-test-pw
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: postgres
+  namespace: pgbench-only
+spec:
+  serviceName: postgres
+  replicas: 1
+  selector: { matchLabels: { app: postgres } }
+  template:
+    metadata: { labels: { app: postgres } }
+    spec:
+      containers:
+        - name: postgres
+          image: postgres:17-alpine
+          args:
+            - -c
+            - shared_buffers=256MB
+            - -c
+            - max_connections=200
+            - -c
+            - work_mem=16MB
+          env:
+            - { name: POSTGRES_DB, value: postgres }
+            - { name: POSTGRES_USER, value: postgres }
+            - name: POSTGRES_PASSWORD
+              valueFrom: { secretKeyRef: { name: hermod-secrets, key: postgres-superuser-password } }
+          ports: [{ containerPort: 5432 }]
+          volumeMounts:
+            - { name: data, mountPath: /var/lib/postgresql/data }
+          resources:
+            requests: { memory: 256Mi, cpu: 100m }
+            limits: { memory: 1536Mi, cpu: "1500m" }
+          readinessProbe: { exec: { command: [pg_isready, -U, postgres] }, initialDelaySeconds: 5, periodSeconds: 5 }
+  volumeClaimTemplates:
+    - metadata: { name: data }
+      spec: { accessModes: [ReadWriteOnce], resources: { requests: { storage: 2Gi } } }
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: postgres
+  namespace: pgbench-only
+spec:
+  type: NodePort
+  selector: { app: postgres }
+  ports: [{ port: 5432, targetPort: 5432, nodePort: 35432 }]

@@ -1,0 +1,134 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+# Namespace gets overridden per-run by orchestrator (sed-replace before
+# kubectl apply). Default value used only for `kustomize build` smoke
+# tests.
+namespace: hermod-test
+
+resources:
+  - ../../../Hermod/kubernetes/base/namespace.yaml
+  - ../../../Hermod/kubernetes/base/nanomq/deployment.yaml
+  - ../../../Hermod/kubernetes/base/nanomq/service.yaml
+  - ../../../Hermod/kubernetes/base/nanomq/configmap.yaml
+  - ../../../Hermod/kubernetes/base/nanomq/pvc.yaml
+  - ../../../Hermod/kubernetes/base/postgres/statefulset.yaml
+  - ../../../Hermod/kubernetes/base/hermod/deployment.yaml
+  - ../../../Hermod/kubernetes/base/hermod/configmap.yaml
+  - ../../../Hermod/kubernetes/base/hermod/pvc.yaml
+  - ../../../Hermod/kubernetes/base/hermod/service.yaml
+  - ../../../Hermod/kubernetes/base/lora2mqtt/deployment.yaml
+  - ../../../Hermod/kubernetes/base/lora2mqtt/configmap.yaml
+  - ../../../Hermod/kubernetes/base/zigbee2mqtt/deployment.yaml
+  - ../../../Hermod/kubernetes/base/zigbee2mqtt/configmap.yaml
+  - ../../../Hermod/kubernetes/base/zigbee2mqtt/pvc.yaml
+  - ../../../Hermod/kubernetes/base/wifi2mqtt/deployment.yaml
+  - ../../../Hermod/kubernetes/base/wifi2mqtt/configmap.yaml
+  - ../../../Hermod/kubernetes/base/wifi2mqtt/service.yaml
+
+# All secrets generated inline with dummy/test-only values. AuthBypass=on
+# means JWKS / cookie keys aren't actually used; the literals just keep
+# the deployments' env-from-secret refs satisfied.
+secretGenerator:
+  - name: hermod-secrets
+    literals:
+      - mqtt-username=hermod
+      - mqtt-password=hermod-test
+  - name: hermod-db-credentials
+    literals:
+      - hermod-db-password=hermod-test-db-pw
+  - name: nanomq-http-admin
+    literals:
+      - http-user=admin
+      - http-password=admin-test
+  - name: nanomq-credentials
+    literals:
+      - username=hermod
+      - password=hermod-test
+  - name: vault42-secrets
+    literals:
+      - db-mig-password=test
+      - db-app-password=test
+      - signing-key-private=test
+      - signing-key-public=test
+      - cookie-encryption-key=01234567890123456789012345678901
+      - cookie-signing-key=01234567890123456789012345678901
+      - admin-bootstrap-password=test
+generatorOptions:
+  disableNameSuffixHash: true
+
+patches:
+  # Coord: drop vault42 init container, add AuthBypass env.
+  - patch: |-
+      - op: replace
+        path: /spec/template/spec/initContainers
+        value:
+          - name: wait-for-nanomq
+            image: busybox:1.36
+            command:
+              - sh
+              - -c
+              - |
+                until nc -z nanomq 1883; do sleep 2; done
+    target:
+      kind: Deployment
+      name: hermod-coordinator
+  - path: coord-patch.yaml
+    target:
+      kind: Deployment
+      name: hermod-coordinator
+  # LoRa2MQTT: drop vault42 init container, add AuthBypass env.
+  - patch: |-
+      - op: replace
+        path: /spec/template/spec/initContainers
+        value:
+          - name: wait-for-nanomq
+            image: busybox:1.36
+            command:
+              - sh
+              - -c
+              - |
+                until nc -z nanomq 1883; do sleep 2; done
+    target:
+      kind: Deployment
+      name: lora2mqtt
+  - path: lora2mqtt-patch.yaml
+    target:
+      kind: Deployment
+      name: lora2mqtt
+  # ZigBee2MQTT: scale to 0 by default (per-profile override re-enables).
+  - patch: |-
+      - op: replace
+        path: /spec/replicas
+        value: 0
+    target:
+      kind: Deployment
+      name: zigbee2mqtt
+  - patch: |-
+      - op: replace
+        path: /spec/replicas
+        value: 0
+    target:
+      kind: Deployment
+      name: wifi2mqtt
+  - patch: |-
+      - op: replace
+        path: /spec/replicas
+        value: 0
+    target:
+      kind: Deployment
+      name: lora2mqtt
+
+images:
+  - name: hermod/coordinator
+    newName: hermod-coordinator
+    newTag: latest
+  - name: lora2mqtt
+    newTag: latest
+
+labels:
+  - pairs:
+      environment: test
+      app.kubernetes.io/managed-by: kustomize
+      app.kubernetes.io/part-of: hermod-iot-translator
+    includeSelectors: false

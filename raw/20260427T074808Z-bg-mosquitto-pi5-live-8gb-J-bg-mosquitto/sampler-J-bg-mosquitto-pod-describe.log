@@ -1,0 +1,715 @@
+=== ts=1777276089 ===
+Name:             mosquitto-f6dbbb66f-wjnhx
+Namespace:        mosquitto-only
+Priority:         0
+Service Account:  default
+Node:             <pi-host>/<pi-ip>
+Start Time:       Mon, 27 Apr 2026 09:47:54 +0200
+Labels:           app=mosquitto
+                  pod-template-hash=f6dbbb66f
+Annotations:      cni.projectcalico.org/containerID: e50f3db0622dc17fe76ed01f64fe8beaaea268fa233d811f7f3d1250029fc552
+                  cni.projectcalico.org/podIP: <pod-ip>/32
+                  cni.projectcalico.org/podIPs: <pod-ip>/32
+Status:           Running
+IP:               <pod-ip>
+IPs:
+  IP:           <pod-ip>
+Controlled By:  ReplicaSet/mosquitto-f6dbbb66f
+Containers:
+  mosquitto:
+    Container ID:   containerd://12b11063e4f40a57d6e384e214dbe27b060c7ebd21e5770d0139c86c14f6e3be
+    Image:          eclipse-mosquitto:2
+    Image ID:       docker.io/library/eclipse-mosquitto@sha256:a908c65cc8e67ec9d292ef27c2c0360dbaaee7eb1b935cdd194e67697f15dea1
+    Port:           1883/TCP (mqtt)
+    Host Port:      0/TCP (mqtt)
+    State:          Running
+      Started:      Mon, 27 Apr 2026 09:47:55 +0200
+    Ready:          True
+    Restart Count:  0
+    Limits:
+      cpu:     1
+      memory:  256Mi
+    Requests:
+      cpu:        50m
+      memory:     32Mi
+    Readiness:    tcp-socket :1883 delay=3s timeout=1s period=5s #success=1 #failure=3
+    Environment:  <none>
+    Mounts:
+      /mosquitto/config/mosquitto.conf from config (rw,path="mosquitto.conf")
+      /var/run/secrets/kubernetes.io/serviceaccount from kube-api-access-8jzc9 (ro)
+Conditions:
+  Type                        Status
+  PodReadyToStartContainers   True 
+  Initialized                 True 
+  Ready                       True 
+  ContainersReady             True 
+  PodScheduled                True 
+Volumes:
+  config:
+    Type:      ConfigMap (a volume populated by a ConfigMap)
+    Name:      mosquitto-config
+    Optional:  false
+  kube-api-access-8jzc9:
+    Type:                    Projected (a volume that contains injected data from multiple sources)
+    TokenExpirationSeconds:  3607
+    ConfigMapName:           kube-root-ca.crt
+    Optional:                false
+    DownwardAPI:             true
+QoS Class:                   Burstable
+Node-Selectors:              <none>
+Tolerations:                 node.kubernetes.io/not-ready:NoExecute op=Exists for 300s
+                             node.kubernetes.io/unreachable:NoExecute op=Exists for 300s
+Events:
+  Type    Reason     Age   From               Message
+  ----    ------     ----  ----               -------
+  Normal  Scheduled  15s   default-scheduler  Successfully assigned mosquitto-only/mosquitto-f6dbbb66f-wjnhx to <pi-host>
+  Normal  Pulled     14s   kubelet            spec.containers{mosquitto}: Container image "eclipse-mosquitto:2" already present on machine
+  Normal  Created    14s   kubelet            spec.containers{mosquitto}: Created container: mosquitto
+  Normal  Started    14s   kubelet            spec.containers{mosquitto}: Started container mosquitto
+
+
+Name:             postgres-0
+Namespace:        mosquitto-only
+Priority:         0
+Service Account:  default
+Node:             <pi-host>/<pi-ip>
+Start Time:       Mon, 27 Apr 2026 09:48:00 +0200
+Labels:           app=postgres
+                  apps.kubernetes.io/pod-index=0
+                  controller-revision-hash=postgres-d5f747749
+                  statefulset.kubernetes.io/pod-name=postgres-0
+Annotations:      cni.projectcalico.org/containerID: 070865462fcdf46d5fcc8ae041b71e5e30cd871eb22bb83ee4fad6e4157239ee
+                  cni.projectcalico.org/podIP: <pod-ip>/32
+                  cni.projectcalico.org/podIPs: <pod-ip>/32
+Status:           Running
+IP:               <pod-ip>
+IPs:
+  IP:           <pod-ip>
+Controlled By:  StatefulSet/postgres
+Containers:
+  postgres:
+    Container ID:   containerd://f9d7f02535c4dee8b63add6800e0e703bda83b50200e45f22934ce9332522b51
+    Image:          postgres:17-alpine
+    Image ID:       docker.io/library/postgres@sha256:778d0b486d6daa02b77434d0358ec57a1b21fd8b6d22ac2eef56a33e816928f6
+    Port:           5432/TCP
+    Host Port:      0/TCP
+    State:          Running
+      Started:      Mon, 27 Apr 2026 09:48:01 +0200
+    Ready:          True
+    Restart Count:  0
+    Limits:
+      cpu:     1500m
+      memory:  1536Mi
+    Requests:
+      cpu:      100m
+      memory:   256Mi
+    Readiness:  exec [pg_isready -U postgres] delay=5s timeout=1s period=5s #success=1 #failure=3
+    Environment:
+      POSTGRES_DB:        postgres
+      POSTGRES_USER:      postgres
+      POSTGRES_PASSWORD:  <set to the key 'postgres-superuser-password' in secret 'hermod-secrets'>  Optional: false
+    Mounts:
+      /var/lib/postgresql/data from data (rw)
+      /var/run/secrets/kubernetes.io/serviceaccount from kube-api-access-jdrk7 (ro)
+Conditions:
+  Type                        Status
+  PodReadyToStartContainers   True 
+  Initialized                 True 
+  Ready                       True 
+  ContainersReady             True 
+  PodScheduled                True 
+Volumes:
+  data:
+    Type:       PersistentVolumeClaim (a reference to a PersistentVolumeClaim in the same namespace)
+    ClaimName:  data-postgres-0
+    ReadOnly:   false
+  kube-api-access-jdrk7:
+    Type:                    Projected (a volume that contains injected data from multiple sources)
+    TokenExpirationSeconds:  3607
+    ConfigMapName:           kube-root-ca.crt
+    Optional:                false
+    DownwardAPI:             true
+QoS Class:                   Burstable
+Node-Selectors:              <none>
+Tolerations:                 node.kubernetes.io/not-ready:NoExecute op=Exists for 300s
+                             node.kubernetes.io/unreachable:NoExecute op=Exists for 300s
+Events:
+  Type    Reason     Age   From               Message
+  ----    ------     ----  ----               -------
+  Normal  Scheduled  9s    default-scheduler  Successfully assigned mosquitto-only/postgres-0 to <pi-host>
+  Normal  Pulled     9s    kubelet            spec.containers{postgres}: Container image "postgres:17-alpine" already present on machine
+  Normal  Created    9s    kubelet            spec.containers{postgres}: Created container: postgres
+  Normal  Started    8s    kubelet            spec.containers{postgres}: Started container postgres
+
+=== ts=1777276100 ===
+Name:             mosquitto-f6dbbb66f-wjnhx
+Namespace:        mosquitto-only
+Priority:         0
+Service Account:  default
+Node:             <pi-host>/<pi-ip>
+Start Time:       Mon, 27 Apr 2026 09:47:54 +0200
+Labels:           app=mosquitto
+                  pod-template-hash=f6dbbb66f
+Annotations:      cni.projectcalico.org/containerID: e50f3db0622dc17fe76ed01f64fe8beaaea268fa233d811f7f3d1250029fc552
+                  cni.projectcalico.org/podIP: <pod-ip>/32
+                  cni.projectcalico.org/podIPs: <pod-ip>/32
+Status:           Running
+IP:               <pod-ip>
+IPs:
+  IP:           <pod-ip>
+Controlled By:  ReplicaSet/mosquitto-f6dbbb66f
+Containers:
+  mosquitto:
+    Container ID:   containerd://12b11063e4f40a57d6e384e214dbe27b060c7ebd21e5770d0139c86c14f6e3be
+    Image:          eclipse-mosquitto:2
+    Image ID:       docker.io/library/eclipse-mosquitto@sha256:a908c65cc8e67ec9d292ef27c2c0360dbaaee7eb1b935cdd194e67697f15dea1
+    Port:           1883/TCP (mqtt)
+    Host Port:      0/TCP (mqtt)
+    State:          Running
+      Started:      Mon, 27 Apr 2026 09:47:55 +0200
+    Ready:          True
+    Restart Count:  0
+    Limits:
+      cpu:     1
+      memory:  256Mi
+    Requests:
+      cpu:        50m
+      memory:     32Mi
+    Readiness:    tcp-socket :1883 delay=3s timeout=1s period=5s #success=1 #failure=3
+    Environment:  <none>
+    Mounts:
+      /mosquitto/config/mosquitto.conf from config (rw,path="mosquitto.conf")
+      /var/run/secrets/kubernetes.io/serviceaccount from kube-api-access-8jzc9 (ro)
+Conditions:
+  Type                        Status
+  PodReadyToStartContainers   True 
+  Initialized                 True 
+  Ready                       True 
+  ContainersReady             True 
+  PodScheduled                True 
+Volumes:
+  config:
+    Type:      ConfigMap (a volume populated by a ConfigMap)
+    Name:      mosquitto-config
+    Optional:  false
+  kube-api-access-8jzc9:
+    Type:                    Projected (a volume that contains injected data from multiple sources)
+    TokenExpirationSeconds:  3607
+    ConfigMapName:           kube-root-ca.crt
+    Optional:                false
+    DownwardAPI:             true
+QoS Class:                   Burstable
+Node-Selectors:              <none>
+Tolerations:                 node.kubernetes.io/not-ready:NoExecute op=Exists for 300s
+                             node.kubernetes.io/unreachable:NoExecute op=Exists for 300s
+Events:
+  Type    Reason     Age   From               Message
+  ----    ------     ----  ----               -------
+  Normal  Scheduled  26s   default-scheduler  Successfully assigned mosquitto-only/mosquitto-f6dbbb66f-wjnhx to <pi-host>
+  Normal  Pulled     25s   kubelet            spec.containers{mosquitto}: Container image "eclipse-mosquitto:2" already present on machine
+  Normal  Created    25s   kubelet            spec.containers{mosquitto}: Created container: mosquitto
+  Normal  Started    25s   kubelet            spec.containers{mosquitto}: Started container mosquitto
+
+
+Name:             postgres-0
+Namespace:        mosquitto-only
+Priority:         0
+Service Account:  default
+Node:             <pi-host>/<pi-ip>
+Start Time:       Mon, 27 Apr 2026 09:48:00 +0200
+Labels:           app=postgres
+                  apps.kubernetes.io/pod-index=0
+                  controller-revision-hash=postgres-d5f747749
+                  statefulset.kubernetes.io/pod-name=postgres-0
+Annotations:      cni.projectcalico.org/containerID: 070865462fcdf46d5fcc8ae041b71e5e30cd871eb22bb83ee4fad6e4157239ee
+                  cni.projectcalico.org/podIP: <pod-ip>/32
+                  cni.projectcalico.org/podIPs: <pod-ip>/32
+Status:           Running
+IP:               <pod-ip>
+IPs:
+  IP:           <pod-ip>
+Controlled By:  StatefulSet/postgres
+Containers:
+  postgres:
+    Container ID:   containerd://f9d7f02535c4dee8b63add6800e0e703bda83b50200e45f22934ce9332522b51
+    Image:          postgres:17-alpine
+    Image ID:       docker.io/library/postgres@sha256:778d0b486d6daa02b77434d0358ec57a1b21fd8b6d22ac2eef56a33e816928f6
+    Port:           5432/TCP
+    Host Port:      0/TCP
+    State:          Running
+      Started:      Mon, 27 Apr 2026 09:48:01 +0200
+    Ready:          True
+    Restart Count:  0
+    Limits:
+      cpu:     1500m
+      memory:  1536Mi
+    Requests:
+      cpu:      100m
+      memory:   256Mi
+    Readiness:  exec [pg_isready -U postgres] delay=5s timeout=1s period=5s #success=1 #failure=3
+    Environment:
+      POSTGRES_DB:        postgres
+      POSTGRES_USER:      postgres
+      POSTGRES_PASSWORD:  <set to the key 'postgres-superuser-password' in secret 'hermod-secrets'>  Optional: false
+    Mounts:
+      /var/lib/postgresql/data from data (rw)
+      /var/run/secrets/kubernetes.io/serviceaccount from kube-api-access-jdrk7 (ro)
+Conditions:
+  Type                        Status
+  PodReadyToStartContainers   True 
+  Initialized                 True 
+  Ready                       True 
+  ContainersReady             True 
+  PodScheduled                True 
+Volumes:
+  data:
+    Type:       PersistentVolumeClaim (a reference to a PersistentVolumeClaim in the same namespace)
+    ClaimName:  data-postgres-0
+    ReadOnly:   false
+  kube-api-access-jdrk7:
+    Type:                    Projected (a volume that contains injected data from multiple sources)
+    TokenExpirationSeconds:  3607
+    ConfigMapName:           kube-root-ca.crt
+    Optional:                false
+    DownwardAPI:             true
+QoS Class:                   Burstable
+Node-Selectors:              <none>
+Tolerations:                 node.kubernetes.io/not-ready:NoExecute op=Exists for 300s
+                             node.kubernetes.io/unreachable:NoExecute op=Exists for 300s
+Events:
+  Type    Reason     Age   From               Message
+  ----    ------     ----  ----               -------
+  Normal  Scheduled  20s   default-scheduler  Successfully assigned mosquitto-only/postgres-0 to <pi-host>
+  Normal  Pulled     20s   kubelet            spec.containers{postgres}: Container image "postgres:17-alpine" already present on machine
+  Normal  Created    20s   kubelet            spec.containers{postgres}: Created container: postgres
+  Normal  Started    19s   kubelet            spec.containers{postgres}: Started container postgres
+
+=== ts=1777276111 ===
+Name:             mosquitto-f6dbbb66f-wjnhx
+Namespace:        mosquitto-only
+Priority:         0
+Service Account:  default
+Node:             <pi-host>/<pi-ip>
+Start Time:       Mon, 27 Apr 2026 09:47:54 +0200
+Labels:           app=mosquitto
+                  pod-template-hash=f6dbbb66f
+Annotations:      cni.projectcalico.org/containerID: e50f3db0622dc17fe76ed01f64fe8beaaea268fa233d811f7f3d1250029fc552
+                  cni.projectcalico.org/podIP: <pod-ip>/32
+                  cni.projectcalico.org/podIPs: <pod-ip>/32
+Status:           Running
+IP:               <pod-ip>
+IPs:
+  IP:           <pod-ip>
+Controlled By:  ReplicaSet/mosquitto-f6dbbb66f
+Containers:
+  mosquitto:
+    Container ID:   containerd://12b11063e4f40a57d6e384e214dbe27b060c7ebd21e5770d0139c86c14f6e3be
+    Image:          eclipse-mosquitto:2
+    Image ID:       docker.io/library/eclipse-mosquitto@sha256:a908c65cc8e67ec9d292ef27c2c0360dbaaee7eb1b935cdd194e67697f15dea1
+    Port:           1883/TCP (mqtt)
+    Host Port:      0/TCP (mqtt)
+    State:          Running
+      Started:      Mon, 27 Apr 2026 09:47:55 +0200
+    Ready:          True
+    Restart Count:  0
+    Limits:
+      cpu:     1
+      memory:  256Mi
+    Requests:
+      cpu:        50m
+      memory:     32Mi
+    Readiness:    tcp-socket :1883 delay=3s timeout=1s period=5s #success=1 #failure=3
+    Environment:  <none>
+    Mounts:
+      /mosquitto/config/mosquitto.conf from config (rw,path="mosquitto.conf")
+      /var/run/secrets/kubernetes.io/serviceaccount from kube-api-access-8jzc9 (ro)
+Conditions:
+  Type                        Status
+  PodReadyToStartContainers   True 
+  Initialized                 True 
+  Ready                       True 
+  ContainersReady             True 
+  PodScheduled                True 
+Volumes:
+  config:
+    Type:      ConfigMap (a volume populated by a ConfigMap)
+    Name:      mosquitto-config
+    Optional:  false
+  kube-api-access-8jzc9:
+    Type:                    Projected (a volume that contains injected data from multiple sources)
+    TokenExpirationSeconds:  3607
+    ConfigMapName:           kube-root-ca.crt
+    Optional:                false
+    DownwardAPI:             true
+QoS Class:                   Burstable
+Node-Selectors:              <none>
+Tolerations:                 node.kubernetes.io/not-ready:NoExecute op=Exists for 300s
+                             node.kubernetes.io/unreachable:NoExecute op=Exists for 300s
+Events:
+  Type    Reason     Age   From               Message
+  ----    ------     ----  ----               -------
+  Normal  Scheduled  36s   default-scheduler  Successfully assigned mosquitto-only/mosquitto-f6dbbb66f-wjnhx to <pi-host>
+  Normal  Pulled     36s   kubelet            spec.containers{mosquitto}: Container image "eclipse-mosquitto:2" already present on machine
+  Normal  Created    36s   kubelet            spec.containers{mosquitto}: Created container: mosquitto
+  Normal  Started    36s   kubelet            spec.containers{mosquitto}: Started container mosquitto
+
+
+Name:             postgres-0
+Namespace:        mosquitto-only
+Priority:         0
+Service Account:  default
+Node:             <pi-host>/<pi-ip>
+Start Time:       Mon, 27 Apr 2026 09:48:00 +0200
+Labels:           app=postgres
+                  apps.kubernetes.io/pod-index=0
+                  controller-revision-hash=postgres-d5f747749
+                  statefulset.kubernetes.io/pod-name=postgres-0
+Annotations:      cni.projectcalico.org/containerID: 070865462fcdf46d5fcc8ae041b71e5e30cd871eb22bb83ee4fad6e4157239ee
+                  cni.projectcalico.org/podIP: <pod-ip>/32
+                  cni.projectcalico.org/podIPs: <pod-ip>/32
+Status:           Running
+IP:               <pod-ip>
+IPs:
+  IP:           <pod-ip>
+Controlled By:  StatefulSet/postgres
+Containers:
+  postgres:
+    Container ID:   containerd://f9d7f02535c4dee8b63add6800e0e703bda83b50200e45f22934ce9332522b51
+    Image:          postgres:17-alpine
+    Image ID:       docker.io/library/postgres@sha256:778d0b486d6daa02b77434d0358ec57a1b21fd8b6d22ac2eef56a33e816928f6
+    Port:           5432/TCP
+    Host Port:      0/TCP
+    State:          Running
+      Started:      Mon, 27 Apr 2026 09:48:01 +0200
+    Ready:          True
+    Restart Count:  0
+    Limits:
+      cpu:     1500m
+      memory:  1536Mi
+    Requests:
+      cpu:      100m
+      memory:   256Mi
+    Readiness:  exec [pg_isready -U postgres] delay=5s timeout=1s period=5s #success=1 #failure=3
+    Environment:
+      POSTGRES_DB:        postgres
+      POSTGRES_USER:      postgres
+      POSTGRES_PASSWORD:  <set to the key 'postgres-superuser-password' in secret 'hermod-secrets'>  Optional: false
+    Mounts:
+      /var/lib/postgresql/data from data (rw)
+      /var/run/secrets/kubernetes.io/serviceaccount from kube-api-access-jdrk7 (ro)
+Conditions:
+  Type                        Status
+  PodReadyToStartContainers   True 
+  Initialized                 True 
+  Ready                       True 
+  ContainersReady             True 
+  PodScheduled                True 
+Volumes:
+  data:
+    Type:       PersistentVolumeClaim (a reference to a PersistentVolumeClaim in the same namespace)
+    ClaimName:  data-postgres-0
+    ReadOnly:   false
+  kube-api-access-jdrk7:
+    Type:                    Projected (a volume that contains injected data from multiple sources)
+    TokenExpirationSeconds:  3607
+    ConfigMapName:           kube-root-ca.crt
+    Optional:                false
+    DownwardAPI:             true
+QoS Class:                   Burstable
+Node-Selectors:              <none>
+Tolerations:                 node.kubernetes.io/not-ready:NoExecute op=Exists for 300s
+                             node.kubernetes.io/unreachable:NoExecute op=Exists for 300s
+Events:
+  Type    Reason     Age   From               Message
+  ----    ------     ----  ----               -------
+  Normal  Scheduled  31s   default-scheduler  Successfully assigned mosquitto-only/postgres-0 to <pi-host>
+  Normal  Pulled     31s   kubelet            spec.containers{postgres}: Container image "postgres:17-alpine" already present on machine
+  Normal  Created    31s   kubelet            spec.containers{postgres}: Created container: postgres
+  Normal  Started    30s   kubelet            spec.containers{postgres}: Started container postgres
+
+=== ts=1777276121 ===
+Name:             mosquitto-f6dbbb66f-wjnhx
+Namespace:        mosquitto-only
+Priority:         0
+Service Account:  default
+Node:             <pi-host>/<pi-ip>
+Start Time:       Mon, 27 Apr 2026 09:47:54 +0200
+Labels:           app=mosquitto
+                  pod-template-hash=f6dbbb66f
+Annotations:      cni.projectcalico.org/containerID: e50f3db0622dc17fe76ed01f64fe8beaaea268fa233d811f7f3d1250029fc552
+                  cni.projectcalico.org/podIP: <pod-ip>/32
+                  cni.projectcalico.org/podIPs: <pod-ip>/32
+Status:           Running
+IP:               <pod-ip>
+IPs:
+  IP:           <pod-ip>
+Controlled By:  ReplicaSet/mosquitto-f6dbbb66f
+Containers:
+  mosquitto:
+    Container ID:   containerd://12b11063e4f40a57d6e384e214dbe27b060c7ebd21e5770d0139c86c14f6e3be
+    Image:          eclipse-mosquitto:2
+    Image ID:       docker.io/library/eclipse-mosquitto@sha256:a908c65cc8e67ec9d292ef27c2c0360dbaaee7eb1b935cdd194e67697f15dea1
+    Port:           1883/TCP (mqtt)
+    Host Port:      0/TCP (mqtt)
+    State:          Running
+      Started:      Mon, 27 Apr 2026 09:47:55 +0200
+    Ready:          True
+    Restart Count:  0
+    Limits:
+      cpu:     1
+      memory:  256Mi
+    Requests:
+      cpu:        50m
+      memory:     32Mi
+    Readiness:    tcp-socket :1883 delay=3s timeout=1s period=5s #success=1 #failure=3
+    Environment:  <none>
+    Mounts:
+      /mosquitto/config/mosquitto.conf from config (rw,path="mosquitto.conf")
+      /var/run/secrets/kubernetes.io/serviceaccount from kube-api-access-8jzc9 (ro)
+Conditions:
+  Type                        Status
+  PodReadyToStartContainers   True 
+  Initialized                 True 
+  Ready                       True 
+  ContainersReady             True 
+  PodScheduled                True 
+Volumes:
+  config:
+    Type:      ConfigMap (a volume populated by a ConfigMap)
+    Name:      mosquitto-config
+    Optional:  false
+  kube-api-access-8jzc9:
+    Type:                    Projected (a volume that contains injected data from multiple sources)
+    TokenExpirationSeconds:  3607
+    ConfigMapName:           kube-root-ca.crt
+    Optional:                false
+    DownwardAPI:             true
+QoS Class:                   Burstable
+Node-Selectors:              <none>
+Tolerations:                 node.kubernetes.io/not-ready:NoExecute op=Exists for 300s
+                             node.kubernetes.io/unreachable:NoExecute op=Exists for 300s
+Events:
+  Type    Reason     Age   From               Message
+  ----    ------     ----  ----               -------
+  Normal  Scheduled  47s   default-scheduler  Successfully assigned mosquitto-only/mosquitto-f6dbbb66f-wjnhx to <pi-host>
+  Normal  Pulled     47s   kubelet            spec.containers{mosquitto}: Container image "eclipse-mosquitto:2" already present on machine
+  Normal  Created    47s   kubelet            spec.containers{mosquitto}: Created container: mosquitto
+  Normal  Started    47s   kubelet            spec.containers{mosquitto}: Started container mosquitto
+
+
+Name:             postgres-0
+Namespace:        mosquitto-only
+Priority:         0
+Service Account:  default
+Node:             <pi-host>/<pi-ip>
+Start Time:       Mon, 27 Apr 2026 09:48:00 +0200
+Labels:           app=postgres
+                  apps.kubernetes.io/pod-index=0
+                  controller-revision-hash=postgres-d5f747749
+                  statefulset.kubernetes.io/pod-name=postgres-0
+Annotations:      cni.projectcalico.org/containerID: 070865462fcdf46d5fcc8ae041b71e5e30cd871eb22bb83ee4fad6e4157239ee
+                  cni.projectcalico.org/podIP: <pod-ip>/32
+                  cni.projectcalico.org/podIPs: <pod-ip>/32
+Status:           Running
+IP:               <pod-ip>
+IPs:
+  IP:           <pod-ip>
+Controlled By:  StatefulSet/postgres
+Containers:
+  postgres:
+    Container ID:   containerd://f9d7f02535c4dee8b63add6800e0e703bda83b50200e45f22934ce9332522b51
+    Image:          postgres:17-alpine
+    Image ID:       docker.io/library/postgres@sha256:778d0b486d6daa02b77434d0358ec57a1b21fd8b6d22ac2eef56a33e816928f6
+    Port:           5432/TCP
+    Host Port:      0/TCP
+    State:          Running
+      Started:      Mon, 27 Apr 2026 09:48:01 +0200
+    Ready:          True
+    Restart Count:  0
+    Limits:
+      cpu:     1500m
+      memory:  1536Mi
+    Requests:
+      cpu:      100m
+      memory:   256Mi
+    Readiness:  exec [pg_isready -U postgres] delay=5s timeout=1s period=5s #success=1 #failure=3
+    Environment:
+      POSTGRES_DB:        postgres
+      POSTGRES_USER:      postgres
+      POSTGRES_PASSWORD:  <set to the key 'postgres-superuser-password' in secret 'hermod-secrets'>  Optional: false
+    Mounts:
+      /var/lib/postgresql/data from data (rw)
+      /var/run/secrets/kubernetes.io/serviceaccount from kube-api-access-jdrk7 (ro)
+Conditions:
+  Type                        Status
+  PodReadyToStartContainers   True 
+  Initialized                 True 
+  Ready                       True 
+  ContainersReady             True 
+  PodScheduled                True 
+Volumes:
+  data:
+    Type:       PersistentVolumeClaim (a reference to a PersistentVolumeClaim in the same namespace)
+    ClaimName:  data-postgres-0
+    ReadOnly:   false
+  kube-api-access-jdrk7:
+    Type:                    Projected (a volume that contains injected data from multiple sources)
+    TokenExpirationSeconds:  3607
+    ConfigMapName:           kube-root-ca.crt
+    Optional:                false
+    DownwardAPI:             true
+QoS Class:                   Burstable
+Node-Selectors:              <none>
+Tolerations:                 node.kubernetes.io/not-ready:NoExecute op=Exists for 300s
+                             node.kubernetes.io/unreachable:NoExecute op=Exists for 300s
+Events:
+  Type    Reason     Age   From               Message
+  ----    ------     ----  ----               -------
+  Normal  Scheduled  41s   default-scheduler  Successfully assigned mosquitto-only/postgres-0 to <pi-host>
+  Normal  Pulled     42s   kubelet            spec.containers{postgres}: Container image "postgres:17-alpine" already present on machine
+  Normal  Created    42s   kubelet            spec.containers{postgres}: Created container: postgres
+  Normal  Started    41s   kubelet            spec.containers{postgres}: Started container postgres
+
+=== ts=1777276132 ===
+Name:             mosquitto-f6dbbb66f-wjnhx
+Namespace:        mosquitto-only
+Priority:         0
+Service Account:  default
+Node:             <pi-host>/<pi-ip>
+Start Time:       Mon, 27 Apr 2026 09:47:54 +0200
+Labels:           app=mosquitto
+                  pod-template-hash=f6dbbb66f
+Annotations:      cni.projectcalico.org/containerID: e50f3db0622dc17fe76ed01f64fe8beaaea268fa233d811f7f3d1250029fc552
+                  cni.projectcalico.org/podIP: <pod-ip>/32
+                  cni.projectcalico.org/podIPs: <pod-ip>/32
+Status:           Running
+IP:               <pod-ip>
+IPs:
+  IP:           <pod-ip>
+Controlled By:  ReplicaSet/mosquitto-f6dbbb66f
+Containers:
+  mosquitto:
+    Container ID:   containerd://12b11063e4f40a57d6e384e214dbe27b060c7ebd21e5770d0139c86c14f6e3be
+    Image:          eclipse-mosquitto:2
+    Image ID:       docker.io/library/eclipse-mosquitto@sha256:a908c65cc8e67ec9d292ef27c2c0360dbaaee7eb1b935cdd194e67697f15dea1
+    Port:           1883/TCP (mqtt)
+    Host Port:      0/TCP (mqtt)
+    State:          Running
+      Started:      Mon, 27 Apr 2026 09:47:55 +0200
+    Ready:          True
+    Restart Count:  0
+    Limits:
+      cpu:     1
+      memory:  256Mi
+    Requests:
+      cpu:        50m
+      memory:     32Mi
+    Readiness:    tcp-socket :1883 delay=3s timeout=1s period=5s #success=1 #failure=3
+    Environment:  <none>
+    Mounts:
+      /mosquitto/config/mosquitto.conf from config (rw,path="mosquitto.conf")
+      /var/run/secrets/kubernetes.io/serviceaccount from kube-api-access-8jzc9 (ro)
+Conditions:
+  Type                        Status
+  PodReadyToStartContainers   True 
+  Initialized                 True 
+  Ready                       True 
+  ContainersReady             True 
+  PodScheduled                True 
+Volumes:
+  config:
+    Type:      ConfigMap (a volume populated by a ConfigMap)
+    Name:      mosquitto-config
+    Optional:  false
+  kube-api-access-8jzc9:
+    Type:                    Projected (a volume that contains injected data from multiple sources)
+    TokenExpirationSeconds:  3607
+    ConfigMapName:           kube-root-ca.crt
+    Optional:                false
+    DownwardAPI:             true
+QoS Class:                   Burstable
+Node-Selectors:              <none>
+Tolerations:                 node.kubernetes.io/not-ready:NoExecute op=Exists for 300s
+                             node.kubernetes.io/unreachable:NoExecute op=Exists for 300s
+Events:
+  Type    Reason     Age   From               Message
+  ----    ------     ----  ----               -------
+  Normal  Scheduled  58s   default-scheduler  Successfully assigned mosquitto-only/mosquitto-f6dbbb66f-wjnhx to <pi-host>
+  Normal  Pulled     57s   kubelet            spec.containers{mosquitto}: Container image "eclipse-mosquitto:2" already present on machine
+  Normal  Created    57s   kubelet            spec.containers{mosquitto}: Created container: mosquitto
+  Normal  Started    57s   kubelet            spec.containers{mosquitto}: Started container mosquitto
+
+
+Name:             postgres-0
+Namespace:        mosquitto-only
+Priority:         0
+Service Account:  default
+Node:             <pi-host>/<pi-ip>
+Start Time:       Mon, 27 Apr 2026 09:48:00 +0200
+Labels:           app=postgres
+                  apps.kubernetes.io/pod-index=0
+                  controller-revision-hash=postgres-d5f747749
+                  statefulset.kubernetes.io/pod-name=postgres-0
+Annotations:      cni.projectcalico.org/containerID: 070865462fcdf46d5fcc8ae041b71e5e30cd871eb22bb83ee4fad6e4157239ee
+                  cni.projectcalico.org/podIP: <pod-ip>/32
+                  cni.projectcalico.org/podIPs: <pod-ip>/32
+Status:           Running
+IP:               <pod-ip>
+IPs:
+  IP:           <pod-ip>
+Controlled By:  StatefulSet/postgres
+Containers:
+  postgres:
+    Container ID:   containerd://f9d7f02535c4dee8b63add6800e0e703bda83b50200e45f22934ce9332522b51
+    Image:          postgres:17-alpine
+    Image ID:       docker.io/library/postgres@sha256:778d0b486d6daa02b77434d0358ec57a1b21fd8b6d22ac2eef56a33e816928f6
+    Port:           5432/TCP
+    Host Port:      0/TCP
+    State:          Running
+      Started:      Mon, 27 Apr 2026 09:48:01 +0200
+    Ready:          True
+    Restart Count:  0
+    Limits:
+      cpu:     1500m
+      memory:  1536Mi
+    Requests:
+      cpu:      100m
+      memory:   256Mi
+    Readiness:  exec [pg_isready -U postgres] delay=5s timeout=1s period=5s #success=1 #failure=3
+    Environment:
+      POSTGRES_DB:        postgres
+      POSTGRES_USER:      postgres
+      POSTGRES_PASSWORD:  <set to the key 'postgres-superuser-password' in secret 'hermod-secrets'>  Optional: false
+    Mounts:
+      /var/lib/postgresql/data from data (rw)
+      /var/run/secrets/kubernetes.io/serviceaccount from kube-api-access-jdrk7 (ro)
+Conditions:
+  Type                        Status
+  PodReadyToStartContainers   True 
+  Initialized                 True 
+  Ready                       True 
+  ContainersReady             True 
+  PodScheduled                True 
+Volumes:
+  data:
+    Type:       PersistentVolumeClaim (a reference to a PersistentVolumeClaim in the same namespace)
+    ClaimName:  data-postgres-0
+    ReadOnly:   false
+  kube-api-access-jdrk7:
+    Type:                    Projected (a volume that contains injected data from multiple sources)
+    TokenExpirationSeconds:  3607
+    ConfigMapName:           kube-root-ca.crt
+    Optional:                false
+    DownwardAPI:             true
+QoS Class:                   Burstable
+Node-Selectors:              <none>
+Tolerations:                 node.kubernetes.io/not-ready:NoExecute op=Exists for 300s
+                             node.kubernetes.io/unreachable:NoExecute op=Exists for 300s
+Events:
+  Type    Reason     Age   From               Message
+  ----    ------     ----  ----               -------
+  Normal  Scheduled  52s   default-scheduler  Successfully assigned mosquitto-only/postgres-0 to <pi-host>
+  Normal  Pulled     52s   kubelet            spec.containers{postgres}: Container image "postgres:17-alpine" already present on machine
+  Normal  Created    52s   kubelet            spec.containers{postgres}: Created container: postgres
+  Normal  Started    51s   kubelet            spec.containers{postgres}: Started container postgres
+

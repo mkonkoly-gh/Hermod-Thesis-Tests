@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: hermod-coordinator
+spec:
+  template:
+    spec:
+      containers:
+        - name: hermod-coordinator
+          env:
+            - name: Hermod__Security__AuthBypass
+              value: "true"
+            - name: Hermod__Security__VaultRequireHttps
+              value: "false"
+            - name: Hermod__Mqtt__UseTls
+              value: "false"
+            - name: Hermod__Mqtt__Host
+              value: "nanomq"
+            - name: ASPNETCORE_URLS
+              value: "http://+:42069"
+            - name: ConnectionStrings__Hermod
+              value: "Host=postgres;Port=5432;Database=hermod;Username=hermod_app;Password=hermod-test-db-pw"

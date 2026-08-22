@@ -1,0 +1,16 @@
+# pgbench-only — Postgres alone. RQ2 μ_storage.
+# A separate pgbench Job is launched against postgres (not Coordinator).
+# Job manifest lives in the orchestrator's hands: it kubectl-applies a
+# small Job spec, waits for it to finish, captures the c=1/c=25/c=100
+# output, then deletes it. Postgres remains a StatefulSet; we just
+# leave it at replicas=1.
+namespace: hermod-prod
+scale:
+  hermod-coordinator: 0
+  nanomq: 0
+  vault42: 0
+  postgres: 1
+  lora2mqtt: 0
+  wifi2mqtt: 0
+  zigbee2mqtt: 0
+  omg-ble: 0

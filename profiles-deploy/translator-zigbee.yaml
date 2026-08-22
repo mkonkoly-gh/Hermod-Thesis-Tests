@@ -1,0 +1,253 @@
+# translator-zigbee profile. Hand-written, frozen.
+# Full Coord stack + zigbee2mqtt running alongside. Measures Coord
+# throughput when a zigbee2mqtt translator is co-resident on the Pi
+# (resource-pressure background). zigbee2mqtt runs hardware-less
+# (mock) — no /dev/ttyUSB0 mount means it'll log "adapter unavailable"
+# but stays Running and consumes ~50–100 MB.
+---
+apiVersion: v1
+kind: Namespace
+metadata: { name: translator-zigbee }
+---
+apiVersion: v1
+kind: Secret
+metadata: { name: hermod-secrets, namespace: translator-zigbee }
+type: Opaque
+stringData:
+  mqtt-username: hermod
+  mqtt-password: hermod-test
+  postgres-superuser-password: postgres-test-pw
+---
+apiVersion: v1
+kind: Secret
+metadata: { name: hermod-db-credentials, namespace: translator-zigbee }
+type: Opaque
+stringData:
+  hermod-db-password: hermod-test-db-pw
+---
+apiVersion: v1
+kind: ConfigMap
+metadata: { name: nanomq-config, namespace: translator-zigbee }
+data:
+  nanomq.conf: |
+    mqtt { property_size = 32; max_packet_size = 256KB; max_mqueue_len = 2048; retry_interval = 10s; keepalive_multiplier = 1.25 }
+    listeners.tcp { bind = "0.0.0.0:1883" }
+    http_server { port = 8081; limit_conn = 32; username = admin; password = admin-test; auth_type = basic }
+    log { to = [console]; level = error }
+    auth { allow_anonymous = true; no_match = allow; deny_action = ignore }
+---
+apiVersion: v1
+kind: ConfigMap
+metadata: { name: postgres-init, namespace: translator-zigbee }
+data:
+  init.sql: |
+    CREATE DATABASE hermod;
+    CREATE ROLE hermod_app WITH LOGIN PASSWORD 'hermod-test-db-pw';
+    GRANT ALL PRIVILEGES ON DATABASE hermod TO hermod_app;
+    \c hermod
+    GRANT ALL ON SCHEMA public TO hermod_app;
+---
+apiVersion: v1
+kind: ConfigMap
+metadata: { name: zigbee2mqtt-config, namespace: translator-zigbee }
+data:
+  configuration.yaml: |
+    homeassistant: false
+    permit_join: false
+    mqtt:
+      base_topic: zigbee
+      server: mqtt://nanomq:1883
+      keepalive: 60
+      reject_unauthorized: false
+      version: 5
+    serial:
+      port: /dev/ttyUSB0
+      adapter: ember
+      baudrate: 115200
+    frontend:
+      port: 8080
+      host: 0.0.0.0
+    advanced:
+      log_level: error
+      log_output: [console]
+      pan_id: GENERATE
+      ext_pan_id: GENERATE
+      channel: 11
+      network_key: GENERATE
+      transmit_power: 20
+    device_options:
+      legacy: false
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata: { name: postgres, namespace: translator-zigbee }
+spec:
+  serviceName: postgres
+  replicas: 1
+  selector: { matchLabels: { app: postgres } }
+  template:
+    metadata: { labels: { app: postgres } }
+    spec:
+      containers:
+        - name: postgres
+          image: postgres:17-alpine
+          env:
+            - { name: POSTGRES_DB, value: postgres }
+            - { name: POSTGRES_USER, value: postgres }
+            - name: POSTGRES_PASSWORD
+              valueFrom: { secretKeyRef: { name: hermod-secrets, key: postgres-superuser-password } }
+          ports: [{ containerPort: 5432 }]
+          volumeMounts:
+            - { name: data, mountPath: /var/lib/postgresql/data }
+            - { name: init, mountPath: /docker-entrypoint-initdb.d }
+          resources:
+            requests: { memory: 256Mi, cpu: 100m }
+            limits: { memory: 1536Mi, cpu: "1500m" }
+          readinessProbe: { exec: { command: [pg_isready, -U, postgres] }, initialDelaySeconds: 5, periodSeconds: 5 }
+      volumes:
+        - { name: init, configMap: { name: postgres-init } }
+  volumeClaimTemplates:
+    - metadata: { name: data }
+      spec: { accessModes: [ReadWriteOnce], resources: { requests: { storage: 2Gi } } }
+---
+apiVersion: v1
+kind: Service
+metadata: { name: postgres, namespace: translator-zigbee }
+spec:
+  selector: { app: postgres }
+  ports: [{ port: 5432, targetPort: 5432 }]
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata: { name: nanomq, namespace: translator-zigbee }
+spec:
+  replicas: 1
+  strategy: { type: Recreate }
+  selector: { matchLabels: { app: nanomq } }
+  template:
+    metadata: { labels: { app: nanomq } }
+    spec:
+      containers:
+        - name: nanomq
+          image: emqx/nanomq:0.21-slim
+          ports:
+            - { name: mqtt, containerPort: 1883 }
+            - { name: http, containerPort: 8081 }
+          volumeMounts:
+            - { name: config, mountPath: /etc/nanomq.conf, subPath: nanomq.conf }
+          resources:
+            requests: { memory: 64Mi, cpu: 50m }
+            limits: { memory: 512Mi, cpu: 1 }
+          readinessProbe: { tcpSocket: { port: 1883 }, initialDelaySeconds: 3, periodSeconds: 5 }
+      volumes:
+        - { name: config, configMap: { name: nanomq-config } }
+---
+apiVersion: v1
+kind: Service
+metadata: { name: nanomq, namespace: translator-zigbee }
+spec:
+  type: NodePort
+  selector: { app: nanomq }
+  ports:
+    - { name: mqtt, port: 1883, targetPort: 1883, nodePort: 31883 }
+    - { name: http, port: 8081, targetPort: 8081 }
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata: { name: hermod-coordinator, namespace: translator-zigbee }
+spec:
+  replicas: 1
+  strategy: { type: Recreate }
+  selector: { matchLabels: { app: hermod-coordinator } }
+  template:
+    metadata: { labels: { app: hermod-coordinator } }
+    spec:
+      initContainers:
+        - { name: wait-for-postgres, image: busybox:1.36, command: [sh, -c, "until nc -z postgres 5432; do sleep 2; done"] }
+        - { name: wait-for-nanomq,   image: busybox:1.36, command: [sh, -c, "until nc -z nanomq 1883; do sleep 2; done"] }
+      containers:
+        - name: hermod-coordinator
+          image: hermod-coordinator:latest
+          imagePullPolicy: Never
+          ports: [{ name: http, containerPort: 42069 }]
+          env:
+            - { name: ASPNETCORE_ENVIRONMENT, value: Production }
+            - { name: ASPNETCORE_URLS, value: "http://+:42069" }
+            - { name: DOTNET_USE_POLLING_FILE_WATCHER, value: "true" }
+            - { name: Hermod__Security__AuthBypass, value: "true" }
+            - { name: Hermod__Security__VaultRequireHttps, value: "false" }
+            - { name: Hermod__Features__MetricsEndpoint, value: "true" }
+            - { name: Hermod__Dev__Endpoints, value: "true" }
+            - { name: Hermod__Mqtt__Host, value: nanomq }
+            - { name: Hermod__Mqtt__Port, value: "1883" }
+            - { name: Hermod__Mqtt__UseTls, value: "false" }
+            - { name: Hermod__Mqtt__Tls__UseTls, value: "false" }
+            - name: Hermod__Mqtt__Username
+              valueFrom: { secretKeyRef: { name: hermod-secrets, key: mqtt-username } }
+            - name: Hermod__Mqtt__Password
+              valueFrom: { secretKeyRef: { name: hermod-secrets, key: mqtt-password } }
+            - { name: Hermod__Database__ConnectionString, value: "Host=postgres;Port=5432;Database=hermod;Username=hermod_app" }
+            - name: Hermod__Database__Password
+              valueFrom: { secretKeyRef: { name: hermod-db-credentials, key: hermod-db-password } }
+          resources:
+            requests: { memory: 256Mi, cpu: 200m }
+            limits: { memory: 1536Mi, cpu: "1500m" }
+          startupProbe: { httpGet: { path: /healthz, port: 42069, scheme: HTTP }, failureThreshold: 30, periodSeconds: 5 }
+          readinessProbe: { httpGet: { path: /healthz/ready, port: 42069, scheme: HTTP }, initialDelaySeconds: 5, periodSeconds: 10 }
+          livenessProbe: { httpGet: { path: /healthz, port: 42069, scheme: HTTP }, initialDelaySeconds: 60, periodSeconds: 30 }
+---
+apiVersion: v1
+kind: Service
+metadata: { name: hermod-coordinator, namespace: translator-zigbee }
+spec:
+  type: NodePort
+  selector: { app: hermod-coordinator }
+  ports: [{ name: http, port: 42069, targetPort: 42069, nodePort: 42069 }]
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata: { name: zigbee2mqtt, namespace: translator-zigbee }
+spec:
+  replicas: 1
+  strategy: { type: Recreate }
+  selector: { matchLabels: { app: zigbee2mqtt } }
+  template:
+    metadata: { labels: { app: zigbee2mqtt } }
+    spec:
+      nodeSelector: { hermod.io/zigbee: "true" }
+      # zigbee2mqtt rewrites configuration.yaml on every schema migration
+      # (most container starts trigger one). A subPath-mount from a
+      # ConfigMap is read-only, which makes the migration step fail with
+      # `EROFS` and the container CrashLoopBackOff. Init-copy the config
+      # into the writable emptyDir so the main container can rewrite it.
+      initContainers:
+        - name: seed-config
+          image: busybox:latest
+          imagePullPolicy: IfNotPresent
+          command: [sh, -c, "cp /tmp/cm/configuration.yaml /app/data/configuration.yaml && chmod 0644 /app/data/configuration.yaml"]
+          volumeMounts:
+            - { name: data, mountPath: /app/data }
+            - { name: config-cm, mountPath: /tmp/cm }
+      containers:
+        - name: zigbee2mqtt
+          image: koenkk/zigbee2mqtt:latest
+          imagePullPolicy: IfNotPresent
+          ports: [{ name: http, containerPort: 8080 }]
+          env:
+            - { name: TZ, value: "Europe/Bratislava" }
+            - name: ZIGBEE2MQTT_CONFIG_MQTT_USER
+              valueFrom: { secretKeyRef: { name: hermod-secrets, key: mqtt-username } }
+            - name: ZIGBEE2MQTT_CONFIG_MQTT_PASSWORD
+              valueFrom: { secretKeyRef: { name: hermod-secrets, key: mqtt-password } }
+          securityContext: { privileged: true }   # USB device access
+          volumeMounts:
+            - { name: data, mountPath: /app/data }
+            - { name: zigbee-device, mountPath: /dev/ttyUSB0 }
+          resources:
+            requests: { memory: 128Mi, cpu: 100m }
+            limits: { memory: 512Mi, cpu: 1 }
+      volumes:
+        - { name: data, emptyDir: {} }
+        - { name: config-cm, configMap: { name: zigbee2mqtt-config } }
+        - name: zigbee-device
+          hostPath: { path: /dev/ttyUSB0, type: CharDevice }

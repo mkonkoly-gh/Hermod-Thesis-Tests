@@ -1,0 +1,27 @@
+# Background characterisation: Theengs / BLE2MQTT with REAL BLE traffic.
+# Field observation (V's prod-pi deployment): peaks ~24 msg/s when
+# broadcasting all paired device states. This profile passively records
+# 5 minutes of that traffic so the campaign has a citable number for
+# "ambient translator background".
+#
+# No load_gen pressure — load.devices=0 idles the publisher. The MQTT
+# trace side-car captures every frame the broker sees, gzipped, into
+# the run dir for offline analysis.
+name: bg-theengs-pi5-live-8gb
+description: Passive 5-min observation of Theengs/BLE2MQTT real traffic.
+inherits_from: baseline-pi5-live-8gb
+hardware_target: pi5-live
+claims: [O3]
+
+load:
+  devices: 0
+  rate_per_device_hz: 0
+  ramp_from_msg_per_sec: 0
+
+run:
+  warmup_sec: 30
+  measure_sec: 300
+  cooldown_sec: 30
+  repeats: 1
+  env:
+    HERMOD_MQTT_TRACE: "1"

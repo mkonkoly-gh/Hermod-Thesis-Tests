@@ -1,0 +1,134 @@
+# Anchor profile. Simulates a Pi 5 8GB target via kind cgroup limits. Every
+# feature flag is ON so OFAT variants can flip exactly one thing at a time
+# and compare-runs attributes the delta to that flag.
+name: baseline-kind-8gb
+description: Pi 5 8GB-equivalent baseline; all features on; load mix matches expected IoT traffic.
+hardware_target: laptop-kind-8gb
+claims: [C1, C4, O3, O5]
+
+# Total memory limits sum: 512 + 128 + 1024 + 128 + 256 + 64 = 2112 MiB.
+# Doubled preflight threshold: ~4.2 GiB free required. Comfortable on 64GB.
+resources:
+  # Bumped 2026-04-25: observed peak was only 118Mi/118m on cycle96 baseline
+  # (well under old 512Mi cap), but the 1-core CPU limit starved the ASP.NET
+  # thread pool under sustained load — /healthz blocked behind MQTT ingest +
+  # PG flushes → liveness probe failed → container restart → counter reset.
+  # Pi 5 8GB has ~7.6 GiB usable; 1 GiB for coord + 256Mi nanomq + 1 GiB
+  # postgres + 256Mi vault42 + translators ≈ 3 GiB committed, leaving ~4.5
+  # GiB free. CPU bumped to 2 cores so probe + ingest don't compete on the
+  # same thread.
+  hermod-coordinator:
+    requests: { memory: "256Mi", cpu: "200m" }
+    limits:   { memory: "1Gi",   cpu: "2000m" }
+  nanomq:
+    requests: { memory: "32Mi",  cpu: "100m" }
+    limits:   { memory: "128Mi", cpu: "500m" }
+  postgres:
+    requests: { memory: "256Mi", cpu: "200m" }
+    limits:   { memory: "1Gi",   cpu: "1500m" }
+  vault42:
+    requests: { memory: "32Mi",  cpu: "50m" }
+    limits:   { memory: "128Mi", cpu: "200m" }
+  lora2mqtt:
+    requests: { memory: "32Mi",  cpu: "50m" }
+    limits:   { memory: "256Mi", cpu: "250m" }
+  wifi2mqtt:
+    requests: { memory: "12Mi",  cpu: "14m" }
+    limits:   { memory: "64Mi",  cpu: "100m" }
+
+features:
+  device_state_tracking: true
+  message_persistence: true
+  rule_audit_log: true
+  stats_rollup: true
+  rule_cache: true
+  metrics_endpoint: true
+  storage_mode: Postgres
+  storage_write_batch_size: 256
+  storage_write_flush_interval_ms: 500
+  storage_write_queue_capacity: 50000
+  storage_max_pool_size: 50
+  storage_min_pool_size: 5
+  storage_command_timeout_sec: 30
+  storage_keepalive_sec: 30
+  storage_max_auto_prepare: 20
+  storage_skip_device_existence_check: true
+  storage_fast_device_upserts: true
+  engine_parallelism: 0
+  engine_batch_size: 64
+  engine_queue_capacity: 10000
+  engine_log_batching: true
+  engine_log_batch_size: 100
+  engine_log_batch_interval_ms: 1000
+  engine_rule_cache_refresh_sec: 5
+  mqtt_reconnect_buffer: 1000
+  seed_devices: false
+  seed_rules: false
+  # Was false (production-like, JWT-gated /metrics). Flipped 2026-04-25
+  # because vault42 pod restarts mid-matrix invalidated cached JWTs and
+  # the scrape-retry cascade couldn't recover for 60+s stretches —
+  # baseline-kind-8gb cycle88 saw 4 scrape misses, no-cache 6. Anonymous
+  # /metrics under matrix is fine: thesis claim is throughput, not auth
+  # surface. RQ13 has its own dedicated frontend-auth-tests profile
+  # that runs with dev_endpoints=false.
+  dev_endpoints: true
+
+broker:
+  max_inflight: 1024
+  max_mqueue: 8192
+  cache_size: 32MB
+
+# Synthetic-load mix. Ratios reflect expected IoT deployment where zigbee
+# dominates, lora is regional, wifi is bursty, bluetooth is short-range.
+# EXPECTED DROPS: ZERO.
+# Paired-device design (matrix-prep cycle 64): seed_rules creates one
+# rule per src device, matching EXACTLY `{proto}/src_{i:04d}` and
+# publishing to `routed/{proto}/{i:04d}` (outside coord's subscription
+# set: zigbee|lora|wifi|bluetooth|hermod/#). load_gen sends ONLY to
+# src_{i} topics. Net amp = 1.0× — ingested_total = exactly what
+# load_gen published. Cycle 64 verified 7500 sent → 7557 ingested, 0
+# dropped over 15s. The old wildcard-rule design (cycle 62) gave
+# 12.98× amp with bursty peaks that silently leaked drops on baseline.
+load:
+  devices: 300
+  rate_per_device_hz: 3.0
+  ramp_from_msg_per_sec: 100
+  mix:
+    zigbee: 0.5
+    lora: 0.3
+    wifi: 0.15
+    bluetooth: 0.05
+  state_change_ratio: 0.3
+  rule_trigger_ratio: 0.1
+  burst:
+    enabled: false
+    peak_multiplier: 5
+    period_sec: 30
+
+run:
+  warmup_sec: 10
+  measure_sec: 30
+  cooldown_sec: 15
+  repeats: 3
+
+tests:
+  runners: [functional, performance, e2e]
+  rate_ceiling_rates: [10, 25, 50, 100, 250, 500, 1000]
+  rate_ceiling_dur_sec: 30
+  rate_ceiling_loss_pct: 5
+  latency_iterations: 100
+  stability_duration_sec: 60
+  soak_minutes: 5
+  skip_latency: false
+  skip_frontend_stats: false
+
+logging:
+  hermod_level: Information
+  aspnet_level: Warning
+
+observability:
+  capture_top: true
+  capture_errors: true
+  capture_crashes: true
+  capture_metrics: true
+  latency_probe: true

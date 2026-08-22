@@ -1,0 +1,24 @@
+# Background characterisation: Mosquitto alone, no clients connecting.
+# Captures the broker's $SYS/ heartbeat — clients_connected,
+# bytes_sent, retained_messages, etc. — at zero application load.
+# Establishes the Mosquitto baseline below which any μ_mosquitto
+# measurement is noise.
+name: bg-mosquitto-pi5-live-8gb
+description: Passive 5-min observation of Mosquitto $SYS/ chatter (no clients).
+inherits_from: baseline-pi5-live-8gb
+hardware_target: pi5-live
+claims: [O3]
+
+load:
+  devices: 0
+  rate_per_device_hz: 0
+  ramp_from_msg_per_sec: 0
+
+run:
+  warmup_sec: 15
+  measure_sec: 300
+  cooldown_sec: 15
+  repeats: 1
+  env:
+    HERMOD_MQTT_TRACE: "1"
+    HERMOD_MQTT_TRACE_PORT: "31984"   # Mosquitto NodePort, not NanoMQ's 31983

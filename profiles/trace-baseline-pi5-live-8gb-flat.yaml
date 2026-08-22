@@ -1,0 +1,21 @@
+# Pi 5 trace-baseline at flat shape with UUID timestamp recorder ON.
+# Required by RQ7/RQ8 — the existing trace-baseline-pi5-live-8gb runs in
+# tests/results/ have NO trace-r*.csv because HERMOD_UUID_TRACE_ENABLED was
+# off. This profile bakes the flag in via run.env so run-profile-pi.sh
+# doesn't have to remember.
+name: trace-baseline-pi5-live-8gb-flat
+description: Pi 5 trace baseline (flat shape) — UUID-instrumented for φ_safe / φ_live.
+inherits_from: trace-baseline-pi5-live-8gb
+claims: [O3, O4]
+
+# Flat shape: ramp_from = rate_target so loadgen does not ramp.
+load:
+  ramp_from_msg_per_sec: 900
+
+run:
+  warmup_sec: 15
+  measure_sec: 30
+  cooldown_sec: 15
+  repeats: 3
+  env:
+    HERMOD_UUID_TRACE_ENABLED: "true"

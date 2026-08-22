@@ -1,0 +1,23 @@
+# Background characterisation: ZigBee2MQTT with no paired devices.
+# Captures the bridge's idle chatter — bridge state announcements,
+# permit-join state, network-map polls. Useful to argue "the translator
+# is silent at idle" or to surface unexpected periodic publishes that
+# would inflate Coordinator inbound queue at zero load.
+name: bg-zigbee-pi5-live-8gb
+description: Passive 5-min observation of ZigBee2MQTT idle chatter (no paired devices).
+inherits_from: baseline-pi5-live-8gb
+hardware_target: pi5-live
+claims: [O3]
+
+load:
+  devices: 0
+  rate_per_device_hz: 0
+  ramp_from_msg_per_sec: 0
+
+run:
+  warmup_sec: 30
+  measure_sec: 300
+  cooldown_sec: 30
+  repeats: 1
+  env:
+    HERMOD_MQTT_TRACE: "1"

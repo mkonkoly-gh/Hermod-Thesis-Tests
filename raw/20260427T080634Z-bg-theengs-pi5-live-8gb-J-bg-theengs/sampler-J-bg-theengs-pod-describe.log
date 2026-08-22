@@ -1,0 +1,3478 @@
+=== ts=1777277194 ===
+Name:                      hermod-coordinator-6b6ff849ff-mjrpq
+Namespace:                 translator-ble
+Priority:                  0
+Service Account:           default
+Node:                      <pi-host>/<pi-ip>
+Start Time:                Mon, 27 Apr 2026 10:06:13 +0200
+Labels:                    app=hermod-coordinator
+                           pod-template-hash=6b6ff849ff
+Annotations:               cni.projectcalico.org/containerID: 9147b944ad29f55e50e18086b9d184b7a770f242547988d441f7f510ea3fb735
+                           cni.projectcalico.org/podIP: <pod-ip>/32
+                           cni.projectcalico.org/podIPs: <pod-ip>/32
+Status:                    Terminating (lasts <invalid>)
+Termination Grace Period:  30s
+IP:                        <pod-ip>
+IPs:
+  IP:           <pod-ip>
+Controlled By:  ReplicaSet/hermod-coordinator-6b6ff849ff
+Init Containers:
+  wait-for-postgres:
+    Container ID:  containerd://b3df4f6309c9ff70775d2187cb4f0f402cdcf0a23e4be8d3cb405f24aefc5e88
+    Image:         busybox:1.36
+    Image ID:      docker.io/library/busybox@sha256:73aaf090f3d85aa34ee199857f03fa3a95c8ede2ffd4cc2cdb5b94e566b11662
+    Port:          <none>
+    Host Port:     <none>
+    Command:
+      sh
+      -c
+      until nc -z postgres 5432; do sleep 2; done
+    State:          Terminated
+      Reason:       Completed
+      Exit Code:    0
+      Started:      Mon, 27 Apr 2026 10:06:14 +0200
+      Finished:     Mon, 27 Apr 2026 10:06:26 +0200
+    Ready:          True
+    Restart Count:  0
+    Environment:    <none>
+    Mounts:
+      /var/run/secrets/kubernetes.io/serviceaccount from kube-api-access-jknzg (ro)
+  wait-for-nanomq:
+    Container ID:  containerd://b0e927d4d9383960ffc57afa51308f054fc85d824d52e7224992782465bb88a2
+    Image:         busybox:1.36
+    Image ID:      docker.io/library/busybox@sha256:73aaf090f3d85aa34ee199857f03fa3a95c8ede2ffd4cc2cdb5b94e566b11662
+    Port:          <none>
+    Host Port:     <none>
+    Command:
+      sh
+      -c
+      until nc -z nanomq 1883; do sleep 2; done
+    State:          Terminated
+      Reason:       Completed
+      Exit Code:    0
+      Started:      Mon, 27 Apr 2026 10:06:27 +0200
+      Finished:     Mon, 27 Apr 2026 10:06:27 +0200
+    Ready:          True
+    Restart Count:  0
+    Environment:    <none>
+    Mounts:
+      /var/run/secrets/kubernetes.io/serviceaccount from kube-api-access-jknzg (ro)
+Containers:
+  hermod-coordinator:
+    Container ID:   containerd://1712758efd2aa267a4af7c9c92de118087bec601af7c28f371e5e89e5351e346
+    Image:          hermod-coordinator:latest
+    Image ID:       sha256:ca91ccdfcd269dd5e4e25d5ffe8d863ca5db57e5c4f62f08c8adf90d23c15eaf
+    Port:           42069/TCP (http)
+    Host Port:      0/TCP (http)
+    State:          Running
+      Started:      Mon, 27 Apr 2026 10:06:28 +0200
+    Ready:          True
+    Restart Count:  0
+    Limits:
+      cpu:     1500m
+      memory:  1536Mi
+    Requests:
+      cpu:      200m
+      memory:   256Mi
+    Liveness:   http-get http://:42069/healthz delay=60s timeout=1s period=30s #success=1 #failure=3
+    Readiness:  http-get http://:42069/healthz/ready delay=5s timeout=1s period=10s #success=1 #failure=3
+    Startup:    http-get http://:42069/healthz delay=0s timeout=1s period=5s #success=1 #failure=30
+    Environment:
+      ASPNETCORE_ENVIRONMENT:               Production
+      ASPNETCORE_URLS:                      http://+:42069
+      DOTNET_USE_POLLING_FILE_WATCHER:      true
+      Hermod__Security__AuthBypass:         true
+      Hermod__Security__VaultRequireHttps:  false
+      Hermod__Features__MetricsEndpoint:    true
+      Hermod__Dev__Endpoints:               true
+      Hermod__Mqtt__Host:                   nanomq
+      Hermod__Mqtt__Port:                   1883
+      Hermod__Mqtt__UseTls:                 false
+      Hermod__Mqtt__Tls__UseTls:            false
+      Hermod__Mqtt__Username:               <set to the key 'mqtt-username' in secret 'hermod-secrets'>  Optional: false
+      Hermod__Mqtt__Password:               <set to the key 'mqtt-password' in secret 'hermod-secrets'>  Optional: false
+      Hermod__Database__ConnectionString:   Host=postgres;Port=5432;Database=hermod;Username=hermod_app
+      Hermod__Database__Password:           <set to the key 'hermod-db-password' in secret 'hermod-db-credentials'>  Optional: false
+    Mounts:
+      /var/run/secrets/kubernetes.io/serviceaccount from kube-api-access-jknzg (ro)
+Conditions:
+  Type                        Status
+  PodReadyToStartContainers   True 
+  Initialized                 True 
+  Ready                       True 
+  ContainersReady             True 
+  PodScheduled                True 
+Volumes:
+  kube-api-access-jknzg:
+    Type:                    Projected (a volume that contains injected data from multiple sources)
+    TokenExpirationSeconds:  3607
+    ConfigMapName:           kube-root-ca.crt
+    Optional:                false
+    DownwardAPI:             true
+QoS Class:                   Burstable
+Node-Selectors:              <none>
+Tolerations:                 node.kubernetes.io/not-ready:NoExecute op=Exists for 300s
+                             node.kubernetes.io/unreachable:NoExecute op=Exists for 300s
+Events:
+  Type    Reason     Age   From               Message
+  ----    ------     ----  ----               -------
+  Normal  Scheduled  21s   default-scheduler  Successfully assigned translator-ble/hermod-coordinator-6b6ff849ff-mjrpq to <pi-host>
+  Normal  Pulled     21s   kubelet            spec.initContainers{wait-for-postgres}: Container image "busybox:1.36" already present on machine
+  Normal  Created    21s   kubelet            spec.initContainers{wait-for-postgres}: Created container: wait-for-postgres
+  Normal  Started    21s   kubelet            spec.initContainers{wait-for-postgres}: Started container wait-for-postgres
+  Normal  Pulled     8s    kubelet            spec.initContainers{wait-for-nanomq}: Container image "busybox:1.36" already present on machine
+  Normal  Created    8s    kubelet            spec.initContainers{wait-for-nanomq}: Created container: wait-for-nanomq
+  Normal  Started    8s    kubelet            spec.initContainers{wait-for-nanomq}: Started container wait-for-nanomq
+  Normal  Pulled     7s    kubelet            spec.containers{hermod-coordinator}: Container image "hermod-coordinator:latest" already present on machine
+  Normal  Created    7s    kubelet            spec.containers{hermod-coordinator}: Created container: hermod-coordinator
+  Normal  Started    7s    kubelet            spec.containers{hermod-coordinator}: Started container hermod-coordinator
+
+
+Name:             nanomq-756fd88db6-g8kl4
+Namespace:        translator-ble
+Priority:         0
+Service Account:  default
+Node:             <pi-host>/<pi-ip>
+Start Time:       Mon, 27 Apr 2026 10:06:13 +0200
+Labels:           app=nanomq
+                  pod-template-hash=756fd88db6
+Annotations:      cni.projectcalico.org/containerID: 82bf8483f17be65c60e0eb64567735fd409becec820630322e1ed5a0055f4833
+                  cni.projectcalico.org/podIP: <pod-ip>/32
+                  cni.projectcalico.org/podIPs: <pod-ip>/32
+Status:           Running
+IP:               <pod-ip>
+IPs:
+  IP:           <pod-ip>
+Controlled By:  ReplicaSet/nanomq-756fd88db6
+Containers:
+  nanomq:
+    Container ID:   containerd://e84184f72b6a154962fb04299fa1c274d11dae895aee180e8a437f1faec802ad
+    Image:          emqx/nanomq:0.21-slim
+    Image ID:       docker.io/emqx/nanomq@sha256:53bea7acb547aced1cc45e08c514628f1e41c4da9ad544fd8c5fa96d3e9eb41b
+    Ports:          1883/TCP (mqtt), 8081/TCP (http)
+    Host Ports:     0/TCP (mqtt), 0/TCP (http)
+    State:          Running
+      Started:      Mon, 27 Apr 2026 10:06:14 +0200
+    Ready:          True
+    Restart Count:  0
+    Limits:
+      cpu:     1
+      memory:  512Mi
+    Requests:
+      cpu:        50m
+      memory:     64Mi
+    Readiness:    tcp-socket :1883 delay=3s timeout=1s period=5s #success=1 #failure=3
+    Environment:  <none>
+    Mounts:
+      /etc/nanomq.conf from config (rw,path="nanomq.conf")
+      /var/run/secrets/kubernetes.io/serviceaccount from kube-api-access-qfw77 (ro)
+Conditions:
+  Type                        Status
+  PodReadyToStartContainers   True 
+  Initialized                 True 
+  Ready                       True 
+  ContainersReady             True 
+  PodScheduled                True 
+Volumes:
+  config:
+    Type:      ConfigMap (a volume populated by a ConfigMap)
+    Name:      nanomq-config
+    Optional:  false
+  kube-api-access-qfw77:
+    Type:                    Projected (a volume that contains injected data from multiple sources)
+    TokenExpirationSeconds:  3607
+    ConfigMapName:           kube-root-ca.crt
+    Optional:                false
+    DownwardAPI:             true
+QoS Class:                   Burstable
+Node-Selectors:              <none>
+Tolerations:                 node.kubernetes.io/not-ready:NoExecute op=Exists for 300s
+                             node.kubernetes.io/unreachable:NoExecute op=Exists for 300s
+Events:
+  Type    Reason     Age   From               Message
+  ----    ------     ----  ----               -------
+  Normal  Scheduled  21s   default-scheduler  Successfully assigned translator-ble/nanomq-756fd88db6-g8kl4 to <pi-host>
+  Normal  Pulled     21s   kubelet            spec.containers{nanomq}: Container image "emqx/nanomq:0.21-slim" already present on machine
+  Normal  Created    21s   kubelet            spec.containers{nanomq}: Created container: nanomq
+  Normal  Started    21s   kubelet            spec.containers{nanomq}: Started container nanomq
+
+
+Name:             omg-ble-5658ff48b9-f9dtx
+Namespace:        translator-ble
+Priority:         0
+Service Account:  default
+Node:             <pi-host>/<pi-ip>
+Start Time:       Mon, 27 Apr 2026 10:06:13 +0200
+Labels:           app=omg-ble
+                  pod-template-hash=5658ff48b9
+Annotations:      <none>
+Status:           Running
+IP:               <pi-ip>
+IPs:
+  IP:           <pi-ip>
+Controlled By:  ReplicaSet/omg-ble-5658ff48b9
+Containers:
+  theengs-gateway:
+    Container ID:  containerd://d330ab3c808193442cfdf669a6d0dfe9266adb97d0a282cad7c9677967d82f7b
+    Image:         theengs/gateway:latest
+    Image ID:      docker.io/theengs/gateway@sha256:c66a847ced586fe307922b1dd0cb7beb7d792c0152f92e23f8b3d9edf8ab0e74
+    Port:          <none>
+    Host Port:     <none>
+    Command:
+      bash
+      -c
+    Args:
+      source /opt/venv/bin/activate
+      # hostNetwork=true means localhost is the Pi host, NOT the
+      # pod. nanomq lives in the cluster — reach it via cluster
+      # DNS (dnsPolicy=ClusterFirstWithHostNet keeps the
+      # cluster resolver visible to host-networked pods).
+      exec python -m TheengsGateway \
+        -H nanomq.translator-ble.svc.cluster.local -P 1883 \
+        -pt bluetooth/BTtoMQTT \
+        -Lt bluetooth/LWT \
+        -D 0 -b 1
+      
+    State:          Running
+      Started:      Mon, 27 Apr 2026 10:06:14 +0200
+    Ready:          True
+    Restart Count:  0
+    Limits:
+      cpu:     500m
+      memory:  256Mi
+    Requests:
+      cpu:        50m
+      memory:     64Mi
+    Environment:  <none>
+    Mounts:
+      /var/run/dbus from dbus (rw)
+      /var/run/secrets/kubernetes.io/serviceaccount from kube-api-access-dqnnv (ro)
+Conditions:
+  Type                        Status
+  PodReadyToStartContainers   True 
+  Initialized                 True 
+  Ready                       True 
+  ContainersReady             True 
+  PodScheduled                True 
+Volumes:
+  dbus:
+    Type:          HostPath (bare host directory volume)
+    Path:          /var/run/dbus
+    HostPathType:  Directory
+  kube-api-access-dqnnv:
+    Type:                    Projected (a volume that contains injected data from multiple sources)
+    TokenExpirationSeconds:  3607
+    ConfigMapName:           kube-root-ca.crt
+    Optional:                false
+    DownwardAPI:             true
+QoS Class:                   Burstable
+Node-Selectors:              hermod.io/bluetooth=true
+Tolerations:                 node.kubernetes.io/not-ready:NoExecute op=Exists for 300s
+                             node.kubernetes.io/unreachable:NoExecute op=Exists for 300s
+Events:
+  Type    Reason     Age   From               Message
+  ----    ------     ----  ----               -------
+  Normal  Scheduled  21s   default-scheduler  Successfully assigned translator-ble/omg-ble-5658ff48b9-f9dtx to <pi-host>
+  Normal  Pulled     21s   kubelet            spec.containers{theengs-gateway}: Container image "theengs/gateway:latest" already present on machine
+  Normal  Created    21s   kubelet            spec.containers{theengs-gateway}: Created container: theengs-gateway
+  Normal  Started    21s   kubelet            spec.containers{theengs-gateway}: Started container theengs-gateway
+
+
+Name:             postgres-0
+Namespace:        translator-ble
+Priority:         0
+Service Account:  default
+Node:             <pi-host>/<pi-ip>
+Start Time:       Mon, 27 Apr 2026 10:06:19 +0200
+Labels:           app=postgres
+                  apps.kubernetes.io/pod-index=0
+                  controller-revision-hash=postgres-848ccb988d
+                  statefulset.kubernetes.io/pod-name=postgres-0
+Annotations:      cni.projectcalico.org/containerID: 0f0e80a9b2fc6d672fa690000c354fc4d2971fdc4c6878a4ec27027943794dea
+                  cni.projectcalico.org/podIP: <pod-ip>/32
+                  cni.projectcalico.org/podIPs: <pod-ip>/32
+Status:           Running
+IP:               <pod-ip>
+IPs:
+  IP:           <pod-ip>
+Controlled By:  StatefulSet/postgres
+Containers:
+  postgres:
+    Container ID:   containerd://a52d47f8c786e35361a1d69403707b1766b9eb4d88b327fa65e53b3c51ad9e92
+    Image:          postgres:17-alpine
+    Image ID:       docker.io/library/postgres@sha256:778d0b486d6daa02b77434d0358ec57a1b21fd8b6d22ac2eef56a33e816928f6
+    Port:           5432/TCP
+    Host Port:      0/TCP
+    State:          Running
+      Started:      Mon, 27 Apr 2026 10:06:19 +0200
+    Ready:          True
+    Restart Count:  0
+    Limits:
+      cpu:     1500m
+      memory:  1536Mi
+    Requests:
+      cpu:      100m
+      memory:   256Mi
+    Readiness:  exec [pg_isready -U postgres] delay=5s timeout=1s period=5s #success=1 #failure=3
+    Environment:
+      POSTGRES_DB:        postgres
+      POSTGRES_USER:      postgres
+      POSTGRES_PASSWORD:  <set to the key 'postgres-superuser-password' in secret 'hermod-secrets'>  Optional: false
+    Mounts:
+      /docker-entrypoint-initdb.d from init (rw)
+      /var/lib/postgresql/data from data (rw)
+      /var/run/secrets/kubernetes.io/serviceaccount from kube-api-access-z5lxp (ro)
+Conditions:
+  Type                        Status
+  PodReadyToStartContainers   True 
+  Initialized                 True 
+  Ready                       True 
+  ContainersReady             True 
+  PodScheduled                True 
+Volumes:
+  data:
+    Type:       PersistentVolumeClaim (a reference to a PersistentVolumeClaim in the same namespace)
+    ClaimName:  data-postgres-0
+    ReadOnly:   false
+  init:
+    Type:      ConfigMap (a volume populated by a ConfigMap)
+    Name:      postgres-init
+    Optional:  false
+  kube-api-access-z5lxp:
+    Type:                    Projected (a volume that contains injected data from multiple sources)
+    TokenExpirationSeconds:  3607
+    ConfigMapName:           kube-root-ca.crt
+    Optional:                false
+    DownwardAPI:             true
+QoS Class:                   Burstable
+Node-Selectors:              <none>
+Tolerations:                 node.kubernetes.io/not-ready:NoExecute op=Exists for 300s
+                             node.kubernetes.io/unreachable:NoExecute op=Exists for 300s
+Events:
+  Type    Reason     Age   From               Message
+  ----    ------     ----  ----               -------
+  Normal  Scheduled  15s   default-scheduler  Successfully assigned translator-ble/postgres-0 to <pi-host>
+  Normal  Pulled     16s   kubelet            spec.containers{postgres}: Container image "postgres:17-alpine" already present on machine
+  Normal  Created    16s   kubelet            spec.containers{postgres}: Created container: postgres
+  Normal  Started    16s   kubelet            spec.containers{postgres}: Started container postgres
+
+=== ts=1777277206 ===
+Name:             hermod-coordinator-7d7b88cc46-qpqzt
+Namespace:        translator-ble
+Priority:         0
+Service Account:  default
+Node:             <pi-host>/<pi-ip>
+Start Time:       Mon, 27 Apr 2026 10:06:38 +0200
+Labels:           app=hermod-coordinator
+                  pod-template-hash=7d7b88cc46
+Annotations:      cni.projectcalico.org/containerID: e62372d94642a06248ee7597177b7ba38777a24e859db93eaf68d9fec2fa4b20
+                  cni.projectcalico.org/podIP: <pod-ip>/32
+                  cni.projectcalico.org/podIPs: <pod-ip>/32
+Status:           Running
+IP:               <pod-ip>
+IPs:
+  IP:           <pod-ip>
+Controlled By:  ReplicaSet/hermod-coordinator-7d7b88cc46
+Init Containers:
+  wait-for-postgres:
+    Container ID:  containerd://199d9a6a85aebf2df2a3d5e9d472e9d981fa98cb181b140edb9006ed655236ac
+    Image:         busybox:1.36
+    Image ID:      docker.io/library/busybox@sha256:73aaf090f3d85aa34ee199857f03fa3a95c8ede2ffd4cc2cdb5b94e566b11662
+    Port:          <none>
+    Host Port:     <none>
+    Command:
+      sh
+      -c
+      until nc -z postgres 5432; do sleep 2; done
+    State:          Terminated
+      Reason:       Completed
+      Exit Code:    0
+      Started:      Mon, 27 Apr 2026 10:06:39 +0200
+      Finished:     Mon, 27 Apr 2026 10:06:39 +0200
+    Ready:          True
+    Restart Count:  0
+    Environment:
+      Hermod__Features__DeviceStateTracking:    true
+      Hermod__Engine__LogBatchSize:             100
+      Hermod__Engine__LogBatching:              true
+      Hermod__Engine__Parallelism:              0
+      Hermod__Features__MessagePersistence:     true
+      Hermod__Features__RuleAuditLog:           true
+      Hermod__Features__RuleCache:              true
+      Hermod__Features__StatsRollup:            true
+      Hermod__Storage__Mode:                    Postgres
+      Logging__LogLevel__Hermod:                Information
+      Logging__LogLevel__Microsoft.AspNetCore:  Warning
+    Mounts:
+      /var/run/secrets/kubernetes.io/serviceaccount from kube-api-access-479zb (ro)
+  wait-for-nanomq:
+    Container ID:  containerd://d6bdd26a020a0669316c2385eb98a23642983979d6bab6e39a1d36a9fb6212a4
+    Image:         busybox:1.36
+    Image ID:      docker.io/library/busybox@sha256:73aaf090f3d85aa34ee199857f03fa3a95c8ede2ffd4cc2cdb5b94e566b11662
+    Port:          <none>
+    Host Port:     <none>
+    Command:
+      sh
+      -c
+      until nc -z nanomq 1883; do sleep 2; done
+    State:          Terminated
+      Reason:       Completed
+      Exit Code:    0
+      Started:      Mon, 27 Apr 2026 10:06:40 +0200
+      Finished:     Mon, 27 Apr 2026 10:06:40 +0200
+    Ready:          True
+    Restart Count:  0
+    Environment:
+      Hermod__Features__DeviceStateTracking:    true
+      Hermod__Engine__LogBatchSize:             100
+      Hermod__Engine__LogBatching:              true
+      Hermod__Engine__Parallelism:              0
+      Hermod__Features__MessagePersistence:     true
+      Hermod__Features__RuleAuditLog:           true
+      Hermod__Features__RuleCache:              true
+      Hermod__Features__StatsRollup:            true
+      Hermod__Storage__Mode:                    Postgres
+      Logging__LogLevel__Hermod:                Information
+      Logging__LogLevel__Microsoft.AspNetCore:  Warning
+    Mounts:
+      /var/run/secrets/kubernetes.io/serviceaccount from kube-api-access-479zb (ro)
+Containers:
+  hermod-coordinator:
+    Container ID:   containerd://b67bd8db894524d8d82df204dd8085f61c1838fda10aa5d5371908db1f442040
+    Image:          hermod-coordinator:latest
+    Image ID:       sha256:ca91ccdfcd269dd5e4e25d5ffe8d863ca5db57e5c4f62f08c8adf90d23c15eaf
+    Port:           42069/TCP (http)
+    Host Port:      0/TCP (http)
+    State:          Running
+      Started:      Mon, 27 Apr 2026 10:06:41 +0200
+    Ready:          False
+    Restart Count:  0
+    Limits:
+      cpu:     1500m
+      memory:  1536Mi
+    Requests:
+      cpu:      200m
+      memory:   256Mi
+    Liveness:   http-get http://:42069/healthz delay=60s timeout=1s period=30s #success=1 #failure=3
+    Readiness:  http-get http://:42069/healthz/ready delay=5s timeout=1s period=10s #success=1 #failure=3
+    Startup:    http-get http://:42069/healthz delay=0s timeout=1s period=5s #success=1 #failure=30
+    Environment:
+      ASPNETCORE_ENVIRONMENT:                   Production
+      ASPNETCORE_URLS:                          http://+:42069
+      DOTNET_USE_POLLING_FILE_WATCHER:          true
+      Hermod__Security__AuthBypass:             true
+      Hermod__Security__VaultRequireHttps:      false
+      Hermod__Features__MetricsEndpoint:        true
+      Hermod__Dev__Endpoints:                   true
+      Hermod__Mqtt__Host:                       nanomq
+      Hermod__Mqtt__Port:                       1883
+      Hermod__Mqtt__UseTls:                     false
+      Hermod__Mqtt__Tls__UseTls:                false
+      Hermod__Mqtt__Username:                   <set to the key 'mqtt-username' in secret 'hermod-secrets'>  Optional: false
+      Hermod__Mqtt__Password:                   <set to the key 'mqtt-password' in secret 'hermod-secrets'>  Optional: false
+      Hermod__Database__ConnectionString:       Host=postgres;Port=5432;Database=hermod;Username=hermod_app
+      Hermod__Database__Password:               <set to the key 'hermod-db-password' in secret 'hermod-db-credentials'>  Optional: false
+      Hermod__Features__DeviceStateTracking:    true
+      Hermod__Engine__LogBatchSize:             100
+      Hermod__Engine__LogBatching:              true
+      Hermod__Engine__Parallelism:              0
+      Hermod__Features__MessagePersistence:     true
+      Hermod__Features__RuleAuditLog:           true
+      Hermod__Features__RuleCache:              true
+      Hermod__Features__StatsRollup:            true
+      Hermod__Storage__Mode:                    Postgres
+      Logging__LogLevel__Hermod:                Information
+      Logging__LogLevel__Microsoft.AspNetCore:  Warning
+    Mounts:
+      /var/run/secrets/kubernetes.io/serviceaccount from kube-api-access-479zb (ro)
+Conditions:
+  Type                        Status
+  PodReadyToStartContainers   True 
+  Initialized                 True 
+  Ready                       False 
+  ContainersReady             False 
+  PodScheduled                True 
+Volumes:
+  kube-api-access-479zb:
+    Type:                    Projected (a volume that contains injected data from multiple sources)
+    TokenExpirationSeconds:  3607
+    ConfigMapName:           kube-root-ca.crt
+    Optional:                false
+    DownwardAPI:             true
+QoS Class:                   Burstable
+Node-Selectors:              <none>
+Tolerations:                 node.kubernetes.io/not-ready:NoExecute op=Exists for 300s
+                             node.kubernetes.io/unreachable:NoExecute op=Exists for 300s
+Events:
+  Type    Reason     Age   From               Message
+  ----    ------     ----  ----               -------
+  Normal  Scheduled  7s    default-scheduler  Successfully assigned translator-ble/hermod-coordinator-7d7b88cc46-qpqzt to <pi-host>
+  Normal  Pulled     7s    kubelet            spec.initContainers{wait-for-postgres}: Container image "busybox:1.36" already present on machine
+  Normal  Created    7s    kubelet            spec.initContainers{wait-for-postgres}: Created container: wait-for-postgres
+  Normal  Started    7s    kubelet            spec.initContainers{wait-for-postgres}: Started container wait-for-postgres
+  Normal  Pulled     6s    kubelet            spec.initContainers{wait-for-nanomq}: Container image "busybox:1.36" already present on machine
+  Normal  Created    6s    kubelet            spec.initContainers{wait-for-nanomq}: Created container: wait-for-nanomq
+  Normal  Started    6s    kubelet            spec.initContainers{wait-for-nanomq}: Started container wait-for-nanomq
+  Normal  Pulled     5s    kubelet            spec.containers{hermod-coordinator}: Container image "hermod-coordinator:latest" already present on machine
+  Normal  Created    5s    kubelet            spec.containers{hermod-coordinator}: Created container: hermod-coordinator
+  Normal  Started    5s    kubelet            spec.containers{hermod-coordinator}: Started container hermod-coordinator
+
+
+Name:             nanomq-756fd88db6-g8kl4
+Namespace:        translator-ble
+Priority:         0
+Service Account:  default
+Node:             <pi-host>/<pi-ip>
+Start Time:       Mon, 27 Apr 2026 10:06:13 +0200
+Labels:           app=nanomq
+                  pod-template-hash=756fd88db6
+Annotations:      cni.projectcalico.org/containerID: 82bf8483f17be65c60e0eb64567735fd409becec820630322e1ed5a0055f4833
+                  cni.projectcalico.org/podIP: <pod-ip>/32
+                  cni.projectcalico.org/podIPs: <pod-ip>/32
+Status:           Running
+IP:               <pod-ip>
+IPs:
+  IP:           <pod-ip>
+Controlled By:  ReplicaSet/nanomq-756fd88db6
+Containers:
+  nanomq:
+    Container ID:   containerd://e84184f72b6a154962fb04299fa1c274d11dae895aee180e8a437f1faec802ad
+    Image:          emqx/nanomq:0.21-slim
+    Image ID:       docker.io/emqx/nanomq@sha256:53bea7acb547aced1cc45e08c514628f1e41c4da9ad544fd8c5fa96d3e9eb41b
+    Ports:          1883/TCP (mqtt), 8081/TCP (http)
+    Host Ports:     0/TCP (mqtt), 0/TCP (http)
+    State:          Running
+      Started:      Mon, 27 Apr 2026 10:06:14 +0200
+    Ready:          True
+    Restart Count:  0
+    Limits:
+      cpu:     1
+      memory:  512Mi
+    Requests:
+      cpu:        50m
+      memory:     64Mi
+    Readiness:    tcp-socket :1883 delay=3s timeout=1s period=5s #success=1 #failure=3
+    Environment:  <none>
+    Mounts:
+      /etc/nanomq.conf from config (rw,path="nanomq.conf")
+      /var/run/secrets/kubernetes.io/serviceaccount from kube-api-access-qfw77 (ro)
+Conditions:
+  Type                        Status
+  PodReadyToStartContainers   True 
+  Initialized                 True 
+  Ready                       True 
+  ContainersReady             True 
+  PodScheduled                True 
+Volumes:
+  config:
+    Type:      ConfigMap (a volume populated by a ConfigMap)
+    Name:      nanomq-config
+    Optional:  false
+  kube-api-access-qfw77:
+    Type:                    Projected (a volume that contains injected data from multiple sources)
+    TokenExpirationSeconds:  3607
+    ConfigMapName:           kube-root-ca.crt
+    Optional:                false
+    DownwardAPI:             true
+QoS Class:                   Burstable
+Node-Selectors:              <none>
+Tolerations:                 node.kubernetes.io/not-ready:NoExecute op=Exists for 300s
+                             node.kubernetes.io/unreachable:NoExecute op=Exists for 300s
+Events:
+  Type    Reason     Age   From               Message
+  ----    ------     ----  ----               -------
+  Normal  Scheduled  32s   default-scheduler  Successfully assigned translator-ble/nanomq-756fd88db6-g8kl4 to <pi-host>
+  Normal  Pulled     32s   kubelet            spec.containers{nanomq}: Container image "emqx/nanomq:0.21-slim" already present on machine
+  Normal  Created    32s   kubelet            spec.containers{nanomq}: Created container: nanomq
+  Normal  Started    32s   kubelet            spec.containers{nanomq}: Started container nanomq
+
+
+Name:             omg-ble-5658ff48b9-f9dtx
+Namespace:        translator-ble
+Priority:         0
+Service Account:  default
+Node:             <pi-host>/<pi-ip>
+Start Time:       Mon, 27 Apr 2026 10:06:13 +0200
+Labels:           app=omg-ble
+                  pod-template-hash=5658ff48b9
+Annotations:      <none>
+Status:           Running
+IP:               <pi-ip>
+IPs:
+  IP:           <pi-ip>
+Controlled By:  ReplicaSet/omg-ble-5658ff48b9
+Containers:
+  theengs-gateway:
+    Container ID:  containerd://d330ab3c808193442cfdf669a6d0dfe9266adb97d0a282cad7c9677967d82f7b
+    Image:         theengs/gateway:latest
+    Image ID:      docker.io/theengs/gateway@sha256:c66a847ced586fe307922b1dd0cb7beb7d792c0152f92e23f8b3d9edf8ab0e74
+    Port:          <none>
+    Host Port:     <none>
+    Command:
+      bash
+      -c
+    Args:
+      source /opt/venv/bin/activate
+      # hostNetwork=true means localhost is the Pi host, NOT the
+      # pod. nanomq lives in the cluster — reach it via cluster
+      # DNS (dnsPolicy=ClusterFirstWithHostNet keeps the
+      # cluster resolver visible to host-networked pods).
+      exec python -m TheengsGateway \
+        -H nanomq.translator-ble.svc.cluster.local -P 1883 \
+        -pt bluetooth/BTtoMQTT \
+        -Lt bluetooth/LWT \
+        -D 0 -b 1
+      
+    State:          Running
+      Started:      Mon, 27 Apr 2026 10:06:14 +0200
+    Ready:          True
+    Restart Count:  0
+    Limits:
+      cpu:     500m
+      memory:  256Mi
+    Requests:
+      cpu:        50m
+      memory:     64Mi
+    Environment:  <none>
+    Mounts:
+      /var/run/dbus from dbus (rw)
+      /var/run/secrets/kubernetes.io/serviceaccount from kube-api-access-dqnnv (ro)
+Conditions:
+  Type                        Status
+  PodReadyToStartContainers   True 
+  Initialized                 True 
+  Ready                       True 
+  ContainersReady             True 
+  PodScheduled                True 
+Volumes:
+  dbus:
+    Type:          HostPath (bare host directory volume)
+    Path:          /var/run/dbus
+    HostPathType:  Directory
+  kube-api-access-dqnnv:
+    Type:                    Projected (a volume that contains injected data from multiple sources)
+    TokenExpirationSeconds:  3607
+    ConfigMapName:           kube-root-ca.crt
+    Optional:                false
+    DownwardAPI:             true
+QoS Class:                   Burstable
+Node-Selectors:              hermod.io/bluetooth=true
+Tolerations:                 node.kubernetes.io/not-ready:NoExecute op=Exists for 300s
+                             node.kubernetes.io/unreachable:NoExecute op=Exists for 300s
+Events:
+  Type    Reason     Age   From               Message
+  ----    ------     ----  ----               -------
+  Normal  Scheduled  32s   default-scheduler  Successfully assigned translator-ble/omg-ble-5658ff48b9-f9dtx to <pi-host>
+  Normal  Pulled     32s   kubelet            spec.containers{theengs-gateway}: Container image "theengs/gateway:latest" already present on machine
+  Normal  Created    32s   kubelet            spec.containers{theengs-gateway}: Created container: theengs-gateway
+  Normal  Started    32s   kubelet            spec.containers{theengs-gateway}: Started container theengs-gateway
+
+
+Name:             postgres-0
+Namespace:        translator-ble
+Priority:         0
+Service Account:  default
+Node:             <pi-host>/<pi-ip>
+Start Time:       Mon, 27 Apr 2026 10:06:19 +0200
+Labels:           app=postgres
+                  apps.kubernetes.io/pod-index=0
+                  controller-revision-hash=postgres-848ccb988d
+                  statefulset.kubernetes.io/pod-name=postgres-0
+Annotations:      cni.projectcalico.org/containerID: 0f0e80a9b2fc6d672fa690000c354fc4d2971fdc4c6878a4ec27027943794dea
+                  cni.projectcalico.org/podIP: <pod-ip>/32
+                  cni.projectcalico.org/podIPs: <pod-ip>/32
+Status:           Running
+IP:               <pod-ip>
+IPs:
+  IP:           <pod-ip>
+Controlled By:  StatefulSet/postgres
+Containers:
+  postgres:
+    Container ID:   containerd://a52d47f8c786e35361a1d69403707b1766b9eb4d88b327fa65e53b3c51ad9e92
+    Image:          postgres:17-alpine
+    Image ID:       docker.io/library/postgres@sha256:778d0b486d6daa02b77434d0358ec57a1b21fd8b6d22ac2eef56a33e816928f6
+    Port:           5432/TCP
+    Host Port:      0/TCP
+    State:          Running
+      Started:      Mon, 27 Apr 2026 10:06:19 +0200
+    Ready:          True
+    Restart Count:  0
+    Limits:
+      cpu:     1500m
+      memory:  1536Mi
+    Requests:
+      cpu:      100m
+      memory:   256Mi
+    Readiness:  exec [pg_isready -U postgres] delay=5s timeout=1s period=5s #success=1 #failure=3
+    Environment:
+      POSTGRES_DB:        postgres
+      POSTGRES_USER:      postgres
+      POSTGRES_PASSWORD:  <set to the key 'postgres-superuser-password' in secret 'hermod-secrets'>  Optional: false
+    Mounts:
+      /docker-entrypoint-initdb.d from init (rw)
+      /var/lib/postgresql/data from data (rw)
+      /var/run/secrets/kubernetes.io/serviceaccount from kube-api-access-z5lxp (ro)
+Conditions:
+  Type                        Status
+  PodReadyToStartContainers   True 
+  Initialized                 True 
+  Ready                       True 
+  ContainersReady             True 
+  PodScheduled                True 
+Volumes:
+  data:
+    Type:       PersistentVolumeClaim (a reference to a PersistentVolumeClaim in the same namespace)
+    ClaimName:  data-postgres-0
+    ReadOnly:   false
+  init:
+    Type:      ConfigMap (a volume populated by a ConfigMap)
+    Name:      postgres-init
+    Optional:  false
+  kube-api-access-z5lxp:
+    Type:                    Projected (a volume that contains injected data from multiple sources)
+    TokenExpirationSeconds:  3607
+    ConfigMapName:           kube-root-ca.crt
+    Optional:                false
+    DownwardAPI:             true
+QoS Class:                   Burstable
+Node-Selectors:              <none>
+Tolerations:                 node.kubernetes.io/not-ready:NoExecute op=Exists for 300s
+                             node.kubernetes.io/unreachable:NoExecute op=Exists for 300s
+Events:
+  Type    Reason     Age   From               Message
+  ----    ------     ----  ----               -------
+  Normal  Scheduled  27s   default-scheduler  Successfully assigned translator-ble/postgres-0 to <pi-host>
+  Normal  Pulled     27s   kubelet            spec.containers{postgres}: Container image "postgres:17-alpine" already present on machine
+  Normal  Created    27s   kubelet            spec.containers{postgres}: Created container: postgres
+  Normal  Started    27s   kubelet            spec.containers{postgres}: Started container postgres
+
+=== ts=1777277217 ===
+Name:             hermod-coordinator-7d7b88cc46-qpqzt
+Namespace:        translator-ble
+Priority:         0
+Service Account:  default
+Node:             <pi-host>/<pi-ip>
+Start Time:       Mon, 27 Apr 2026 10:06:38 +0200
+Labels:           app=hermod-coordinator
+                  pod-template-hash=7d7b88cc46
+Annotations:      cni.projectcalico.org/containerID: e62372d94642a06248ee7597177b7ba38777a24e859db93eaf68d9fec2fa4b20
+                  cni.projectcalico.org/podIP: <pod-ip>/32
+                  cni.projectcalico.org/podIPs: <pod-ip>/32
+Status:           Running
+IP:               <pod-ip>
+IPs:
+  IP:           <pod-ip>
+Controlled By:  ReplicaSet/hermod-coordinator-7d7b88cc46
+Init Containers:
+  wait-for-postgres:
+    Container ID:  containerd://199d9a6a85aebf2df2a3d5e9d472e9d981fa98cb181b140edb9006ed655236ac
+    Image:         busybox:1.36
+    Image ID:      docker.io/library/busybox@sha256:73aaf090f3d85aa34ee199857f03fa3a95c8ede2ffd4cc2cdb5b94e566b11662
+    Port:          <none>
+    Host Port:     <none>
+    Command:
+      sh
+      -c
+      until nc -z postgres 5432; do sleep 2; done
+    State:          Terminated
+      Reason:       Completed
+      Exit Code:    0
+      Started:      Mon, 27 Apr 2026 10:06:39 +0200
+      Finished:     Mon, 27 Apr 2026 10:06:39 +0200
+    Ready:          True
+    Restart Count:  0
+    Environment:
+      Hermod__Features__DeviceStateTracking:    true
+      Hermod__Engine__LogBatchSize:             100
+      Hermod__Engine__LogBatching:              true
+      Hermod__Engine__Parallelism:              0
+      Hermod__Features__MessagePersistence:     true
+      Hermod__Features__RuleAuditLog:           true
+      Hermod__Features__RuleCache:              true
+      Hermod__Features__StatsRollup:            true
+      Hermod__Storage__Mode:                    Postgres
+      Logging__LogLevel__Hermod:                Information
+      Logging__LogLevel__Microsoft.AspNetCore:  Warning
+    Mounts:
+      /var/run/secrets/kubernetes.io/serviceaccount from kube-api-access-479zb (ro)
+  wait-for-nanomq:
+    Container ID:  containerd://d6bdd26a020a0669316c2385eb98a23642983979d6bab6e39a1d36a9fb6212a4
+    Image:         busybox:1.36
+    Image ID:      docker.io/library/busybox@sha256:73aaf090f3d85aa34ee199857f03fa3a95c8ede2ffd4cc2cdb5b94e566b11662
+    Port:          <none>
+    Host Port:     <none>
+    Command:
+      sh
+      -c
+      until nc -z nanomq 1883; do sleep 2; done
+    State:          Terminated
+      Reason:       Completed
+      Exit Code:    0
+      Started:      Mon, 27 Apr 2026 10:06:40 +0200
+      Finished:     Mon, 27 Apr 2026 10:06:40 +0200
+    Ready:          True
+    Restart Count:  0
+    Environment:
+      Hermod__Features__DeviceStateTracking:    true
+      Hermod__Engine__LogBatchSize:             100
+      Hermod__Engine__LogBatching:              true
+      Hermod__Engine__Parallelism:              0
+      Hermod__Features__MessagePersistence:     true
+      Hermod__Features__RuleAuditLog:           true
+      Hermod__Features__RuleCache:              true
+      Hermod__Features__StatsRollup:            true
+      Hermod__Storage__Mode:                    Postgres
+      Logging__LogLevel__Hermod:                Information
+      Logging__LogLevel__Microsoft.AspNetCore:  Warning
+    Mounts:
+      /var/run/secrets/kubernetes.io/serviceaccount from kube-api-access-479zb (ro)
+Containers:
+  hermod-coordinator:
+    Container ID:   containerd://b67bd8db894524d8d82df204dd8085f61c1838fda10aa5d5371908db1f442040
+    Image:          hermod-coordinator:latest
+    Image ID:       sha256:ca91ccdfcd269dd5e4e25d5ffe8d863ca5db57e5c4f62f08c8adf90d23c15eaf
+    Port:           42069/TCP (http)
+    Host Port:      0/TCP (http)
+    State:          Running
+      Started:      Mon, 27 Apr 2026 10:06:41 +0200
+    Ready:          True
+    Restart Count:  0
+    Limits:
+      cpu:     1500m
+      memory:  1536Mi
+    Requests:
+      cpu:      200m
+      memory:   256Mi
+    Liveness:   http-get http://:42069/healthz delay=60s timeout=1s period=30s #success=1 #failure=3
+    Readiness:  http-get http://:42069/healthz/ready delay=5s timeout=1s period=10s #success=1 #failure=3
+    Startup:    http-get http://:42069/healthz delay=0s timeout=1s period=5s #success=1 #failure=30
+    Environment:
+      ASPNETCORE_ENVIRONMENT:                   Production
+      ASPNETCORE_URLS:                          http://+:42069
+      DOTNET_USE_POLLING_FILE_WATCHER:          true
+      Hermod__Security__AuthBypass:             true
+      Hermod__Security__VaultRequireHttps:      false
+      Hermod__Features__MetricsEndpoint:        true
+      Hermod__Dev__Endpoints:                   true
+      Hermod__Mqtt__Host:                       nanomq
+      Hermod__Mqtt__Port:                       1883
+      Hermod__Mqtt__UseTls:                     false
+      Hermod__Mqtt__Tls__UseTls:                false
+      Hermod__Mqtt__Username:                   <set to the key 'mqtt-username' in secret 'hermod-secrets'>  Optional: false
+      Hermod__Mqtt__Password:                   <set to the key 'mqtt-password' in secret 'hermod-secrets'>  Optional: false
+      Hermod__Database__ConnectionString:       Host=postgres;Port=5432;Database=hermod;Username=hermod_app
+      Hermod__Database__Password:               <set to the key 'hermod-db-password' in secret 'hermod-db-credentials'>  Optional: false
+      Hermod__Features__DeviceStateTracking:    true
+      Hermod__Engine__LogBatchSize:             100
+      Hermod__Engine__LogBatching:              true
+      Hermod__Engine__Parallelism:              0
+      Hermod__Features__MessagePersistence:     true
+      Hermod__Features__RuleAuditLog:           true
+      Hermod__Features__RuleCache:              true
+      Hermod__Features__StatsRollup:            true
+      Hermod__Storage__Mode:                    Postgres
+      Logging__LogLevel__Hermod:                Information
+      Logging__LogLevel__Microsoft.AspNetCore:  Warning
+    Mounts:
+      /var/run/secrets/kubernetes.io/serviceaccount from kube-api-access-479zb (ro)
+Conditions:
+  Type                        Status
+  PodReadyToStartContainers   True 
+  Initialized                 True 
+  Ready                       True 
+  ContainersReady             True 
+  PodScheduled                True 
+Volumes:
+  kube-api-access-479zb:
+    Type:                    Projected (a volume that contains injected data from multiple sources)
+    TokenExpirationSeconds:  3607
+    ConfigMapName:           kube-root-ca.crt
+    Optional:                false
+    DownwardAPI:             true
+QoS Class:                   Burstable
+Node-Selectors:              <none>
+Tolerations:                 node.kubernetes.io/not-ready:NoExecute op=Exists for 300s
+                             node.kubernetes.io/unreachable:NoExecute op=Exists for 300s
+Events:
+  Type    Reason     Age   From               Message
+  ----    ------     ----  ----               -------
+  Normal  Scheduled  19s   default-scheduler  Successfully assigned translator-ble/hermod-coordinator-7d7b88cc46-qpqzt to <pi-host>
+  Normal  Pulled     18s   kubelet            spec.initContainers{wait-for-postgres}: Container image "busybox:1.36" already present on machine
+  Normal  Created    18s   kubelet            spec.initContainers{wait-for-postgres}: Created container: wait-for-postgres
+  Normal  Started    18s   kubelet            spec.initContainers{wait-for-postgres}: Started container wait-for-postgres
+  Normal  Pulled     17s   kubelet            spec.initContainers{wait-for-nanomq}: Container image "busybox:1.36" already present on machine
+  Normal  Created    17s   kubelet            spec.initContainers{wait-for-nanomq}: Created container: wait-for-nanomq
+  Normal  Started    17s   kubelet            spec.initContainers{wait-for-nanomq}: Started container wait-for-nanomq
+  Normal  Pulled     16s   kubelet            spec.containers{hermod-coordinator}: Container image "hermod-coordinator:latest" already present on machine
+  Normal  Created    16s   kubelet            spec.containers{hermod-coordinator}: Created container: hermod-coordinator
+  Normal  Started    16s   kubelet            spec.containers{hermod-coordinator}: Started container hermod-coordinator
+
+
+Name:             nanomq-756fd88db6-g8kl4
+Namespace:        translator-ble
+Priority:         0
+Service Account:  default
+Node:             <pi-host>/<pi-ip>
+Start Time:       Mon, 27 Apr 2026 10:06:13 +0200
+Labels:           app=nanomq
+                  pod-template-hash=756fd88db6
+Annotations:      cni.projectcalico.org/containerID: 82bf8483f17be65c60e0eb64567735fd409becec820630322e1ed5a0055f4833
+                  cni.projectcalico.org/podIP: <pod-ip>/32
+                  cni.projectcalico.org/podIPs: <pod-ip>/32
+Status:           Running
+IP:               <pod-ip>
+IPs:
+  IP:           <pod-ip>
+Controlled By:  ReplicaSet/nanomq-756fd88db6
+Containers:
+  nanomq:
+    Container ID:   containerd://e84184f72b6a154962fb04299fa1c274d11dae895aee180e8a437f1faec802ad
+    Image:          emqx/nanomq:0.21-slim
+    Image ID:       docker.io/emqx/nanomq@sha256:53bea7acb547aced1cc45e08c514628f1e41c4da9ad544fd8c5fa96d3e9eb41b
+    Ports:          1883/TCP (mqtt), 8081/TCP (http)
+    Host Ports:     0/TCP (mqtt), 0/TCP (http)
+    State:          Running
+      Started:      Mon, 27 Apr 2026 10:06:14 +0200
+    Ready:          True
+    Restart Count:  0
+    Limits:
+      cpu:     1
+      memory:  512Mi
+    Requests:
+      cpu:        50m
+      memory:     64Mi
+    Readiness:    tcp-socket :1883 delay=3s timeout=1s period=5s #success=1 #failure=3
+    Environment:  <none>
+    Mounts:
+      /etc/nanomq.conf from config (rw,path="nanomq.conf")
+      /var/run/secrets/kubernetes.io/serviceaccount from kube-api-access-qfw77 (ro)
+Conditions:
+  Type                        Status
+  PodReadyToStartContainers   True 
+  Initialized                 True 
+  Ready                       True 
+  ContainersReady             True 
+  PodScheduled                True 
+Volumes:
+  config:
+    Type:      ConfigMap (a volume populated by a ConfigMap)
+    Name:      nanomq-config
+    Optional:  false
+  kube-api-access-qfw77:
+    Type:                    Projected (a volume that contains injected data from multiple sources)
+    TokenExpirationSeconds:  3607
+    ConfigMapName:           kube-root-ca.crt
+    Optional:                false
+    DownwardAPI:             true
+QoS Class:                   Burstable
+Node-Selectors:              <none>
+Tolerations:                 node.kubernetes.io/not-ready:NoExecute op=Exists for 300s
+                             node.kubernetes.io/unreachable:NoExecute op=Exists for 300s
+Events:
+  Type    Reason     Age   From               Message
+  ----    ------     ----  ----               -------
+  Normal  Scheduled  44s   default-scheduler  Successfully assigned translator-ble/nanomq-756fd88db6-g8kl4 to <pi-host>
+  Normal  Pulled     43s   kubelet            spec.containers{nanomq}: Container image "emqx/nanomq:0.21-slim" already present on machine
+  Normal  Created    43s   kubelet            spec.containers{nanomq}: Created container: nanomq
+  Normal  Started    43s   kubelet            spec.containers{nanomq}: Started container nanomq
+
+
+Name:             omg-ble-5658ff48b9-f9dtx
+Namespace:        translator-ble
+Priority:         0
+Service Account:  default
+Node:             <pi-host>/<pi-ip>
+Start Time:       Mon, 27 Apr 2026 10:06:13 +0200
+Labels:           app=omg-ble
+                  pod-template-hash=5658ff48b9
+Annotations:      <none>
+Status:           Running
+IP:               <pi-ip>
+IPs:
+  IP:           <pi-ip>
+Controlled By:  ReplicaSet/omg-ble-5658ff48b9
+Containers:
+  theengs-gateway:
+    Container ID:  containerd://d330ab3c808193442cfdf669a6d0dfe9266adb97d0a282cad7c9677967d82f7b
+    Image:         theengs/gateway:latest
+    Image ID:      docker.io/theengs/gateway@sha256:c66a847ced586fe307922b1dd0cb7beb7d792c0152f92e23f8b3d9edf8ab0e74
+    Port:          <none>
+    Host Port:     <none>
+    Command:
+      bash
+      -c
+    Args:
+      source /opt/venv/bin/activate
+      # hostNetwork=true means localhost is the Pi host, NOT the
+      # pod. nanomq lives in the cluster — reach it via cluster
+      # DNS (dnsPolicy=ClusterFirstWithHostNet keeps the
+      # cluster resolver visible to host-networked pods).
+      exec python -m TheengsGateway \
+        -H nanomq.translator-ble.svc.cluster.local -P 1883 \
+        -pt bluetooth/BTtoMQTT \
+        -Lt bluetooth/LWT \
+        -D 0 -b 1
+      
+    State:          Running
+      Started:      Mon, 27 Apr 2026 10:06:14 +0200
+    Ready:          True
+    Restart Count:  0
+    Limits:
+      cpu:     500m
+      memory:  256Mi
+    Requests:
+      cpu:        50m
+      memory:     64Mi
+    Environment:  <none>
+    Mounts:
+      /var/run/dbus from dbus (rw)
+      /var/run/secrets/kubernetes.io/serviceaccount from kube-api-access-dqnnv (ro)
+Conditions:
+  Type                        Status
+  PodReadyToStartContainers   True 
+  Initialized                 True 
+  Ready                       True 
+  ContainersReady             True 
+  PodScheduled                True 
+Volumes:
+  dbus:
+    Type:          HostPath (bare host directory volume)
+    Path:          /var/run/dbus
+    HostPathType:  Directory
+  kube-api-access-dqnnv:
+    Type:                    Projected (a volume that contains injected data from multiple sources)
+    TokenExpirationSeconds:  3607
+    ConfigMapName:           kube-root-ca.crt
+    Optional:                false
+    DownwardAPI:             true
+QoS Class:                   Burstable
+Node-Selectors:              hermod.io/bluetooth=true
+Tolerations:                 node.kubernetes.io/not-ready:NoExecute op=Exists for 300s
+                             node.kubernetes.io/unreachable:NoExecute op=Exists for 300s
+Events:
+  Type    Reason     Age   From               Message
+  ----    ------     ----  ----               -------
+  Normal  Scheduled  43s   default-scheduler  Successfully assigned translator-ble/omg-ble-5658ff48b9-f9dtx to <pi-host>
+  Normal  Pulled     43s   kubelet            spec.containers{theengs-gateway}: Container image "theengs/gateway:latest" already present on machine
+  Normal  Created    43s   kubelet            spec.containers{theengs-gateway}: Created container: theengs-gateway
+  Normal  Started    43s   kubelet            spec.containers{theengs-gateway}: Started container theengs-gateway
+
+
+Name:             postgres-0
+Namespace:        translator-ble
+Priority:         0
+Service Account:  default
+Node:             <pi-host>/<pi-ip>
+Start Time:       Mon, 27 Apr 2026 10:06:19 +0200
+Labels:           app=postgres
+                  apps.kubernetes.io/pod-index=0
+                  controller-revision-hash=postgres-848ccb988d
+                  statefulset.kubernetes.io/pod-name=postgres-0
+Annotations:      cni.projectcalico.org/containerID: 0f0e80a9b2fc6d672fa690000c354fc4d2971fdc4c6878a4ec27027943794dea
+                  cni.projectcalico.org/podIP: <pod-ip>/32
+                  cni.projectcalico.org/podIPs: <pod-ip>/32
+Status:           Running
+IP:               <pod-ip>
+IPs:
+  IP:           <pod-ip>
+Controlled By:  StatefulSet/postgres
+Containers:
+  postgres:
+    Container ID:   containerd://a52d47f8c786e35361a1d69403707b1766b9eb4d88b327fa65e53b3c51ad9e92
+    Image:          postgres:17-alpine
+    Image ID:       docker.io/library/postgres@sha256:778d0b486d6daa02b77434d0358ec57a1b21fd8b6d22ac2eef56a33e816928f6
+    Port:           5432/TCP
+    Host Port:      0/TCP
+    State:          Running
+      Started:      Mon, 27 Apr 2026 10:06:19 +0200
+    Ready:          True
+    Restart Count:  0
+    Limits:
+      cpu:     1500m
+      memory:  1536Mi
+    Requests:
+      cpu:      100m
+      memory:   256Mi
+    Readiness:  exec [pg_isready -U postgres] delay=5s timeout=1s period=5s #success=1 #failure=3
+    Environment:
+      POSTGRES_DB:        postgres
+      POSTGRES_USER:      postgres
+      POSTGRES_PASSWORD:  <set to the key 'postgres-superuser-password' in secret 'hermod-secrets'>  Optional: false
+    Mounts:
+      /docker-entrypoint-initdb.d from init (rw)
+      /var/lib/postgresql/data from data (rw)
+      /var/run/secrets/kubernetes.io/serviceaccount from kube-api-access-z5lxp (ro)
+Conditions:
+  Type                        Status
+  PodReadyToStartContainers   True 
+  Initialized                 True 
+  Ready                       True 
+  ContainersReady             True 
+  PodScheduled                True 
+Volumes:
+  data:
+    Type:       PersistentVolumeClaim (a reference to a PersistentVolumeClaim in the same namespace)
+    ClaimName:  data-postgres-0
+    ReadOnly:   false
+  init:
+    Type:      ConfigMap (a volume populated by a ConfigMap)
+    Name:      postgres-init
+    Optional:  false
+  kube-api-access-z5lxp:
+    Type:                    Projected (a volume that contains injected data from multiple sources)
+    TokenExpirationSeconds:  3607
+    ConfigMapName:           kube-root-ca.crt
+    Optional:                false
+    DownwardAPI:             true
+QoS Class:                   Burstable
+Node-Selectors:              <none>
+Tolerations:                 node.kubernetes.io/not-ready:NoExecute op=Exists for 300s
+                             node.kubernetes.io/unreachable:NoExecute op=Exists for 300s
+Events:
+  Type    Reason     Age   From               Message
+  ----    ------     ----  ----               -------
+  Normal  Scheduled  38s   default-scheduler  Successfully assigned translator-ble/postgres-0 to <pi-host>
+  Normal  Pulled     38s   kubelet            spec.containers{postgres}: Container image "postgres:17-alpine" already present on machine
+  Normal  Created    38s   kubelet            spec.containers{postgres}: Created container: postgres
+  Normal  Started    38s   kubelet            spec.containers{postgres}: Started container postgres
+
+=== ts=1777277228 ===
+Name:             hermod-coordinator-7d7b88cc46-qpqzt
+Namespace:        translator-ble
+Priority:         0
+Service Account:  default
+Node:             <pi-host>/<pi-ip>
+Start Time:       Mon, 27 Apr 2026 10:06:38 +0200
+Labels:           app=hermod-coordinator
+                  pod-template-hash=7d7b88cc46
+Annotations:      cni.projectcalico.org/containerID: e62372d94642a06248ee7597177b7ba38777a24e859db93eaf68d9fec2fa4b20
+                  cni.projectcalico.org/podIP: <pod-ip>/32
+                  cni.projectcalico.org/podIPs: <pod-ip>/32
+Status:           Running
+IP:               <pod-ip>
+IPs:
+  IP:           <pod-ip>
+Controlled By:  ReplicaSet/hermod-coordinator-7d7b88cc46
+Init Containers:
+  wait-for-postgres:
+    Container ID:  containerd://199d9a6a85aebf2df2a3d5e9d472e9d981fa98cb181b140edb9006ed655236ac
+    Image:         busybox:1.36
+    Image ID:      docker.io/library/busybox@sha256:73aaf090f3d85aa34ee199857f03fa3a95c8ede2ffd4cc2cdb5b94e566b11662
+    Port:          <none>
+    Host Port:     <none>
+    Command:
+      sh
+      -c
+      until nc -z postgres 5432; do sleep 2; done
+    State:          Terminated
+      Reason:       Completed
+      Exit Code:    0
+      Started:      Mon, 27 Apr 2026 10:06:39 +0200
+      Finished:     Mon, 27 Apr 2026 10:06:39 +0200
+    Ready:          True
+    Restart Count:  0
+    Environment:
+      Hermod__Features__DeviceStateTracking:    true
+      Hermod__Engine__LogBatchSize:             100
+      Hermod__Engine__LogBatching:              true
+      Hermod__Engine__Parallelism:              0
+      Hermod__Features__MessagePersistence:     true
+      Hermod__Features__RuleAuditLog:           true
+      Hermod__Features__RuleCache:              true
+      Hermod__Features__StatsRollup:            true
+      Hermod__Storage__Mode:                    Postgres
+      Logging__LogLevel__Hermod:                Information
+      Logging__LogLevel__Microsoft.AspNetCore:  Warning
+    Mounts:
+      /var/run/secrets/kubernetes.io/serviceaccount from kube-api-access-479zb (ro)
+  wait-for-nanomq:
+    Container ID:  containerd://d6bdd26a020a0669316c2385eb98a23642983979d6bab6e39a1d36a9fb6212a4
+    Image:         busybox:1.36
+    Image ID:      docker.io/library/busybox@sha256:73aaf090f3d85aa34ee199857f03fa3a95c8ede2ffd4cc2cdb5b94e566b11662
+    Port:          <none>
+    Host Port:     <none>
+    Command:
+      sh
+      -c
+      until nc -z nanomq 1883; do sleep 2; done
+    State:          Terminated
+      Reason:       Completed
+      Exit Code:    0
+      Started:      Mon, 27 Apr 2026 10:06:40 +0200
+      Finished:     Mon, 27 Apr 2026 10:06:40 +0200
+    Ready:          True
+    Restart Count:  0
+    Environment:
+      Hermod__Features__DeviceStateTracking:    true
+      Hermod__Engine__LogBatchSize:             100
+      Hermod__Engine__LogBatching:              true
+      Hermod__Engine__Parallelism:              0
+      Hermod__Features__MessagePersistence:     true
+      Hermod__Features__RuleAuditLog:           true
+      Hermod__Features__RuleCache:              true
+      Hermod__Features__StatsRollup:            true
+      Hermod__Storage__Mode:                    Postgres
+      Logging__LogLevel__Hermod:                Information
+      Logging__LogLevel__Microsoft.AspNetCore:  Warning
+    Mounts:
+      /var/run/secrets/kubernetes.io/serviceaccount from kube-api-access-479zb (ro)
+Containers:
+  hermod-coordinator:
+    Container ID:   containerd://b67bd8db894524d8d82df204dd8085f61c1838fda10aa5d5371908db1f442040
+    Image:          hermod-coordinator:latest
+    Image ID:       sha256:ca91ccdfcd269dd5e4e25d5ffe8d863ca5db57e5c4f62f08c8adf90d23c15eaf
+    Port:           42069/TCP (http)
+    Host Port:      0/TCP (http)
+    State:          Running
+      Started:      Mon, 27 Apr 2026 10:06:41 +0200
+    Ready:          True
+    Restart Count:  0
+    Limits:
+      cpu:     1500m
+      memory:  1536Mi
+    Requests:
+      cpu:      200m
+      memory:   256Mi
+    Liveness:   http-get http://:42069/healthz delay=60s timeout=1s period=30s #success=1 #failure=3
+    Readiness:  http-get http://:42069/healthz/ready delay=5s timeout=1s period=10s #success=1 #failure=3
+    Startup:    http-get http://:42069/healthz delay=0s timeout=1s period=5s #success=1 #failure=30
+    Environment:
+      ASPNETCORE_ENVIRONMENT:                   Production
+      ASPNETCORE_URLS:                          http://+:42069
+      DOTNET_USE_POLLING_FILE_WATCHER:          true
+      Hermod__Security__AuthBypass:             true
+      Hermod__Security__VaultRequireHttps:      false
+      Hermod__Features__MetricsEndpoint:        true
+      Hermod__Dev__Endpoints:                   true
+      Hermod__Mqtt__Host:                       nanomq
+      Hermod__Mqtt__Port:                       1883
+      Hermod__Mqtt__UseTls:                     false
+      Hermod__Mqtt__Tls__UseTls:                false
+      Hermod__Mqtt__Username:                   <set to the key 'mqtt-username' in secret 'hermod-secrets'>  Optional: false
+      Hermod__Mqtt__Password:                   <set to the key 'mqtt-password' in secret 'hermod-secrets'>  Optional: false
+      Hermod__Database__ConnectionString:       Host=postgres;Port=5432;Database=hermod;Username=hermod_app
+      Hermod__Database__Password:               <set to the key 'hermod-db-password' in secret 'hermod-db-credentials'>  Optional: false
+      Hermod__Features__DeviceStateTracking:    true
+      Hermod__Engine__LogBatchSize:             100
+      Hermod__Engine__LogBatching:              true
+      Hermod__Engine__Parallelism:              0
+      Hermod__Features__MessagePersistence:     true
+      Hermod__Features__RuleAuditLog:           true
+      Hermod__Features__RuleCache:              true
+      Hermod__Features__StatsRollup:            true
+      Hermod__Storage__Mode:                    Postgres
+      Logging__LogLevel__Hermod:                Information
+      Logging__LogLevel__Microsoft.AspNetCore:  Warning
+    Mounts:
+      /var/run/secrets/kubernetes.io/serviceaccount from kube-api-access-479zb (ro)
+Conditions:
+  Type                        Status
+  PodReadyToStartContainers   True 
+  Initialized                 True 
+  Ready                       True 
+  ContainersReady             True 
+  PodScheduled                True 
+Volumes:
+  kube-api-access-479zb:
+    Type:                    Projected (a volume that contains injected data from multiple sources)
+    TokenExpirationSeconds:  3607
+    ConfigMapName:           kube-root-ca.crt
+    Optional:                false
+    DownwardAPI:             true
+QoS Class:                   Burstable
+Node-Selectors:              <none>
+Tolerations:                 node.kubernetes.io/not-ready:NoExecute op=Exists for 300s
+                             node.kubernetes.io/unreachable:NoExecute op=Exists for 300s
+Events:
+  Type    Reason     Age   From               Message
+  ----    ------     ----  ----               -------
+  Normal  Scheduled  30s   default-scheduler  Successfully assigned translator-ble/hermod-coordinator-7d7b88cc46-qpqzt to <pi-host>
+  Normal  Pulled     29s   kubelet            spec.initContainers{wait-for-postgres}: Container image "busybox:1.36" already present on machine
+  Normal  Created    29s   kubelet            spec.initContainers{wait-for-postgres}: Created container: wait-for-postgres
+  Normal  Started    29s   kubelet            spec.initContainers{wait-for-postgres}: Started container wait-for-postgres
+  Normal  Pulled     28s   kubelet            spec.initContainers{wait-for-nanomq}: Container image "busybox:1.36" already present on machine
+  Normal  Created    28s   kubelet            spec.initContainers{wait-for-nanomq}: Created container: wait-for-nanomq
+  Normal  Started    28s   kubelet            spec.initContainers{wait-for-nanomq}: Started container wait-for-nanomq
+  Normal  Pulled     27s   kubelet            spec.containers{hermod-coordinator}: Container image "hermod-coordinator:latest" already present on machine
+  Normal  Created    27s   kubelet            spec.containers{hermod-coordinator}: Created container: hermod-coordinator
+  Normal  Started    27s   kubelet            spec.containers{hermod-coordinator}: Started container hermod-coordinator
+
+
+Name:             nanomq-756fd88db6-g8kl4
+Namespace:        translator-ble
+Priority:         0
+Service Account:  default
+Node:             <pi-host>/<pi-ip>
+Start Time:       Mon, 27 Apr 2026 10:06:13 +0200
+Labels:           app=nanomq
+                  pod-template-hash=756fd88db6
+Annotations:      cni.projectcalico.org/containerID: 82bf8483f17be65c60e0eb64567735fd409becec820630322e1ed5a0055f4833
+                  cni.projectcalico.org/podIP: <pod-ip>/32
+                  cni.projectcalico.org/podIPs: <pod-ip>/32
+Status:           Running
+IP:               <pod-ip>
+IPs:
+  IP:           <pod-ip>
+Controlled By:  ReplicaSet/nanomq-756fd88db6
+Containers:
+  nanomq:
+    Container ID:   containerd://e84184f72b6a154962fb04299fa1c274d11dae895aee180e8a437f1faec802ad
+    Image:          emqx/nanomq:0.21-slim
+    Image ID:       docker.io/emqx/nanomq@sha256:53bea7acb547aced1cc45e08c514628f1e41c4da9ad544fd8c5fa96d3e9eb41b
+    Ports:          1883/TCP (mqtt), 8081/TCP (http)
+    Host Ports:     0/TCP (mqtt), 0/TCP (http)
+    State:          Running
+      Started:      Mon, 27 Apr 2026 10:06:14 +0200
+    Ready:          True
+    Restart Count:  0
+    Limits:
+      cpu:     1
+      memory:  512Mi
+    Requests:
+      cpu:        50m
+      memory:     64Mi
+    Readiness:    tcp-socket :1883 delay=3s timeout=1s period=5s #success=1 #failure=3
+    Environment:  <none>
+    Mounts:
+      /etc/nanomq.conf from config (rw,path="nanomq.conf")
+      /var/run/secrets/kubernetes.io/serviceaccount from kube-api-access-qfw77 (ro)
+Conditions:
+  Type                        Status
+  PodReadyToStartContainers   True 
+  Initialized                 True 
+  Ready                       True 
+  ContainersReady             True 
+  PodScheduled                True 
+Volumes:
+  config:
+    Type:      ConfigMap (a volume populated by a ConfigMap)
+    Name:      nanomq-config
+    Optional:  false
+  kube-api-access-qfw77:
+    Type:                    Projected (a volume that contains injected data from multiple sources)
+    TokenExpirationSeconds:  3607
+    ConfigMapName:           kube-root-ca.crt
+    Optional:                false
+    DownwardAPI:             true
+QoS Class:                   Burstable
+Node-Selectors:              <none>
+Tolerations:                 node.kubernetes.io/not-ready:NoExecute op=Exists for 300s
+                             node.kubernetes.io/unreachable:NoExecute op=Exists for 300s
+Events:
+  Type    Reason     Age   From               Message
+  ----    ------     ----  ----               -------
+  Normal  Scheduled  55s   default-scheduler  Successfully assigned translator-ble/nanomq-756fd88db6-g8kl4 to <pi-host>
+  Normal  Pulled     54s   kubelet            spec.containers{nanomq}: Container image "emqx/nanomq:0.21-slim" already present on machine
+  Normal  Created    54s   kubelet            spec.containers{nanomq}: Created container: nanomq
+  Normal  Started    54s   kubelet            spec.containers{nanomq}: Started container nanomq
+
+
+Name:             omg-ble-5658ff48b9-f9dtx
+Namespace:        translator-ble
+Priority:         0
+Service Account:  default
+Node:             <pi-host>/<pi-ip>
+Start Time:       Mon, 27 Apr 2026 10:06:13 +0200
+Labels:           app=omg-ble
+                  pod-template-hash=5658ff48b9
+Annotations:      <none>
+Status:           Running
+IP:               <pi-ip>
+IPs:
+  IP:           <pi-ip>
+Controlled By:  ReplicaSet/omg-ble-5658ff48b9
+Containers:
+  theengs-gateway:
+    Container ID:  containerd://d330ab3c808193442cfdf669a6d0dfe9266adb97d0a282cad7c9677967d82f7b
+    Image:         theengs/gateway:latest
+    Image ID:      docker.io/theengs/gateway@sha256:c66a847ced586fe307922b1dd0cb7beb7d792c0152f92e23f8b3d9edf8ab0e74
+    Port:          <none>
+    Host Port:     <none>
+    Command:
+      bash
+      -c
+    Args:
+      source /opt/venv/bin/activate
+      # hostNetwork=true means localhost is the Pi host, NOT the
+      # pod. nanomq lives in the cluster — reach it via cluster
+      # DNS (dnsPolicy=ClusterFirstWithHostNet keeps the
+      # cluster resolver visible to host-networked pods).
+      exec python -m TheengsGateway \
+        -H nanomq.translator-ble.svc.cluster.local -P 1883 \
+        -pt bluetooth/BTtoMQTT \
+        -Lt bluetooth/LWT \
+        -D 0 -b 1
+      
+    State:          Running
+      Started:      Mon, 27 Apr 2026 10:06:14 +0200
+    Ready:          True
+    Restart Count:  0
+    Limits:
+      cpu:     500m
+      memory:  256Mi
+    Requests:
+      cpu:        50m
+      memory:     64Mi
+    Environment:  <none>
+    Mounts:
+      /var/run/dbus from dbus (rw)
+      /var/run/secrets/kubernetes.io/serviceaccount from kube-api-access-dqnnv (ro)
+Conditions:
+  Type                        Status
+  PodReadyToStartContainers   True 
+  Initialized                 True 
+  Ready                       True 
+  ContainersReady             True 
+  PodScheduled                True 
+Volumes:
+  dbus:
+    Type:          HostPath (bare host directory volume)
+    Path:          /var/run/dbus
+    HostPathType:  Directory
+  kube-api-access-dqnnv:
+    Type:                    Projected (a volume that contains injected data from multiple sources)
+    TokenExpirationSeconds:  3607
+    ConfigMapName:           kube-root-ca.crt
+    Optional:                false
+    DownwardAPI:             true
+QoS Class:                   Burstable
+Node-Selectors:              hermod.io/bluetooth=true
+Tolerations:                 node.kubernetes.io/not-ready:NoExecute op=Exists for 300s
+                             node.kubernetes.io/unreachable:NoExecute op=Exists for 300s
+Events:
+  Type    Reason     Age   From               Message
+  ----    ------     ----  ----               -------
+  Normal  Scheduled  55s   default-scheduler  Successfully assigned translator-ble/omg-ble-5658ff48b9-f9dtx to <pi-host>
+  Normal  Pulled     54s   kubelet            spec.containers{theengs-gateway}: Container image "theengs/gateway:latest" already present on machine
+  Normal  Created    54s   kubelet            spec.containers{theengs-gateway}: Created container: theengs-gateway
+  Normal  Started    54s   kubelet            spec.containers{theengs-gateway}: Started container theengs-gateway
+
+
+Name:             postgres-0
+Namespace:        translator-ble
+Priority:         0
+Service Account:  default
+Node:             <pi-host>/<pi-ip>
+Start Time:       Mon, 27 Apr 2026 10:06:19 +0200
+Labels:           app=postgres
+                  apps.kubernetes.io/pod-index=0
+                  controller-revision-hash=postgres-848ccb988d
+                  statefulset.kubernetes.io/pod-name=postgres-0
+Annotations:      cni.projectcalico.org/containerID: 0f0e80a9b2fc6d672fa690000c354fc4d2971fdc4c6878a4ec27027943794dea
+                  cni.projectcalico.org/podIP: <pod-ip>/32
+                  cni.projectcalico.org/podIPs: <pod-ip>/32
+Status:           Running
+IP:               <pod-ip>
+IPs:
+  IP:           <pod-ip>
+Controlled By:  StatefulSet/postgres
+Containers:
+  postgres:
+    Container ID:   containerd://a52d47f8c786e35361a1d69403707b1766b9eb4d88b327fa65e53b3c51ad9e92
+    Image:          postgres:17-alpine
+    Image ID:       docker.io/library/postgres@sha256:778d0b486d6daa02b77434d0358ec57a1b21fd8b6d22ac2eef56a33e816928f6
+    Port:           5432/TCP
+    Host Port:      0/TCP
+    State:          Running
+      Started:      Mon, 27 Apr 2026 10:06:19 +0200
+    Ready:          True
+    Restart Count:  0
+    Limits:
+      cpu:     1500m
+      memory:  1536Mi
+    Requests:
+      cpu:      100m
+      memory:   256Mi
+    Readiness:  exec [pg_isready -U postgres] delay=5s timeout=1s period=5s #success=1 #failure=3
+    Environment:
+      POSTGRES_DB:        postgres
+      POSTGRES_USER:      postgres
+      POSTGRES_PASSWORD:  <set to the key 'postgres-superuser-password' in secret 'hermod-secrets'>  Optional: false
+    Mounts:
+      /docker-entrypoint-initdb.d from init (rw)
+      /var/lib/postgresql/data from data (rw)
+      /var/run/secrets/kubernetes.io/serviceaccount from kube-api-access-z5lxp (ro)
+Conditions:
+  Type                        Status
+  PodReadyToStartContainers   True 
+  Initialized                 True 
+  Ready                       True 
+  ContainersReady             True 
+  PodScheduled                True 
+Volumes:
+  data:
+    Type:       PersistentVolumeClaim (a reference to a PersistentVolumeClaim in the same namespace)
+    ClaimName:  data-postgres-0
+    ReadOnly:   false
+  init:
+    Type:      ConfigMap (a volume populated by a ConfigMap)
+    Name:      postgres-init
+    Optional:  false
+  kube-api-access-z5lxp:
+    Type:                    Projected (a volume that contains injected data from multiple sources)
+    TokenExpirationSeconds:  3607
+    ConfigMapName:           kube-root-ca.crt
+    Optional:                false
+    DownwardAPI:             true
+QoS Class:                   Burstable
+Node-Selectors:              <none>
+Tolerations:                 node.kubernetes.io/not-ready:NoExecute op=Exists for 300s
+                             node.kubernetes.io/unreachable:NoExecute op=Exists for 300s
+Events:
+  Type    Reason     Age   From               Message
+  ----    ------     ----  ----               -------
+  Normal  Scheduled  49s   default-scheduler  Successfully assigned translator-ble/postgres-0 to <pi-host>
+  Normal  Pulled     49s   kubelet            spec.containers{postgres}: Container image "postgres:17-alpine" already present on machine
+  Normal  Created    49s   kubelet            spec.containers{postgres}: Created container: postgres
+  Normal  Started    49s   kubelet            spec.containers{postgres}: Started container postgres
+
+=== ts=1777277240 ===
+Name:             hermod-coordinator-7d7b88cc46-qpqzt
+Namespace:        translator-ble
+Priority:         0
+Service Account:  default
+Node:             <pi-host>/<pi-ip>
+Start Time:       Mon, 27 Apr 2026 10:06:38 +0200
+Labels:           app=hermod-coordinator
+                  pod-template-hash=7d7b88cc46
+Annotations:      cni.projectcalico.org/containerID: e62372d94642a06248ee7597177b7ba38777a24e859db93eaf68d9fec2fa4b20
+                  cni.projectcalico.org/podIP: <pod-ip>/32
+                  cni.projectcalico.org/podIPs: <pod-ip>/32
+Status:           Running
+IP:               <pod-ip>
+IPs:
+  IP:           <pod-ip>
+Controlled By:  ReplicaSet/hermod-coordinator-7d7b88cc46
+Init Containers:
+  wait-for-postgres:
+    Container ID:  containerd://199d9a6a85aebf2df2a3d5e9d472e9d981fa98cb181b140edb9006ed655236ac
+    Image:         busybox:1.36
+    Image ID:      docker.io/library/busybox@sha256:73aaf090f3d85aa34ee199857f03fa3a95c8ede2ffd4cc2cdb5b94e566b11662
+    Port:          <none>
+    Host Port:     <none>
+    Command:
+      sh
+      -c
+      until nc -z postgres 5432; do sleep 2; done
+    State:          Terminated
+      Reason:       Completed
+      Exit Code:    0
+      Started:      Mon, 27 Apr 2026 10:06:39 +0200
+      Finished:     Mon, 27 Apr 2026 10:06:39 +0200
+    Ready:          True
+    Restart Count:  0
+    Environment:
+      Hermod__Features__DeviceStateTracking:    true
+      Hermod__Engine__LogBatchSize:             100
+      Hermod__Engine__LogBatching:              true
+      Hermod__Engine__Parallelism:              0
+      Hermod__Features__MessagePersistence:     true
+      Hermod__Features__RuleAuditLog:           true
+      Hermod__Features__RuleCache:              true
+      Hermod__Features__StatsRollup:            true
+      Hermod__Storage__Mode:                    Postgres
+      Logging__LogLevel__Hermod:                Information
+      Logging__LogLevel__Microsoft.AspNetCore:  Warning
+    Mounts:
+      /var/run/secrets/kubernetes.io/serviceaccount from kube-api-access-479zb (ro)
+  wait-for-nanomq:
+    Container ID:  containerd://d6bdd26a020a0669316c2385eb98a23642983979d6bab6e39a1d36a9fb6212a4
+    Image:         busybox:1.36
+    Image ID:      docker.io/library/busybox@sha256:73aaf090f3d85aa34ee199857f03fa3a95c8ede2ffd4cc2cdb5b94e566b11662
+    Port:          <none>
+    Host Port:     <none>
+    Command:
+      sh
+      -c
+      until nc -z nanomq 1883; do sleep 2; done
+    State:          Terminated
+      Reason:       Completed
+      Exit Code:    0
+      Started:      Mon, 27 Apr 2026 10:06:40 +0200
+      Finished:     Mon, 27 Apr 2026 10:06:40 +0200
+    Ready:          True
+    Restart Count:  0
+    Environment:
+      Hermod__Features__DeviceStateTracking:    true
+      Hermod__Engine__LogBatchSize:             100
+      Hermod__Engine__LogBatching:              true
+      Hermod__Engine__Parallelism:              0
+      Hermod__Features__MessagePersistence:     true
+      Hermod__Features__RuleAuditLog:           true
+      Hermod__Features__RuleCache:              true
+      Hermod__Features__StatsRollup:            true
+      Hermod__Storage__Mode:                    Postgres
+      Logging__LogLevel__Hermod:                Information
+      Logging__LogLevel__Microsoft.AspNetCore:  Warning
+    Mounts:
+      /var/run/secrets/kubernetes.io/serviceaccount from kube-api-access-479zb (ro)
+Containers:
+  hermod-coordinator:
+    Container ID:   containerd://b67bd8db894524d8d82df204dd8085f61c1838fda10aa5d5371908db1f442040
+    Image:          hermod-coordinator:latest
+    Image ID:       sha256:ca91ccdfcd269dd5e4e25d5ffe8d863ca5db57e5c4f62f08c8adf90d23c15eaf
+    Port:           42069/TCP (http)
+    Host Port:      0/TCP (http)
+    State:          Running
+      Started:      Mon, 27 Apr 2026 10:06:41 +0200
+    Ready:          True
+    Restart Count:  0
+    Limits:
+      cpu:     1500m
+      memory:  1536Mi
+    Requests:
+      cpu:      200m
+      memory:   256Mi
+    Liveness:   http-get http://:42069/healthz delay=60s timeout=1s period=30s #success=1 #failure=3
+    Readiness:  http-get http://:42069/healthz/ready delay=5s timeout=1s period=10s #success=1 #failure=3
+    Startup:    http-get http://:42069/healthz delay=0s timeout=1s period=5s #success=1 #failure=30
+    Environment:
+      ASPNETCORE_ENVIRONMENT:                   Production
+      ASPNETCORE_URLS:                          http://+:42069
+      DOTNET_USE_POLLING_FILE_WATCHER:          true
+      Hermod__Security__AuthBypass:             true
+      Hermod__Security__VaultRequireHttps:      false
+      Hermod__Features__MetricsEndpoint:        true
+      Hermod__Dev__Endpoints:                   true
+      Hermod__Mqtt__Host:                       nanomq
+      Hermod__Mqtt__Port:                       1883
+      Hermod__Mqtt__UseTls:                     false
+      Hermod__Mqtt__Tls__UseTls:                false
+      Hermod__Mqtt__Username:                   <set to the key 'mqtt-username' in secret 'hermod-secrets'>  Optional: false
+      Hermod__Mqtt__Password:                   <set to the key 'mqtt-password' in secret 'hermod-secrets'>  Optional: false
+      Hermod__Database__ConnectionString:       Host=postgres;Port=5432;Database=hermod;Username=hermod_app
+      Hermod__Database__Password:               <set to the key 'hermod-db-password' in secret 'hermod-db-credentials'>  Optional: false
+      Hermod__Features__DeviceStateTracking:    true
+      Hermod__Engine__LogBatchSize:             100
+      Hermod__Engine__LogBatching:              true
+      Hermod__Engine__Parallelism:              0
+      Hermod__Features__MessagePersistence:     true
+      Hermod__Features__RuleAuditLog:           true
+      Hermod__Features__RuleCache:              true
+      Hermod__Features__StatsRollup:            true
+      Hermod__Storage__Mode:                    Postgres
+      Logging__LogLevel__Hermod:                Information
+      Logging__LogLevel__Microsoft.AspNetCore:  Warning
+    Mounts:
+      /var/run/secrets/kubernetes.io/serviceaccount from kube-api-access-479zb (ro)
+Conditions:
+  Type                        Status
+  PodReadyToStartContainers   True 
+  Initialized                 True 
+  Ready                       True 
+  ContainersReady             True 
+  PodScheduled                True 
+Volumes:
+  kube-api-access-479zb:
+    Type:                    Projected (a volume that contains injected data from multiple sources)
+    TokenExpirationSeconds:  3607
+    ConfigMapName:           kube-root-ca.crt
+    Optional:                false
+    DownwardAPI:             true
+QoS Class:                   Burstable
+Node-Selectors:              <none>
+Tolerations:                 node.kubernetes.io/not-ready:NoExecute op=Exists for 300s
+                             node.kubernetes.io/unreachable:NoExecute op=Exists for 300s
+Events:
+  Type    Reason     Age   From               Message
+  ----    ------     ----  ----               -------
+  Normal  Scheduled  41s   default-scheduler  Successfully assigned translator-ble/hermod-coordinator-7d7b88cc46-qpqzt to <pi-host>
+  Normal  Pulled     41s   kubelet            spec.initContainers{wait-for-postgres}: Container image "busybox:1.36" already present on machine
+  Normal  Created    41s   kubelet            spec.initContainers{wait-for-postgres}: Created container: wait-for-postgres
+  Normal  Started    41s   kubelet            spec.initContainers{wait-for-postgres}: Started container wait-for-postgres
+  Normal  Pulled     40s   kubelet            spec.initContainers{wait-for-nanomq}: Container image "busybox:1.36" already present on machine
+  Normal  Created    40s   kubelet            spec.initContainers{wait-for-nanomq}: Created container: wait-for-nanomq
+  Normal  Started    40s   kubelet            spec.initContainers{wait-for-nanomq}: Started container wait-for-nanomq
+  Normal  Pulled     39s   kubelet            spec.containers{hermod-coordinator}: Container image "hermod-coordinator:latest" already present on machine
+  Normal  Created    39s   kubelet            spec.containers{hermod-coordinator}: Created container: hermod-coordinator
+  Normal  Started    39s   kubelet            spec.containers{hermod-coordinator}: Started container hermod-coordinator
+
+
+Name:             nanomq-756fd88db6-g8kl4
+Namespace:        translator-ble
+Priority:         0
+Service Account:  default
+Node:             <pi-host>/<pi-ip>
+Start Time:       Mon, 27 Apr 2026 10:06:13 +0200
+Labels:           app=nanomq
+                  pod-template-hash=756fd88db6
+Annotations:      cni.projectcalico.org/containerID: 82bf8483f17be65c60e0eb64567735fd409becec820630322e1ed5a0055f4833
+                  cni.projectcalico.org/podIP: <pod-ip>/32
+                  cni.projectcalico.org/podIPs: <pod-ip>/32
+Status:           Running
+IP:               <pod-ip>
+IPs:
+  IP:           <pod-ip>
+Controlled By:  ReplicaSet/nanomq-756fd88db6
+Containers:
+  nanomq:
+    Container ID:   containerd://e84184f72b6a154962fb04299fa1c274d11dae895aee180e8a437f1faec802ad
+    Image:          emqx/nanomq:0.21-slim
+    Image ID:       docker.io/emqx/nanomq@sha256:53bea7acb547aced1cc45e08c514628f1e41c4da9ad544fd8c5fa96d3e9eb41b
+    Ports:          1883/TCP (mqtt), 8081/TCP (http)
+    Host Ports:     0/TCP (mqtt), 0/TCP (http)
+    State:          Running
+      Started:      Mon, 27 Apr 2026 10:06:14 +0200
+    Ready:          True
+    Restart Count:  0
+    Limits:
+      cpu:     1
+      memory:  512Mi
+    Requests:
+      cpu:        50m
+      memory:     64Mi
+    Readiness:    tcp-socket :1883 delay=3s timeout=1s period=5s #success=1 #failure=3
+    Environment:  <none>
+    Mounts:
+      /etc/nanomq.conf from config (rw,path="nanomq.conf")
+      /var/run/secrets/kubernetes.io/serviceaccount from kube-api-access-qfw77 (ro)
+Conditions:
+  Type                        Status
+  PodReadyToStartContainers   True 
+  Initialized                 True 
+  Ready                       True 
+  ContainersReady             True 
+  PodScheduled                True 
+Volumes:
+  config:
+    Type:      ConfigMap (a volume populated by a ConfigMap)
+    Name:      nanomq-config
+    Optional:  false
+  kube-api-access-qfw77:
+    Type:                    Projected (a volume that contains injected data from multiple sources)
+    TokenExpirationSeconds:  3607
+    ConfigMapName:           kube-root-ca.crt
+    Optional:                false
+    DownwardAPI:             true
+QoS Class:                   Burstable
+Node-Selectors:              <none>
+Tolerations:                 node.kubernetes.io/not-ready:NoExecute op=Exists for 300s
+                             node.kubernetes.io/unreachable:NoExecute op=Exists for 300s
+Events:
+  Type    Reason     Age   From               Message
+  ----    ------     ----  ----               -------
+  Normal  Scheduled  66s   default-scheduler  Successfully assigned translator-ble/nanomq-756fd88db6-g8kl4 to <pi-host>
+  Normal  Pulled     66s   kubelet            spec.containers{nanomq}: Container image "emqx/nanomq:0.21-slim" already present on machine
+  Normal  Created    66s   kubelet            spec.containers{nanomq}: Created container: nanomq
+  Normal  Started    66s   kubelet            spec.containers{nanomq}: Started container nanomq
+
+
+Name:             omg-ble-5658ff48b9-f9dtx
+Namespace:        translator-ble
+Priority:         0
+Service Account:  default
+Node:             <pi-host>/<pi-ip>
+Start Time:       Mon, 27 Apr 2026 10:06:13 +0200
+Labels:           app=omg-ble
+                  pod-template-hash=5658ff48b9
+Annotations:      <none>
+Status:           Running
+IP:               <pi-ip>
+IPs:
+  IP:           <pi-ip>
+Controlled By:  ReplicaSet/omg-ble-5658ff48b9
+Containers:
+  theengs-gateway:
+    Container ID:  containerd://d330ab3c808193442cfdf669a6d0dfe9266adb97d0a282cad7c9677967d82f7b
+    Image:         theengs/gateway:latest
+    Image ID:      docker.io/theengs/gateway@sha256:c66a847ced586fe307922b1dd0cb7beb7d792c0152f92e23f8b3d9edf8ab0e74
+    Port:          <none>
+    Host Port:     <none>
+    Command:
+      bash
+      -c
+    Args:
+      source /opt/venv/bin/activate
+      # hostNetwork=true means localhost is the Pi host, NOT the
+      # pod. nanomq lives in the cluster — reach it via cluster
+      # DNS (dnsPolicy=ClusterFirstWithHostNet keeps the
+      # cluster resolver visible to host-networked pods).
+      exec python -m TheengsGateway \
+        -H nanomq.translator-ble.svc.cluster.local -P 1883 \
+        -pt bluetooth/BTtoMQTT \
+        -Lt bluetooth/LWT \
+        -D 0 -b 1
+      
+    State:          Running
+      Started:      Mon, 27 Apr 2026 10:06:14 +0200
+    Ready:          True
+    Restart Count:  0
+    Limits:
+      cpu:     500m
+      memory:  256Mi
+    Requests:
+      cpu:        50m
+      memory:     64Mi
+    Environment:  <none>
+    Mounts:
+      /var/run/dbus from dbus (rw)
+      /var/run/secrets/kubernetes.io/serviceaccount from kube-api-access-dqnnv (ro)
+Conditions:
+  Type                        Status
+  PodReadyToStartContainers   True 
+  Initialized                 True 
+  Ready                       True 
+  ContainersReady             True 
+  PodScheduled                True 
+Volumes:
+  dbus:
+    Type:          HostPath (bare host directory volume)
+    Path:          /var/run/dbus
+    HostPathType:  Directory
+  kube-api-access-dqnnv:
+    Type:                    Projected (a volume that contains injected data from multiple sources)
+    TokenExpirationSeconds:  3607
+    ConfigMapName:           kube-root-ca.crt
+    Optional:                false
+    DownwardAPI:             true
+QoS Class:                   Burstable
+Node-Selectors:              hermod.io/bluetooth=true
+Tolerations:                 node.kubernetes.io/not-ready:NoExecute op=Exists for 300s
+                             node.kubernetes.io/unreachable:NoExecute op=Exists for 300s
+Events:
+  Type    Reason     Age   From               Message
+  ----    ------     ----  ----               -------
+  Normal  Scheduled  66s   default-scheduler  Successfully assigned translator-ble/omg-ble-5658ff48b9-f9dtx to <pi-host>
+  Normal  Pulled     66s   kubelet            spec.containers{theengs-gateway}: Container image "theengs/gateway:latest" already present on machine
+  Normal  Created    66s   kubelet            spec.containers{theengs-gateway}: Created container: theengs-gateway
+  Normal  Started    66s   kubelet            spec.containers{theengs-gateway}: Started container theengs-gateway
+
+
+Name:             postgres-0
+Namespace:        translator-ble
+Priority:         0
+Service Account:  default
+Node:             <pi-host>/<pi-ip>
+Start Time:       Mon, 27 Apr 2026 10:06:19 +0200
+Labels:           app=postgres
+                  apps.kubernetes.io/pod-index=0
+                  controller-revision-hash=postgres-848ccb988d
+                  statefulset.kubernetes.io/pod-name=postgres-0
+Annotations:      cni.projectcalico.org/containerID: 0f0e80a9b2fc6d672fa690000c354fc4d2971fdc4c6878a4ec27027943794dea
+                  cni.projectcalico.org/podIP: <pod-ip>/32
+                  cni.projectcalico.org/podIPs: <pod-ip>/32
+Status:           Running
+IP:               <pod-ip>
+IPs:
+  IP:           <pod-ip>
+Controlled By:  StatefulSet/postgres
+Containers:
+  postgres:
+    Container ID:   containerd://a52d47f8c786e35361a1d69403707b1766b9eb4d88b327fa65e53b3c51ad9e92
+    Image:          postgres:17-alpine
+    Image ID:       docker.io/library/postgres@sha256:778d0b486d6daa02b77434d0358ec57a1b21fd8b6d22ac2eef56a33e816928f6
+    Port:           5432/TCP
+    Host Port:      0/TCP
+    State:          Running
+      Started:      Mon, 27 Apr 2026 10:06:19 +0200
+    Ready:          True
+    Restart Count:  0
+    Limits:
+      cpu:     1500m
+      memory:  1536Mi
+    Requests:
+      cpu:      100m
+      memory:   256Mi
+    Readiness:  exec [pg_isready -U postgres] delay=5s timeout=1s period=5s #success=1 #failure=3
+    Environment:
+      POSTGRES_DB:        postgres
+      POSTGRES_USER:      postgres
+      POSTGRES_PASSWORD:  <set to the key 'postgres-superuser-password' in secret 'hermod-secrets'>  Optional: false
+    Mounts:
+      /docker-entrypoint-initdb.d from init (rw)
+      /var/lib/postgresql/data from data (rw)
+      /var/run/secrets/kubernetes.io/serviceaccount from kube-api-access-z5lxp (ro)
+Conditions:
+  Type                        Status
+  PodReadyToStartContainers   True 
+  Initialized                 True 
+  Ready                       True 
+  ContainersReady             True 
+  PodScheduled                True 
+Volumes:
+  data:
+    Type:       PersistentVolumeClaim (a reference to a PersistentVolumeClaim in the same namespace)
+    ClaimName:  data-postgres-0
+    ReadOnly:   false
+  init:
+    Type:      ConfigMap (a volume populated by a ConfigMap)
+    Name:      postgres-init
+    Optional:  false
+  kube-api-access-z5lxp:
+    Type:                    Projected (a volume that contains injected data from multiple sources)
+    TokenExpirationSeconds:  3607
+    ConfigMapName:           kube-root-ca.crt
+    Optional:                false
+    DownwardAPI:             true
+QoS Class:                   Burstable
+Node-Selectors:              <none>
+Tolerations:                 node.kubernetes.io/not-ready:NoExecute op=Exists for 300s
+                             node.kubernetes.io/unreachable:NoExecute op=Exists for 300s
+Events:
+  Type    Reason     Age   From               Message
+  ----    ------     ----  ----               -------
+  Normal  Scheduled  60s   default-scheduler  Successfully assigned translator-ble/postgres-0 to <pi-host>
+  Normal  Pulled     61s   kubelet            spec.containers{postgres}: Container image "postgres:17-alpine" already present on machine
+  Normal  Created    61s   kubelet            spec.containers{postgres}: Created container: postgres
+  Normal  Started    61s   kubelet            spec.containers{postgres}: Started container postgres
+
+=== ts=1777277251 ===
+Name:             hermod-coordinator-7d7b88cc46-qpqzt
+Namespace:        translator-ble
+Priority:         0
+Service Account:  default
+Node:             <pi-host>/<pi-ip>
+Start Time:       Mon, 27 Apr 2026 10:06:38 +0200
+Labels:           app=hermod-coordinator
+                  pod-template-hash=7d7b88cc46
+Annotations:      cni.projectcalico.org/containerID: e62372d94642a06248ee7597177b7ba38777a24e859db93eaf68d9fec2fa4b20
+                  cni.projectcalico.org/podIP: <pod-ip>/32
+                  cni.projectcalico.org/podIPs: <pod-ip>/32
+Status:           Running
+IP:               <pod-ip>
+IPs:
+  IP:           <pod-ip>
+Controlled By:  ReplicaSet/hermod-coordinator-7d7b88cc46
+Init Containers:
+  wait-for-postgres:
+    Container ID:  containerd://199d9a6a85aebf2df2a3d5e9d472e9d981fa98cb181b140edb9006ed655236ac
+    Image:         busybox:1.36
+    Image ID:      docker.io/library/busybox@sha256:73aaf090f3d85aa34ee199857f03fa3a95c8ede2ffd4cc2cdb5b94e566b11662
+    Port:          <none>
+    Host Port:     <none>
+    Command:
+      sh
+      -c
+      until nc -z postgres 5432; do sleep 2; done
+    State:          Terminated
+      Reason:       Completed
+      Exit Code:    0
+      Started:      Mon, 27 Apr 2026 10:06:39 +0200
+      Finished:     Mon, 27 Apr 2026 10:06:39 +0200
+    Ready:          True
+    Restart Count:  0
+    Environment:
+      Hermod__Features__DeviceStateTracking:    true
+      Hermod__Engine__LogBatchSize:             100
+      Hermod__Engine__LogBatching:              true
+      Hermod__Engine__Parallelism:              0
+      Hermod__Features__MessagePersistence:     true
+      Hermod__Features__RuleAuditLog:           true
+      Hermod__Features__RuleCache:              true
+      Hermod__Features__StatsRollup:            true
+      Hermod__Storage__Mode:                    Postgres
+      Logging__LogLevel__Hermod:                Information
+      Logging__LogLevel__Microsoft.AspNetCore:  Warning
+    Mounts:
+      /var/run/secrets/kubernetes.io/serviceaccount from kube-api-access-479zb (ro)
+  wait-for-nanomq:
+    Container ID:  containerd://d6bdd26a020a0669316c2385eb98a23642983979d6bab6e39a1d36a9fb6212a4
+    Image:         busybox:1.36
+    Image ID:      docker.io/library/busybox@sha256:73aaf090f3d85aa34ee199857f03fa3a95c8ede2ffd4cc2cdb5b94e566b11662
+    Port:          <none>
+    Host Port:     <none>
+    Command:
+      sh
+      -c
+      until nc -z nanomq 1883; do sleep 2; done
+    State:          Terminated
+      Reason:       Completed
+      Exit Code:    0
+      Started:      Mon, 27 Apr 2026 10:06:40 +0200
+      Finished:     Mon, 27 Apr 2026 10:06:40 +0200
+    Ready:          True
+    Restart Count:  0
+    Environment:
+      Hermod__Features__DeviceStateTracking:    true
+      Hermod__Engine__LogBatchSize:             100
+      Hermod__Engine__LogBatching:              true
+      Hermod__Engine__Parallelism:              0
+      Hermod__Features__MessagePersistence:     true
+      Hermod__Features__RuleAuditLog:           true
+      Hermod__Features__RuleCache:              true
+      Hermod__Features__StatsRollup:            true
+      Hermod__Storage__Mode:                    Postgres
+      Logging__LogLevel__Hermod:                Information
+      Logging__LogLevel__Microsoft.AspNetCore:  Warning
+    Mounts:
+      /var/run/secrets/kubernetes.io/serviceaccount from kube-api-access-479zb (ro)
+Containers:
+  hermod-coordinator:
+    Container ID:   containerd://b67bd8db894524d8d82df204dd8085f61c1838fda10aa5d5371908db1f442040
+    Image:          hermod-coordinator:latest
+    Image ID:       sha256:ca91ccdfcd269dd5e4e25d5ffe8d863ca5db57e5c4f62f08c8adf90d23c15eaf
+    Port:           42069/TCP (http)
+    Host Port:      0/TCP (http)
+    State:          Running
+      Started:      Mon, 27 Apr 2026 10:06:41 +0200
+    Ready:          True
+    Restart Count:  0
+    Limits:
+      cpu:     1500m
+      memory:  1536Mi
+    Requests:
+      cpu:      200m
+      memory:   256Mi
+    Liveness:   http-get http://:42069/healthz delay=60s timeout=1s period=30s #success=1 #failure=3
+    Readiness:  http-get http://:42069/healthz/ready delay=5s timeout=1s period=10s #success=1 #failure=3
+    Startup:    http-get http://:42069/healthz delay=0s timeout=1s period=5s #success=1 #failure=30
+    Environment:
+      ASPNETCORE_ENVIRONMENT:                   Production
+      ASPNETCORE_URLS:                          http://+:42069
+      DOTNET_USE_POLLING_FILE_WATCHER:          true
+      Hermod__Security__AuthBypass:             true
+      Hermod__Security__VaultRequireHttps:      false
+      Hermod__Features__MetricsEndpoint:        true
+      Hermod__Dev__Endpoints:                   true
+      Hermod__Mqtt__Host:                       nanomq
+      Hermod__Mqtt__Port:                       1883
+      Hermod__Mqtt__UseTls:                     false
+      Hermod__Mqtt__Tls__UseTls:                false
+      Hermod__Mqtt__Username:                   <set to the key 'mqtt-username' in secret 'hermod-secrets'>  Optional: false
+      Hermod__Mqtt__Password:                   <set to the key 'mqtt-password' in secret 'hermod-secrets'>  Optional: false
+      Hermod__Database__ConnectionString:       Host=postgres;Port=5432;Database=hermod;Username=hermod_app
+      Hermod__Database__Password:               <set to the key 'hermod-db-password' in secret 'hermod-db-credentials'>  Optional: false
+      Hermod__Features__DeviceStateTracking:    true
+      Hermod__Engine__LogBatchSize:             100
+      Hermod__Engine__LogBatching:              true
+      Hermod__Engine__Parallelism:              0
+      Hermod__Features__MessagePersistence:     true
+      Hermod__Features__RuleAuditLog:           true
+      Hermod__Features__RuleCache:              true
+      Hermod__Features__StatsRollup:            true
+      Hermod__Storage__Mode:                    Postgres
+      Logging__LogLevel__Hermod:                Information
+      Logging__LogLevel__Microsoft.AspNetCore:  Warning
+    Mounts:
+      /var/run/secrets/kubernetes.io/serviceaccount from kube-api-access-479zb (ro)
+Conditions:
+  Type                        Status
+  PodReadyToStartContainers   True 
+  Initialized                 True 
+  Ready                       True 
+  ContainersReady             True 
+  PodScheduled                True 
+Volumes:
+  kube-api-access-479zb:
+    Type:                    Projected (a volume that contains injected data from multiple sources)
+    TokenExpirationSeconds:  3607
+    ConfigMapName:           kube-root-ca.crt
+    Optional:                false
+    DownwardAPI:             true
+QoS Class:                   Burstable
+Node-Selectors:              <none>
+Tolerations:                 node.kubernetes.io/not-ready:NoExecute op=Exists for 300s
+                             node.kubernetes.io/unreachable:NoExecute op=Exists for 300s
+Events:
+  Type    Reason     Age   From               Message
+  ----    ------     ----  ----               -------
+  Normal  Scheduled  52s   default-scheduler  Successfully assigned translator-ble/hermod-coordinator-7d7b88cc46-qpqzt to <pi-host>
+  Normal  Pulled     52s   kubelet            spec.initContainers{wait-for-postgres}: Container image "busybox:1.36" already present on machine
+  Normal  Created    52s   kubelet            spec.initContainers{wait-for-postgres}: Created container: wait-for-postgres
+  Normal  Started    52s   kubelet            spec.initContainers{wait-for-postgres}: Started container wait-for-postgres
+  Normal  Pulled     51s   kubelet            spec.initContainers{wait-for-nanomq}: Container image "busybox:1.36" already present on machine
+  Normal  Created    51s   kubelet            spec.initContainers{wait-for-nanomq}: Created container: wait-for-nanomq
+  Normal  Started    51s   kubelet            spec.initContainers{wait-for-nanomq}: Started container wait-for-nanomq
+  Normal  Pulled     50s   kubelet            spec.containers{hermod-coordinator}: Container image "hermod-coordinator:latest" already present on machine
+  Normal  Created    50s   kubelet            spec.containers{hermod-coordinator}: Created container: hermod-coordinator
+  Normal  Started    50s   kubelet            spec.containers{hermod-coordinator}: Started container hermod-coordinator
+
+
+Name:             nanomq-756fd88db6-g8kl4
+Namespace:        translator-ble
+Priority:         0
+Service Account:  default
+Node:             <pi-host>/<pi-ip>
+Start Time:       Mon, 27 Apr 2026 10:06:13 +0200
+Labels:           app=nanomq
+                  pod-template-hash=756fd88db6
+Annotations:      cni.projectcalico.org/containerID: 82bf8483f17be65c60e0eb64567735fd409becec820630322e1ed5a0055f4833
+                  cni.projectcalico.org/podIP: <pod-ip>/32
+                  cni.projectcalico.org/podIPs: <pod-ip>/32
+Status:           Running
+IP:               <pod-ip>
+IPs:
+  IP:           <pod-ip>
+Controlled By:  ReplicaSet/nanomq-756fd88db6
+Containers:
+  nanomq:
+    Container ID:   containerd://e84184f72b6a154962fb04299fa1c274d11dae895aee180e8a437f1faec802ad
+    Image:          emqx/nanomq:0.21-slim
+    Image ID:       docker.io/emqx/nanomq@sha256:53bea7acb547aced1cc45e08c514628f1e41c4da9ad544fd8c5fa96d3e9eb41b
+    Ports:          1883/TCP (mqtt), 8081/TCP (http)
+    Host Ports:     0/TCP (mqtt), 0/TCP (http)
+    State:          Running
+      Started:      Mon, 27 Apr 2026 10:06:14 +0200
+    Ready:          True
+    Restart Count:  0
+    Limits:
+      cpu:     1
+      memory:  512Mi
+    Requests:
+      cpu:        50m
+      memory:     64Mi
+    Readiness:    tcp-socket :1883 delay=3s timeout=1s period=5s #success=1 #failure=3
+    Environment:  <none>
+    Mounts:
+      /etc/nanomq.conf from config (rw,path="nanomq.conf")
+      /var/run/secrets/kubernetes.io/serviceaccount from kube-api-access-qfw77 (ro)
+Conditions:
+  Type                        Status
+  PodReadyToStartContainers   True 
+  Initialized                 True 
+  Ready                       True 
+  ContainersReady             True 
+  PodScheduled                True 
+Volumes:
+  config:
+    Type:      ConfigMap (a volume populated by a ConfigMap)
+    Name:      nanomq-config
+    Optional:  false
+  kube-api-access-qfw77:
+    Type:                    Projected (a volume that contains injected data from multiple sources)
+    TokenExpirationSeconds:  3607
+    ConfigMapName:           kube-root-ca.crt
+    Optional:                false
+    DownwardAPI:             true
+QoS Class:                   Burstable
+Node-Selectors:              <none>
+Tolerations:                 node.kubernetes.io/not-ready:NoExecute op=Exists for 300s
+                             node.kubernetes.io/unreachable:NoExecute op=Exists for 300s
+Events:
+  Type    Reason     Age   From               Message
+  ----    ------     ----  ----               -------
+  Normal  Scheduled  77s   default-scheduler  Successfully assigned translator-ble/nanomq-756fd88db6-g8kl4 to <pi-host>
+  Normal  Pulled     77s   kubelet            spec.containers{nanomq}: Container image "emqx/nanomq:0.21-slim" already present on machine
+  Normal  Created    77s   kubelet            spec.containers{nanomq}: Created container: nanomq
+  Normal  Started    77s   kubelet            spec.containers{nanomq}: Started container nanomq
+
+
+Name:             omg-ble-5658ff48b9-f9dtx
+Namespace:        translator-ble
+Priority:         0
+Service Account:  default
+Node:             <pi-host>/<pi-ip>
+Start Time:       Mon, 27 Apr 2026 10:06:13 +0200
+Labels:           app=omg-ble
+                  pod-template-hash=5658ff48b9
+Annotations:      <none>
+Status:           Running
+IP:               <pi-ip>
+IPs:
+  IP:           <pi-ip>
+Controlled By:  ReplicaSet/omg-ble-5658ff48b9
+Containers:
+  theengs-gateway:
+    Container ID:  containerd://d330ab3c808193442cfdf669a6d0dfe9266adb97d0a282cad7c9677967d82f7b
+    Image:         theengs/gateway:latest
+    Image ID:      docker.io/theengs/gateway@sha256:c66a847ced586fe307922b1dd0cb7beb7d792c0152f92e23f8b3d9edf8ab0e74
+    Port:          <none>
+    Host Port:     <none>
+    Command:
+      bash
+      -c
+    Args:
+      source /opt/venv/bin/activate
+      # hostNetwork=true means localhost is the Pi host, NOT the
+      # pod. nanomq lives in the cluster — reach it via cluster
+      # DNS (dnsPolicy=ClusterFirstWithHostNet keeps the
+      # cluster resolver visible to host-networked pods).
+      exec python -m TheengsGateway \
+        -H nanomq.translator-ble.svc.cluster.local -P 1883 \
+        -pt bluetooth/BTtoMQTT \
+        -Lt bluetooth/LWT \
+        -D 0 -b 1
+      
+    State:          Running
+      Started:      Mon, 27 Apr 2026 10:06:14 +0200
+    Ready:          True
+    Restart Count:  0
+    Limits:
+      cpu:     500m
+      memory:  256Mi
+    Requests:
+      cpu:        50m
+      memory:     64Mi
+    Environment:  <none>
+    Mounts:
+      /var/run/dbus from dbus (rw)
+      /var/run/secrets/kubernetes.io/serviceaccount from kube-api-access-dqnnv (ro)
+Conditions:
+  Type                        Status
+  PodReadyToStartContainers   True 
+  Initialized                 True 
+  Ready                       True 
+  ContainersReady             True 
+  PodScheduled                True 
+Volumes:
+  dbus:
+    Type:          HostPath (bare host directory volume)
+    Path:          /var/run/dbus
+    HostPathType:  Directory
+  kube-api-access-dqnnv:
+    Type:                    Projected (a volume that contains injected data from multiple sources)
+    TokenExpirationSeconds:  3607
+    ConfigMapName:           kube-root-ca.crt
+    Optional:                false
+    DownwardAPI:             true
+QoS Class:                   Burstable
+Node-Selectors:              hermod.io/bluetooth=true
+Tolerations:                 node.kubernetes.io/not-ready:NoExecute op=Exists for 300s
+                             node.kubernetes.io/unreachable:NoExecute op=Exists for 300s
+Events:
+  Type    Reason     Age   From               Message
+  ----    ------     ----  ----               -------
+  Normal  Scheduled  77s   default-scheduler  Successfully assigned translator-ble/omg-ble-5658ff48b9-f9dtx to <pi-host>
+  Normal  Pulled     77s   kubelet            spec.containers{theengs-gateway}: Container image "theengs/gateway:latest" already present on machine
+  Normal  Created    77s   kubelet            spec.containers{theengs-gateway}: Created container: theengs-gateway
+  Normal  Started    77s   kubelet            spec.containers{theengs-gateway}: Started container theengs-gateway
+
+
+Name:             postgres-0
+Namespace:        translator-ble
+Priority:         0
+Service Account:  default
+Node:             <pi-host>/<pi-ip>
+Start Time:       Mon, 27 Apr 2026 10:06:19 +0200
+Labels:           app=postgres
+                  apps.kubernetes.io/pod-index=0
+                  controller-revision-hash=postgres-848ccb988d
+                  statefulset.kubernetes.io/pod-name=postgres-0
+Annotations:      cni.projectcalico.org/containerID: 0f0e80a9b2fc6d672fa690000c354fc4d2971fdc4c6878a4ec27027943794dea
+                  cni.projectcalico.org/podIP: <pod-ip>/32
+                  cni.projectcalico.org/podIPs: <pod-ip>/32
+Status:           Running
+IP:               <pod-ip>
+IPs:
+  IP:           <pod-ip>
+Controlled By:  StatefulSet/postgres
+Containers:
+  postgres:
+    Container ID:   containerd://a52d47f8c786e35361a1d69403707b1766b9eb4d88b327fa65e53b3c51ad9e92
+    Image:          postgres:17-alpine
+    Image ID:       docker.io/library/postgres@sha256:778d0b486d6daa02b77434d0358ec57a1b21fd8b6d22ac2eef56a33e816928f6
+    Port:           5432/TCP
+    Host Port:      0/TCP
+    State:          Running
+      Started:      Mon, 27 Apr 2026 10:06:19 +0200
+    Ready:          True
+    Restart Count:  0
+    Limits:
+      cpu:     1500m
+      memory:  1536Mi
+    Requests:
+      cpu:      100m
+      memory:   256Mi
+    Readiness:  exec [pg_isready -U postgres] delay=5s timeout=1s period=5s #success=1 #failure=3
+    Environment:
+      POSTGRES_DB:        postgres
+      POSTGRES_USER:      postgres
+      POSTGRES_PASSWORD:  <set to the key 'postgres-superuser-password' in secret 'hermod-secrets'>  Optional: false
+    Mounts:
+      /docker-entrypoint-initdb.d from init (rw)
+      /var/lib/postgresql/data from data (rw)
+      /var/run/secrets/kubernetes.io/serviceaccount from kube-api-access-z5lxp (ro)
+Conditions:
+  Type                        Status
+  PodReadyToStartContainers   True 
+  Initialized                 True 
+  Ready                       True 
+  ContainersReady             True 
+  PodScheduled                True 
+Volumes:
+  data:
+    Type:       PersistentVolumeClaim (a reference to a PersistentVolumeClaim in the same namespace)
+    ClaimName:  data-postgres-0
+    ReadOnly:   false
+  init:
+    Type:      ConfigMap (a volume populated by a ConfigMap)
+    Name:      postgres-init
+    Optional:  false
+  kube-api-access-z5lxp:
+    Type:                    Projected (a volume that contains injected data from multiple sources)
+    TokenExpirationSeconds:  3607
+    ConfigMapName:           kube-root-ca.crt
+    Optional:                false
+    DownwardAPI:             true
+QoS Class:                   Burstable
+Node-Selectors:              <none>
+Tolerations:                 node.kubernetes.io/not-ready:NoExecute op=Exists for 300s
+                             node.kubernetes.io/unreachable:NoExecute op=Exists for 300s
+Events:
+  Type    Reason     Age   From               Message
+  ----    ------     ----  ----               -------
+  Normal  Scheduled  72s   default-scheduler  Successfully assigned translator-ble/postgres-0 to <pi-host>
+  Normal  Pulled     72s   kubelet            spec.containers{postgres}: Container image "postgres:17-alpine" already present on machine
+  Normal  Created    72s   kubelet            spec.containers{postgres}: Created container: postgres
+  Normal  Started    72s   kubelet            spec.containers{postgres}: Started container postgres
+
+=== ts=1777277262 ===
+Name:             hermod-coordinator-7d7b88cc46-qpqzt
+Namespace:        translator-ble
+Priority:         0
+Service Account:  default
+Node:             <pi-host>/<pi-ip>
+Start Time:       Mon, 27 Apr 2026 10:06:38 +0200
+Labels:           app=hermod-coordinator
+                  pod-template-hash=7d7b88cc46
+Annotations:      cni.projectcalico.org/containerID: e62372d94642a06248ee7597177b7ba38777a24e859db93eaf68d9fec2fa4b20
+                  cni.projectcalico.org/podIP: <pod-ip>/32
+                  cni.projectcalico.org/podIPs: <pod-ip>/32
+Status:           Running
+IP:               <pod-ip>
+IPs:
+  IP:           <pod-ip>
+Controlled By:  ReplicaSet/hermod-coordinator-7d7b88cc46
+Init Containers:
+  wait-for-postgres:
+    Container ID:  containerd://199d9a6a85aebf2df2a3d5e9d472e9d981fa98cb181b140edb9006ed655236ac
+    Image:         busybox:1.36
+    Image ID:      docker.io/library/busybox@sha256:73aaf090f3d85aa34ee199857f03fa3a95c8ede2ffd4cc2cdb5b94e566b11662
+    Port:          <none>
+    Host Port:     <none>
+    Command:
+      sh
+      -c
+      until nc -z postgres 5432; do sleep 2; done
+    State:          Terminated
+      Reason:       Completed
+      Exit Code:    0
+      Started:      Mon, 27 Apr 2026 10:06:39 +0200
+      Finished:     Mon, 27 Apr 2026 10:06:39 +0200
+    Ready:          True
+    Restart Count:  0
+    Environment:
+      Hermod__Features__DeviceStateTracking:    true
+      Hermod__Engine__LogBatchSize:             100
+      Hermod__Engine__LogBatching:              true
+      Hermod__Engine__Parallelism:              0
+      Hermod__Features__MessagePersistence:     true
+      Hermod__Features__RuleAuditLog:           true
+      Hermod__Features__RuleCache:              true
+      Hermod__Features__StatsRollup:            true
+      Hermod__Storage__Mode:                    Postgres
+      Logging__LogLevel__Hermod:                Information
+      Logging__LogLevel__Microsoft.AspNetCore:  Warning
+    Mounts:
+      /var/run/secrets/kubernetes.io/serviceaccount from kube-api-access-479zb (ro)
+  wait-for-nanomq:
+    Container ID:  containerd://d6bdd26a020a0669316c2385eb98a23642983979d6bab6e39a1d36a9fb6212a4
+    Image:         busybox:1.36
+    Image ID:      docker.io/library/busybox@sha256:73aaf090f3d85aa34ee199857f03fa3a95c8ede2ffd4cc2cdb5b94e566b11662
+    Port:          <none>
+    Host Port:     <none>
+    Command:
+      sh
+      -c
+      until nc -z nanomq 1883; do sleep 2; done
+    State:          Terminated
+      Reason:       Completed
+      Exit Code:    0
+      Started:      Mon, 27 Apr 2026 10:06:40 +0200
+      Finished:     Mon, 27 Apr 2026 10:06:40 +0200
+    Ready:          True
+    Restart Count:  0
+    Environment:
+      Hermod__Features__DeviceStateTracking:    true
+      Hermod__Engine__LogBatchSize:             100
+      Hermod__Engine__LogBatching:              true
+      Hermod__Engine__Parallelism:              0
+      Hermod__Features__MessagePersistence:     true
+      Hermod__Features__RuleAuditLog:           true
+      Hermod__Features__RuleCache:              true
+      Hermod__Features__StatsRollup:            true
+      Hermod__Storage__Mode:                    Postgres
+      Logging__LogLevel__Hermod:                Information
+      Logging__LogLevel__Microsoft.AspNetCore:  Warning
+    Mounts:
+      /var/run/secrets/kubernetes.io/serviceaccount from kube-api-access-479zb (ro)
+Containers:
+  hermod-coordinator:
+    Container ID:   containerd://b67bd8db894524d8d82df204dd8085f61c1838fda10aa5d5371908db1f442040
+    Image:          hermod-coordinator:latest
+    Image ID:       sha256:ca91ccdfcd269dd5e4e25d5ffe8d863ca5db57e5c4f62f08c8adf90d23c15eaf
+    Port:           42069/TCP (http)
+    Host Port:      0/TCP (http)
+    State:          Running
+      Started:      Mon, 27 Apr 2026 10:06:41 +0200
+    Ready:          True
+    Restart Count:  0
+    Limits:
+      cpu:     1500m
+      memory:  1536Mi
+    Requests:
+      cpu:      200m
+      memory:   256Mi
+    Liveness:   http-get http://:42069/healthz delay=60s timeout=1s period=30s #success=1 #failure=3
+    Readiness:  http-get http://:42069/healthz/ready delay=5s timeout=1s period=10s #success=1 #failure=3
+    Startup:    http-get http://:42069/healthz delay=0s timeout=1s period=5s #success=1 #failure=30
+    Environment:
+      ASPNETCORE_ENVIRONMENT:                   Production
+      ASPNETCORE_URLS:                          http://+:42069
+      DOTNET_USE_POLLING_FILE_WATCHER:          true
+      Hermod__Security__AuthBypass:             true
+      Hermod__Security__VaultRequireHttps:      false
+      Hermod__Features__MetricsEndpoint:        true
+      Hermod__Dev__Endpoints:                   true
+      Hermod__Mqtt__Host:                       nanomq
+      Hermod__Mqtt__Port:                       1883
+      Hermod__Mqtt__UseTls:                     false
+      Hermod__Mqtt__Tls__UseTls:                false
+      Hermod__Mqtt__Username:                   <set to the key 'mqtt-username' in secret 'hermod-secrets'>  Optional: false
+      Hermod__Mqtt__Password:                   <set to the key 'mqtt-password' in secret 'hermod-secrets'>  Optional: false
+      Hermod__Database__ConnectionString:       Host=postgres;Port=5432;Database=hermod;Username=hermod_app
+      Hermod__Database__Password:               <set to the key 'hermod-db-password' in secret 'hermod-db-credentials'>  Optional: false
+      Hermod__Features__DeviceStateTracking:    true
+      Hermod__Engine__LogBatchSize:             100
+      Hermod__Engine__LogBatching:              true
+      Hermod__Engine__Parallelism:              0
+      Hermod__Features__MessagePersistence:     true
+      Hermod__Features__RuleAuditLog:           true
+      Hermod__Features__RuleCache:              true
+      Hermod__Features__StatsRollup:            true
+      Hermod__Storage__Mode:                    Postgres
+      Logging__LogLevel__Hermod:                Information
+      Logging__LogLevel__Microsoft.AspNetCore:  Warning
+    Mounts:
+      /var/run/secrets/kubernetes.io/serviceaccount from kube-api-access-479zb (ro)
+Conditions:
+  Type                        Status
+  PodReadyToStartContainers   True 
+  Initialized                 True 
+  Ready                       True 
+  ContainersReady             True 
+  PodScheduled                True 
+Volumes:
+  kube-api-access-479zb:
+    Type:                    Projected (a volume that contains injected data from multiple sources)
+    TokenExpirationSeconds:  3607
+    ConfigMapName:           kube-root-ca.crt
+    Optional:                false
+    DownwardAPI:             true
+QoS Class:                   Burstable
+Node-Selectors:              <none>
+Tolerations:                 node.kubernetes.io/not-ready:NoExecute op=Exists for 300s
+                             node.kubernetes.io/unreachable:NoExecute op=Exists for 300s
+Events:
+  Type    Reason     Age   From               Message
+  ----    ------     ----  ----               -------
+  Normal  Scheduled  64s   default-scheduler  Successfully assigned translator-ble/hermod-coordinator-7d7b88cc46-qpqzt to <pi-host>
+  Normal  Pulled     63s   kubelet            spec.initContainers{wait-for-postgres}: Container image "busybox:1.36" already present on machine
+  Normal  Created    63s   kubelet            spec.initContainers{wait-for-postgres}: Created container: wait-for-postgres
+  Normal  Started    63s   kubelet            spec.initContainers{wait-for-postgres}: Started container wait-for-postgres
+  Normal  Pulled     62s   kubelet            spec.initContainers{wait-for-nanomq}: Container image "busybox:1.36" already present on machine
+  Normal  Created    62s   kubelet            spec.initContainers{wait-for-nanomq}: Created container: wait-for-nanomq
+  Normal  Started    62s   kubelet            spec.initContainers{wait-for-nanomq}: Started container wait-for-nanomq
+  Normal  Pulled     61s   kubelet            spec.containers{hermod-coordinator}: Container image "hermod-coordinator:latest" already present on machine
+  Normal  Created    61s   kubelet            spec.containers{hermod-coordinator}: Created container: hermod-coordinator
+  Normal  Started    61s   kubelet            spec.containers{hermod-coordinator}: Started container hermod-coordinator
+
+
+Name:             nanomq-756fd88db6-g8kl4
+Namespace:        translator-ble
+Priority:         0
+Service Account:  default
+Node:             <pi-host>/<pi-ip>
+Start Time:       Mon, 27 Apr 2026 10:06:13 +0200
+Labels:           app=nanomq
+                  pod-template-hash=756fd88db6
+Annotations:      cni.projectcalico.org/containerID: 82bf8483f17be65c60e0eb64567735fd409becec820630322e1ed5a0055f4833
+                  cni.projectcalico.org/podIP: <pod-ip>/32
+                  cni.projectcalico.org/podIPs: <pod-ip>/32
+Status:           Running
+IP:               <pod-ip>
+IPs:
+  IP:           <pod-ip>
+Controlled By:  ReplicaSet/nanomq-756fd88db6
+Containers:
+  nanomq:
+    Container ID:   containerd://e84184f72b6a154962fb04299fa1c274d11dae895aee180e8a437f1faec802ad
+    Image:          emqx/nanomq:0.21-slim
+    Image ID:       docker.io/emqx/nanomq@sha256:53bea7acb547aced1cc45e08c514628f1e41c4da9ad544fd8c5fa96d3e9eb41b
+    Ports:          1883/TCP (mqtt), 8081/TCP (http)
+    Host Ports:     0/TCP (mqtt), 0/TCP (http)
+    State:          Running
+      Started:      Mon, 27 Apr 2026 10:06:14 +0200
+    Ready:          True
+    Restart Count:  0
+    Limits:
+      cpu:     1
+      memory:  512Mi
+    Requests:
+      cpu:        50m
+      memory:     64Mi
+    Readiness:    tcp-socket :1883 delay=3s timeout=1s period=5s #success=1 #failure=3
+    Environment:  <none>
+    Mounts:
+      /etc/nanomq.conf from config (rw,path="nanomq.conf")
+      /var/run/secrets/kubernetes.io/serviceaccount from kube-api-access-qfw77 (ro)
+Conditions:
+  Type                        Status
+  PodReadyToStartContainers   True 
+  Initialized                 True 
+  Ready                       True 
+  ContainersReady             True 
+  PodScheduled                True 
+Volumes:
+  config:
+    Type:      ConfigMap (a volume populated by a ConfigMap)
+    Name:      nanomq-config
+    Optional:  false
+  kube-api-access-qfw77:
+    Type:                    Projected (a volume that contains injected data from multiple sources)
+    TokenExpirationSeconds:  3607
+    ConfigMapName:           kube-root-ca.crt
+    Optional:                false
+    DownwardAPI:             true
+QoS Class:                   Burstable
+Node-Selectors:              <none>
+Tolerations:                 node.kubernetes.io/not-ready:NoExecute op=Exists for 300s
+                             node.kubernetes.io/unreachable:NoExecute op=Exists for 300s
+Events:
+  Type    Reason     Age   From               Message
+  ----    ------     ----  ----               -------
+  Normal  Scheduled  89s   default-scheduler  Successfully assigned translator-ble/nanomq-756fd88db6-g8kl4 to <pi-host>
+  Normal  Pulled     88s   kubelet            spec.containers{nanomq}: Container image "emqx/nanomq:0.21-slim" already present on machine
+  Normal  Created    88s   kubelet            spec.containers{nanomq}: Created container: nanomq
+  Normal  Started    88s   kubelet            spec.containers{nanomq}: Started container nanomq
+
+
+Name:             omg-ble-5658ff48b9-f9dtx
+Namespace:        translator-ble
+Priority:         0
+Service Account:  default
+Node:             <pi-host>/<pi-ip>
+Start Time:       Mon, 27 Apr 2026 10:06:13 +0200
+Labels:           app=omg-ble
+                  pod-template-hash=5658ff48b9
+Annotations:      <none>
+Status:           Running
+IP:               <pi-ip>
+IPs:
+  IP:           <pi-ip>
+Controlled By:  ReplicaSet/omg-ble-5658ff48b9
+Containers:
+  theengs-gateway:
+    Container ID:  containerd://d330ab3c808193442cfdf669a6d0dfe9266adb97d0a282cad7c9677967d82f7b
+    Image:         theengs/gateway:latest
+    Image ID:      docker.io/theengs/gateway@sha256:c66a847ced586fe307922b1dd0cb7beb7d792c0152f92e23f8b3d9edf8ab0e74
+    Port:          <none>
+    Host Port:     <none>
+    Command:
+      bash
+      -c
+    Args:
+      source /opt/venv/bin/activate
+      # hostNetwork=true means localhost is the Pi host, NOT the
+      # pod. nanomq lives in the cluster — reach it via cluster
+      # DNS (dnsPolicy=ClusterFirstWithHostNet keeps the
+      # cluster resolver visible to host-networked pods).
+      exec python -m TheengsGateway \
+        -H nanomq.translator-ble.svc.cluster.local -P 1883 \
+        -pt bluetooth/BTtoMQTT \
+        -Lt bluetooth/LWT \
+        -D 0 -b 1
+      
+    State:          Running
+      Started:      Mon, 27 Apr 2026 10:06:14 +0200
+    Ready:          True
+    Restart Count:  0
+    Limits:
+      cpu:     500m
+      memory:  256Mi
+    Requests:
+      cpu:        50m
+      memory:     64Mi
+    Environment:  <none>
+    Mounts:
+      /var/run/dbus from dbus (rw)
+      /var/run/secrets/kubernetes.io/serviceaccount from kube-api-access-dqnnv (ro)
+Conditions:
+  Type                        Status
+  PodReadyToStartContainers   True 
+  Initialized                 True 
+  Ready                       True 
+  ContainersReady             True 
+  PodScheduled                True 
+Volumes:
+  dbus:
+    Type:          HostPath (bare host directory volume)
+    Path:          /var/run/dbus
+    HostPathType:  Directory
+  kube-api-access-dqnnv:
+    Type:                    Projected (a volume that contains injected data from multiple sources)
+    TokenExpirationSeconds:  3607
+    ConfigMapName:           kube-root-ca.crt
+    Optional:                false
+    DownwardAPI:             true
+QoS Class:                   Burstable
+Node-Selectors:              hermod.io/bluetooth=true
+Tolerations:                 node.kubernetes.io/not-ready:NoExecute op=Exists for 300s
+                             node.kubernetes.io/unreachable:NoExecute op=Exists for 300s
+Events:
+  Type    Reason     Age   From               Message
+  ----    ------     ----  ----               -------
+  Normal  Scheduled  88s   default-scheduler  Successfully assigned translator-ble/omg-ble-5658ff48b9-f9dtx to <pi-host>
+  Normal  Pulled     88s   kubelet            spec.containers{theengs-gateway}: Container image "theengs/gateway:latest" already present on machine
+  Normal  Created    88s   kubelet            spec.containers{theengs-gateway}: Created container: theengs-gateway
+  Normal  Started    88s   kubelet            spec.containers{theengs-gateway}: Started container theengs-gateway
+
+
+Name:             postgres-0
+Namespace:        translator-ble
+Priority:         0
+Service Account:  default
+Node:             <pi-host>/<pi-ip>
+Start Time:       Mon, 27 Apr 2026 10:06:19 +0200
+Labels:           app=postgres
+                  apps.kubernetes.io/pod-index=0
+                  controller-revision-hash=postgres-848ccb988d
+                  statefulset.kubernetes.io/pod-name=postgres-0
+Annotations:      cni.projectcalico.org/containerID: 0f0e80a9b2fc6d672fa690000c354fc4d2971fdc4c6878a4ec27027943794dea
+                  cni.projectcalico.org/podIP: <pod-ip>/32
+                  cni.projectcalico.org/podIPs: <pod-ip>/32
+Status:           Running
+IP:               <pod-ip>
+IPs:
+  IP:           <pod-ip>
+Controlled By:  StatefulSet/postgres
+Containers:
+  postgres:
+    Container ID:   containerd://a52d47f8c786e35361a1d69403707b1766b9eb4d88b327fa65e53b3c51ad9e92
+    Image:          postgres:17-alpine
+    Image ID:       docker.io/library/postgres@sha256:778d0b486d6daa02b77434d0358ec57a1b21fd8b6d22ac2eef56a33e816928f6
+    Port:           5432/TCP
+    Host Port:      0/TCP
+    State:          Running
+      Started:      Mon, 27 Apr 2026 10:06:19 +0200
+    Ready:          True
+    Restart Count:  0
+    Limits:
+      cpu:     1500m
+      memory:  1536Mi
+    Requests:
+      cpu:      100m
+      memory:   256Mi
+    Readiness:  exec [pg_isready -U postgres] delay=5s timeout=1s period=5s #success=1 #failure=3
+    Environment:
+      POSTGRES_DB:        postgres
+      POSTGRES_USER:      postgres
+      POSTGRES_PASSWORD:  <set to the key 'postgres-superuser-password' in secret 'hermod-secrets'>  Optional: false
+    Mounts:
+      /docker-entrypoint-initdb.d from init (rw)
+      /var/lib/postgresql/data from data (rw)
+      /var/run/secrets/kubernetes.io/serviceaccount from kube-api-access-z5lxp (ro)
+Conditions:
+  Type                        Status
+  PodReadyToStartContainers   True 
+  Initialized                 True 
+  Ready                       True 
+  ContainersReady             True 
+  PodScheduled                True 
+Volumes:
+  data:
+    Type:       PersistentVolumeClaim (a reference to a PersistentVolumeClaim in the same namespace)
+    ClaimName:  data-postgres-0
+    ReadOnly:   false
+  init:
+    Type:      ConfigMap (a volume populated by a ConfigMap)
+    Name:      postgres-init
+    Optional:  false
+  kube-api-access-z5lxp:
+    Type:                    Projected (a volume that contains injected data from multiple sources)
+    TokenExpirationSeconds:  3607
+    ConfigMapName:           kube-root-ca.crt
+    Optional:                false
+    DownwardAPI:             true
+QoS Class:                   Burstable
+Node-Selectors:              <none>
+Tolerations:                 node.kubernetes.io/not-ready:NoExecute op=Exists for 300s
+                             node.kubernetes.io/unreachable:NoExecute op=Exists for 300s
+Events:
+  Type    Reason     Age   From               Message
+  ----    ------     ----  ----               -------
+  Normal  Scheduled  83s   default-scheduler  Successfully assigned translator-ble/postgres-0 to <pi-host>
+  Normal  Pulled     83s   kubelet            spec.containers{postgres}: Container image "postgres:17-alpine" already present on machine
+  Normal  Created    83s   kubelet            spec.containers{postgres}: Created container: postgres
+  Normal  Started    83s   kubelet            spec.containers{postgres}: Started container postgres
+
+=== ts=1777277273 ===
+Name:             hermod-coordinator-7d7b88cc46-qpqzt
+Namespace:        translator-ble
+Priority:         0
+Service Account:  default
+Node:             <pi-host>/<pi-ip>
+Start Time:       Mon, 27 Apr 2026 10:06:38 +0200
+Labels:           app=hermod-coordinator
+                  pod-template-hash=7d7b88cc46
+Annotations:      cni.projectcalico.org/containerID: e62372d94642a06248ee7597177b7ba38777a24e859db93eaf68d9fec2fa4b20
+                  cni.projectcalico.org/podIP: <pod-ip>/32
+                  cni.projectcalico.org/podIPs: <pod-ip>/32
+Status:           Running
+IP:               <pod-ip>
+IPs:
+  IP:           <pod-ip>
+Controlled By:  ReplicaSet/hermod-coordinator-7d7b88cc46
+Init Containers:
+  wait-for-postgres:
+    Container ID:  containerd://199d9a6a85aebf2df2a3d5e9d472e9d981fa98cb181b140edb9006ed655236ac
+    Image:         busybox:1.36
+    Image ID:      docker.io/library/busybox@sha256:73aaf090f3d85aa34ee199857f03fa3a95c8ede2ffd4cc2cdb5b94e566b11662
+    Port:          <none>
+    Host Port:     <none>
+    Command:
+      sh
+      -c
+      until nc -z postgres 5432; do sleep 2; done
+    State:          Terminated
+      Reason:       Completed
+      Exit Code:    0
+      Started:      Mon, 27 Apr 2026 10:06:39 +0200
+      Finished:     Mon, 27 Apr 2026 10:06:39 +0200
+    Ready:          True
+    Restart Count:  0
+    Environment:
+      Hermod__Features__DeviceStateTracking:    true
+      Hermod__Engine__LogBatchSize:             100
+      Hermod__Engine__LogBatching:              true
+      Hermod__Engine__Parallelism:              0
+      Hermod__Features__MessagePersistence:     true
+      Hermod__Features__RuleAuditLog:           true
+      Hermod__Features__RuleCache:              true
+      Hermod__Features__StatsRollup:            true
+      Hermod__Storage__Mode:                    Postgres
+      Logging__LogLevel__Hermod:                Information
+      Logging__LogLevel__Microsoft.AspNetCore:  Warning
+    Mounts:
+      /var/run/secrets/kubernetes.io/serviceaccount from kube-api-access-479zb (ro)
+  wait-for-nanomq:
+    Container ID:  containerd://d6bdd26a020a0669316c2385eb98a23642983979d6bab6e39a1d36a9fb6212a4
+    Image:         busybox:1.36
+    Image ID:      docker.io/library/busybox@sha256:73aaf090f3d85aa34ee199857f03fa3a95c8ede2ffd4cc2cdb5b94e566b11662
+    Port:          <none>
+    Host Port:     <none>
+    Command:
+      sh
+      -c
+      until nc -z nanomq 1883; do sleep 2; done
+    State:          Terminated
+      Reason:       Completed
+      Exit Code:    0
+      Started:      Mon, 27 Apr 2026 10:06:40 +0200
+      Finished:     Mon, 27 Apr 2026 10:06:40 +0200
+    Ready:          True
+    Restart Count:  0
+    Environment:
+      Hermod__Features__DeviceStateTracking:    true
+      Hermod__Engine__LogBatchSize:             100
+      Hermod__Engine__LogBatching:              true
+      Hermod__Engine__Parallelism:              0
+      Hermod__Features__MessagePersistence:     true
+      Hermod__Features__RuleAuditLog:           true
+      Hermod__Features__RuleCache:              true
+      Hermod__Features__StatsRollup:            true
+      Hermod__Storage__Mode:                    Postgres
+      Logging__LogLevel__Hermod:                Information
+      Logging__LogLevel__Microsoft.AspNetCore:  Warning
+    Mounts:
+      /var/run/secrets/kubernetes.io/serviceaccount from kube-api-access-479zb (ro)
+Containers:
+  hermod-coordinator:
+    Container ID:   containerd://b67bd8db894524d8d82df204dd8085f61c1838fda10aa5d5371908db1f442040
+    Image:          hermod-coordinator:latest
+    Image ID:       sha256:ca91ccdfcd269dd5e4e25d5ffe8d863ca5db57e5c4f62f08c8adf90d23c15eaf
+    Port:           42069/TCP (http)
+    Host Port:      0/TCP (http)
+    State:          Running
+      Started:      Mon, 27 Apr 2026 10:06:41 +0200
+    Ready:          True
+    Restart Count:  0
+    Limits:
+      cpu:     1500m
+      memory:  1536Mi
+    Requests:
+      cpu:      200m
+      memory:   256Mi
+    Liveness:   http-get http://:42069/healthz delay=60s timeout=1s period=30s #success=1 #failure=3
+    Readiness:  http-get http://:42069/healthz/ready delay=5s timeout=1s period=10s #success=1 #failure=3
+    Startup:    http-get http://:42069/healthz delay=0s timeout=1s period=5s #success=1 #failure=30
+    Environment:
+      ASPNETCORE_ENVIRONMENT:                   Production
+      ASPNETCORE_URLS:                          http://+:42069
+      DOTNET_USE_POLLING_FILE_WATCHER:          true
+      Hermod__Security__AuthBypass:             true
+      Hermod__Security__VaultRequireHttps:      false
+      Hermod__Features__MetricsEndpoint:        true
+      Hermod__Dev__Endpoints:                   true
+      Hermod__Mqtt__Host:                       nanomq
+      Hermod__Mqtt__Port:                       1883
+      Hermod__Mqtt__UseTls:                     false
+      Hermod__Mqtt__Tls__UseTls:                false
+      Hermod__Mqtt__Username:                   <set to the key 'mqtt-username' in secret 'hermod-secrets'>  Optional: false
+      Hermod__Mqtt__Password:                   <set to the key 'mqtt-password' in secret 'hermod-secrets'>  Optional: false
+      Hermod__Database__ConnectionString:       Host=postgres;Port=5432;Database=hermod;Username=hermod_app
+      Hermod__Database__Password:               <set to the key 'hermod-db-password' in secret 'hermod-db-credentials'>  Optional: false
+      Hermod__Features__DeviceStateTracking:    true
+      Hermod__Engine__LogBatchSize:             100
+      Hermod__Engine__LogBatching:              true
+      Hermod__Engine__Parallelism:              0
+      Hermod__Features__MessagePersistence:     true
+      Hermod__Features__RuleAuditLog:           true
+      Hermod__Features__RuleCache:              true
+      Hermod__Features__StatsRollup:            true
+      Hermod__Storage__Mode:                    Postgres
+      Logging__LogLevel__Hermod:                Information
+      Logging__LogLevel__Microsoft.AspNetCore:  Warning
+    Mounts:
+      /var/run/secrets/kubernetes.io/serviceaccount from kube-api-access-479zb (ro)
+Conditions:
+  Type                        Status
+  PodReadyToStartContainers   True 
+  Initialized                 True 
+  Ready                       True 
+  ContainersReady             True 
+  PodScheduled                True 
+Volumes:
+  kube-api-access-479zb:
+    Type:                    Projected (a volume that contains injected data from multiple sources)
+    TokenExpirationSeconds:  3607
+    ConfigMapName:           kube-root-ca.crt
+    Optional:                false
+    DownwardAPI:             true
+QoS Class:                   Burstable
+Node-Selectors:              <none>
+Tolerations:                 node.kubernetes.io/not-ready:NoExecute op=Exists for 300s
+                             node.kubernetes.io/unreachable:NoExecute op=Exists for 300s
+Events:
+  Type    Reason     Age   From               Message
+  ----    ------     ----  ----               -------
+  Normal  Scheduled  75s   default-scheduler  Successfully assigned translator-ble/hermod-coordinator-7d7b88cc46-qpqzt to <pi-host>
+  Normal  Pulled     74s   kubelet            spec.initContainers{wait-for-postgres}: Container image "busybox:1.36" already present on machine
+  Normal  Created    74s   kubelet            spec.initContainers{wait-for-postgres}: Created container: wait-for-postgres
+  Normal  Started    74s   kubelet            spec.initContainers{wait-for-postgres}: Started container wait-for-postgres
+  Normal  Pulled     73s   kubelet            spec.initContainers{wait-for-nanomq}: Container image "busybox:1.36" already present on machine
+  Normal  Created    73s   kubelet            spec.initContainers{wait-for-nanomq}: Created container: wait-for-nanomq
+  Normal  Started    73s   kubelet            spec.initContainers{wait-for-nanomq}: Started container wait-for-nanomq
+  Normal  Pulled     72s   kubelet            spec.containers{hermod-coordinator}: Container image "hermod-coordinator:latest" already present on machine
+  Normal  Created    72s   kubelet            spec.containers{hermod-coordinator}: Created container: hermod-coordinator
+  Normal  Started    72s   kubelet            spec.containers{hermod-coordinator}: Started container hermod-coordinator
+
+
+Name:             nanomq-756fd88db6-g8kl4
+Namespace:        translator-ble
+Priority:         0
+Service Account:  default
+Node:             <pi-host>/<pi-ip>
+Start Time:       Mon, 27 Apr 2026 10:06:13 +0200
+Labels:           app=nanomq
+                  pod-template-hash=756fd88db6
+Annotations:      cni.projectcalico.org/containerID: 82bf8483f17be65c60e0eb64567735fd409becec820630322e1ed5a0055f4833
+                  cni.projectcalico.org/podIP: <pod-ip>/32
+                  cni.projectcalico.org/podIPs: <pod-ip>/32
+Status:           Running
+IP:               <pod-ip>
+IPs:
+  IP:           <pod-ip>
+Controlled By:  ReplicaSet/nanomq-756fd88db6
+Containers:
+  nanomq:
+    Container ID:   containerd://e84184f72b6a154962fb04299fa1c274d11dae895aee180e8a437f1faec802ad
+    Image:          emqx/nanomq:0.21-slim
+    Image ID:       docker.io/emqx/nanomq@sha256:53bea7acb547aced1cc45e08c514628f1e41c4da9ad544fd8c5fa96d3e9eb41b
+    Ports:          1883/TCP (mqtt), 8081/TCP (http)
+    Host Ports:     0/TCP (mqtt), 0/TCP (http)
+    State:          Running
+      Started:      Mon, 27 Apr 2026 10:06:14 +0200
+    Ready:          True
+    Restart Count:  0
+    Limits:
+      cpu:     1
+      memory:  512Mi
+    Requests:
+      cpu:        50m
+      memory:     64Mi
+    Readiness:    tcp-socket :1883 delay=3s timeout=1s period=5s #success=1 #failure=3
+    Environment:  <none>
+    Mounts:
+      /etc/nanomq.conf from config (rw,path="nanomq.conf")
+      /var/run/secrets/kubernetes.io/serviceaccount from kube-api-access-qfw77 (ro)
+Conditions:
+  Type                        Status
+  PodReadyToStartContainers   True 
+  Initialized                 True 
+  Ready                       True 
+  ContainersReady             True 
+  PodScheduled                True 
+Volumes:
+  config:
+    Type:      ConfigMap (a volume populated by a ConfigMap)
+    Name:      nanomq-config
+    Optional:  false
+  kube-api-access-qfw77:
+    Type:                    Projected (a volume that contains injected data from multiple sources)
+    TokenExpirationSeconds:  3607
+    ConfigMapName:           kube-root-ca.crt
+    Optional:                false
+    DownwardAPI:             true
+QoS Class:                   Burstable
+Node-Selectors:              <none>
+Tolerations:                 node.kubernetes.io/not-ready:NoExecute op=Exists for 300s
+                             node.kubernetes.io/unreachable:NoExecute op=Exists for 300s
+Events:
+  Type    Reason     Age   From               Message
+  ----    ------     ----  ----               -------
+  Normal  Scheduled  100s  default-scheduler  Successfully assigned translator-ble/nanomq-756fd88db6-g8kl4 to <pi-host>
+  Normal  Pulled     99s   kubelet            spec.containers{nanomq}: Container image "emqx/nanomq:0.21-slim" already present on machine
+  Normal  Created    99s   kubelet            spec.containers{nanomq}: Created container: nanomq
+  Normal  Started    99s   kubelet            spec.containers{nanomq}: Started container nanomq
+
+
+Name:             omg-ble-5658ff48b9-f9dtx
+Namespace:        translator-ble
+Priority:         0
+Service Account:  default
+Node:             <pi-host>/<pi-ip>
+Start Time:       Mon, 27 Apr 2026 10:06:13 +0200
+Labels:           app=omg-ble
+                  pod-template-hash=5658ff48b9
+Annotations:      <none>
+Status:           Running
+IP:               <pi-ip>
+IPs:
+  IP:           <pi-ip>
+Controlled By:  ReplicaSet/omg-ble-5658ff48b9
+Containers:
+  theengs-gateway:
+    Container ID:  containerd://d330ab3c808193442cfdf669a6d0dfe9266adb97d0a282cad7c9677967d82f7b
+    Image:         theengs/gateway:latest
+    Image ID:      docker.io/theengs/gateway@sha256:c66a847ced586fe307922b1dd0cb7beb7d792c0152f92e23f8b3d9edf8ab0e74
+    Port:          <none>
+    Host Port:     <none>
+    Command:
+      bash
+      -c
+    Args:
+      source /opt/venv/bin/activate
+      # hostNetwork=true means localhost is the Pi host, NOT the
+      # pod. nanomq lives in the cluster — reach it via cluster
+      # DNS (dnsPolicy=ClusterFirstWithHostNet keeps the
+      # cluster resolver visible to host-networked pods).
+      exec python -m TheengsGateway \
+        -H nanomq.translator-ble.svc.cluster.local -P 1883 \
+        -pt bluetooth/BTtoMQTT \
+        -Lt bluetooth/LWT \
+        -D 0 -b 1
+      
+    State:          Running
+      Started:      Mon, 27 Apr 2026 10:06:14 +0200
+    Ready:          True
+    Restart Count:  0
+    Limits:
+      cpu:     500m
+      memory:  256Mi
+    Requests:
+      cpu:        50m
+      memory:     64Mi
+    Environment:  <none>
+    Mounts:
+      /var/run/dbus from dbus (rw)
+      /var/run/secrets/kubernetes.io/serviceaccount from kube-api-access-dqnnv (ro)
+Conditions:
+  Type                        Status
+  PodReadyToStartContainers   True 
+  Initialized                 True 
+  Ready                       True 
+  ContainersReady             True 
+  PodScheduled                True 
+Volumes:
+  dbus:
+    Type:          HostPath (bare host directory volume)
+    Path:          /var/run/dbus
+    HostPathType:  Directory
+  kube-api-access-dqnnv:
+    Type:                    Projected (a volume that contains injected data from multiple sources)
+    TokenExpirationSeconds:  3607
+    ConfigMapName:           kube-root-ca.crt
+    Optional:                false
+    DownwardAPI:             true
+QoS Class:                   Burstable
+Node-Selectors:              hermod.io/bluetooth=true
+Tolerations:                 node.kubernetes.io/not-ready:NoExecute op=Exists for 300s
+                             node.kubernetes.io/unreachable:NoExecute op=Exists for 300s
+Events:
+  Type    Reason     Age   From               Message
+  ----    ------     ----  ----               -------
+  Normal  Scheduled  99s   default-scheduler  Successfully assigned translator-ble/omg-ble-5658ff48b9-f9dtx to <pi-host>
+  Normal  Pulled     99s   kubelet            spec.containers{theengs-gateway}: Container image "theengs/gateway:latest" already present on machine
+  Normal  Created    99s   kubelet            spec.containers{theengs-gateway}: Created container: theengs-gateway
+  Normal  Started    99s   kubelet            spec.containers{theengs-gateway}: Started container theengs-gateway
+
+
+Name:             postgres-0
+Namespace:        translator-ble
+Priority:         0
+Service Account:  default
+Node:             <pi-host>/<pi-ip>
+Start Time:       Mon, 27 Apr 2026 10:06:19 +0200
+Labels:           app=postgres
+                  apps.kubernetes.io/pod-index=0
+                  controller-revision-hash=postgres-848ccb988d
+                  statefulset.kubernetes.io/pod-name=postgres-0
+Annotations:      cni.projectcalico.org/containerID: 0f0e80a9b2fc6d672fa690000c354fc4d2971fdc4c6878a4ec27027943794dea
+                  cni.projectcalico.org/podIP: <pod-ip>/32
+                  cni.projectcalico.org/podIPs: <pod-ip>/32
+Status:           Running
+IP:               <pod-ip>
+IPs:
+  IP:           <pod-ip>
+Controlled By:  StatefulSet/postgres
+Containers:
+  postgres:
+    Container ID:   containerd://a52d47f8c786e35361a1d69403707b1766b9eb4d88b327fa65e53b3c51ad9e92
+    Image:          postgres:17-alpine
+    Image ID:       docker.io/library/postgres@sha256:778d0b486d6daa02b77434d0358ec57a1b21fd8b6d22ac2eef56a33e816928f6
+    Port:           5432/TCP
+    Host Port:      0/TCP
+    State:          Running
+      Started:      Mon, 27 Apr 2026 10:06:19 +0200
+    Ready:          True
+    Restart Count:  0
+    Limits:
+      cpu:     1500m
+      memory:  1536Mi
+    Requests:
+      cpu:      100m
+      memory:   256Mi
+    Readiness:  exec [pg_isready -U postgres] delay=5s timeout=1s period=5s #success=1 #failure=3
+    Environment:
+      POSTGRES_DB:        postgres
+      POSTGRES_USER:      postgres
+      POSTGRES_PASSWORD:  <set to the key 'postgres-superuser-password' in secret 'hermod-secrets'>  Optional: false
+    Mounts:
+      /docker-entrypoint-initdb.d from init (rw)
+      /var/lib/postgresql/data from data (rw)
+      /var/run/secrets/kubernetes.io/serviceaccount from kube-api-access-z5lxp (ro)
+Conditions:
+  Type                        Status
+  PodReadyToStartContainers   True 
+  Initialized                 True 
+  Ready                       True 
+  ContainersReady             True 
+  PodScheduled                True 
+Volumes:
+  data:
+    Type:       PersistentVolumeClaim (a reference to a PersistentVolumeClaim in the same namespace)
+    ClaimName:  data-postgres-0
+    ReadOnly:   false
+  init:
+    Type:      ConfigMap (a volume populated by a ConfigMap)
+    Name:      postgres-init
+    Optional:  false
+  kube-api-access-z5lxp:
+    Type:                    Projected (a volume that contains injected data from multiple sources)
+    TokenExpirationSeconds:  3607
+    ConfigMapName:           kube-root-ca.crt
+    Optional:                false
+    DownwardAPI:             true
+QoS Class:                   Burstable
+Node-Selectors:              <none>
+Tolerations:                 node.kubernetes.io/not-ready:NoExecute op=Exists for 300s
+                             node.kubernetes.io/unreachable:NoExecute op=Exists for 300s
+Events:
+  Type    Reason     Age   From               Message
+  ----    ------     ----  ----               -------
+  Normal  Scheduled  94s   default-scheduler  Successfully assigned translator-ble/postgres-0 to <pi-host>
+  Normal  Pulled     94s   kubelet            spec.containers{postgres}: Container image "postgres:17-alpine" already present on machine
+  Normal  Created    94s   kubelet            spec.containers{postgres}: Created container: postgres
+  Normal  Started    94s   kubelet            spec.containers{postgres}: Started container postgres
+
+=== ts=1777277284 ===
+Name:             hermod-coordinator-7d7b88cc46-qpqzt
+Namespace:        translator-ble
+Priority:         0
+Service Account:  default
+Node:             <pi-host>/<pi-ip>
+Start Time:       Mon, 27 Apr 2026 10:06:38 +0200
+Labels:           app=hermod-coordinator
+                  pod-template-hash=7d7b88cc46
+Annotations:      cni.projectcalico.org/containerID: e62372d94642a06248ee7597177b7ba38777a24e859db93eaf68d9fec2fa4b20
+                  cni.projectcalico.org/podIP: <pod-ip>/32
+                  cni.projectcalico.org/podIPs: <pod-ip>/32
+Status:           Running
+IP:               <pod-ip>
+IPs:
+  IP:           <pod-ip>
+Controlled By:  ReplicaSet/hermod-coordinator-7d7b88cc46
+Init Containers:
+  wait-for-postgres:
+    Container ID:  containerd://199d9a6a85aebf2df2a3d5e9d472e9d981fa98cb181b140edb9006ed655236ac
+    Image:         busybox:1.36
+    Image ID:      docker.io/library/busybox@sha256:73aaf090f3d85aa34ee199857f03fa3a95c8ede2ffd4cc2cdb5b94e566b11662
+    Port:          <none>
+    Host Port:     <none>
+    Command:
+      sh
+      -c
+      until nc -z postgres 5432; do sleep 2; done
+    State:          Terminated
+      Reason:       Completed
+      Exit Code:    0
+      Started:      Mon, 27 Apr 2026 10:06:39 +0200
+      Finished:     Mon, 27 Apr 2026 10:06:39 +0200
+    Ready:          True
+    Restart Count:  0
+    Environment:
+      Hermod__Features__DeviceStateTracking:    true
+      Hermod__Engine__LogBatchSize:             100
+      Hermod__Engine__LogBatching:              true
+      Hermod__Engine__Parallelism:              0
+      Hermod__Features__MessagePersistence:     true
+      Hermod__Features__RuleAuditLog:           true
+      Hermod__Features__RuleCache:              true
+      Hermod__Features__StatsRollup:            true
+      Hermod__Storage__Mode:                    Postgres
+      Logging__LogLevel__Hermod:                Information
+      Logging__LogLevel__Microsoft.AspNetCore:  Warning
+    Mounts:
+      /var/run/secrets/kubernetes.io/serviceaccount from kube-api-access-479zb (ro)
+  wait-for-nanomq:
+    Container ID:  containerd://d6bdd26a020a0669316c2385eb98a23642983979d6bab6e39a1d36a9fb6212a4
+    Image:         busybox:1.36
+    Image ID:      docker.io/library/busybox@sha256:73aaf090f3d85aa34ee199857f03fa3a95c8ede2ffd4cc2cdb5b94e566b11662
+    Port:          <none>
+    Host Port:     <none>
+    Command:
+      sh
+      -c
+      until nc -z nanomq 1883; do sleep 2; done
+    State:          Terminated
+      Reason:       Completed
+      Exit Code:    0
+      Started:      Mon, 27 Apr 2026 10:06:40 +0200
+      Finished:     Mon, 27 Apr 2026 10:06:40 +0200
+    Ready:          True
+    Restart Count:  0
+    Environment:
+      Hermod__Features__DeviceStateTracking:    true
+      Hermod__Engine__LogBatchSize:             100
+      Hermod__Engine__LogBatching:              true
+      Hermod__Engine__Parallelism:              0
+      Hermod__Features__MessagePersistence:     true
+      Hermod__Features__RuleAuditLog:           true
+      Hermod__Features__RuleCache:              true
+      Hermod__Features__StatsRollup:            true
+      Hermod__Storage__Mode:                    Postgres
+      Logging__LogLevel__Hermod:                Information
+      Logging__LogLevel__Microsoft.AspNetCore:  Warning
+    Mounts:
+      /var/run/secrets/kubernetes.io/serviceaccount from kube-api-access-479zb (ro)
+Containers:
+  hermod-coordinator:
+    Container ID:   containerd://b67bd8db894524d8d82df204dd8085f61c1838fda10aa5d5371908db1f442040
+    Image:          hermod-coordinator:latest
+    Image ID:       sha256:ca91ccdfcd269dd5e4e25d5ffe8d863ca5db57e5c4f62f08c8adf90d23c15eaf
+    Port:           42069/TCP (http)
+    Host Port:      0/TCP (http)
+    State:          Running
+      Started:      Mon, 27 Apr 2026 10:06:41 +0200
+    Ready:          True
+    Restart Count:  0
+    Limits:
+      cpu:     1500m
+      memory:  1536Mi
+    Requests:
+      cpu:      200m
+      memory:   256Mi
+    Liveness:   http-get http://:42069/healthz delay=60s timeout=1s period=30s #success=1 #failure=3
+    Readiness:  http-get http://:42069/healthz/ready delay=5s timeout=1s period=10s #success=1 #failure=3
+    Startup:    http-get http://:42069/healthz delay=0s timeout=1s period=5s #success=1 #failure=30
+    Environment:
+      ASPNETCORE_ENVIRONMENT:                   Production
+      ASPNETCORE_URLS:                          http://+:42069
+      DOTNET_USE_POLLING_FILE_WATCHER:          true
+      Hermod__Security__AuthBypass:             true
+      Hermod__Security__VaultRequireHttps:      false
+      Hermod__Features__MetricsEndpoint:        true
+      Hermod__Dev__Endpoints:                   true
+      Hermod__Mqtt__Host:                       nanomq
+      Hermod__Mqtt__Port:                       1883
+      Hermod__Mqtt__UseTls:                     false
+      Hermod__Mqtt__Tls__UseTls:                false
+      Hermod__Mqtt__Username:                   <set to the key 'mqtt-username' in secret 'hermod-secrets'>  Optional: false
+      Hermod__Mqtt__Password:                   <set to the key 'mqtt-password' in secret 'hermod-secrets'>  Optional: false
+      Hermod__Database__ConnectionString:       Host=postgres;Port=5432;Database=hermod;Username=hermod_app
+      Hermod__Database__Password:               <set to the key 'hermod-db-password' in secret 'hermod-db-credentials'>  Optional: false
+      Hermod__Features__DeviceStateTracking:    true
+      Hermod__Engine__LogBatchSize:             100
+      Hermod__Engine__LogBatching:              true
+      Hermod__Engine__Parallelism:              0
+      Hermod__Features__MessagePersistence:     true
+      Hermod__Features__RuleAuditLog:           true
+      Hermod__Features__RuleCache:              true
+      Hermod__Features__StatsRollup:            true
+      Hermod__Storage__Mode:                    Postgres
+      Logging__LogLevel__Hermod:                Information
+      Logging__LogLevel__Microsoft.AspNetCore:  Warning
+    Mounts:
+      /var/run/secrets/kubernetes.io/serviceaccount from kube-api-access-479zb (ro)
+Conditions:
+  Type                        Status
+  PodReadyToStartContainers   True 
+  Initialized                 True 
+  Ready                       True 
+  ContainersReady             True 
+  PodScheduled                True 
+Volumes:
+  kube-api-access-479zb:
+    Type:                    Projected (a volume that contains injected data from multiple sources)
+    TokenExpirationSeconds:  3607
+    ConfigMapName:           kube-root-ca.crt
+    Optional:                false
+    DownwardAPI:             true
+QoS Class:                   Burstable
+Node-Selectors:              <none>
+Tolerations:                 node.kubernetes.io/not-ready:NoExecute op=Exists for 300s
+                             node.kubernetes.io/unreachable:NoExecute op=Exists for 300s
+Events:
+  Type    Reason     Age   From               Message
+  ----    ------     ----  ----               -------
+  Normal  Scheduled  86s   default-scheduler  Successfully assigned translator-ble/hermod-coordinator-7d7b88cc46-qpqzt to <pi-host>
+  Normal  Pulled     85s   kubelet            spec.initContainers{wait-for-postgres}: Container image "busybox:1.36" already present on machine
+  Normal  Created    85s   kubelet            spec.initContainers{wait-for-postgres}: Created container: wait-for-postgres
+  Normal  Started    85s   kubelet            spec.initContainers{wait-for-postgres}: Started container wait-for-postgres
+  Normal  Pulled     84s   kubelet            spec.initContainers{wait-for-nanomq}: Container image "busybox:1.36" already present on machine
+  Normal  Created    84s   kubelet            spec.initContainers{wait-for-nanomq}: Created container: wait-for-nanomq
+  Normal  Started    84s   kubelet            spec.initContainers{wait-for-nanomq}: Started container wait-for-nanomq
+  Normal  Pulled     83s   kubelet            spec.containers{hermod-coordinator}: Container image "hermod-coordinator:latest" already present on machine
+  Normal  Created    83s   kubelet            spec.containers{hermod-coordinator}: Created container: hermod-coordinator
+  Normal  Started    83s   kubelet            spec.containers{hermod-coordinator}: Started container hermod-coordinator
+
+
+Name:             nanomq-756fd88db6-g8kl4
+Namespace:        translator-ble
+Priority:         0
+Service Account:  default
+Node:             <pi-host>/<pi-ip>
+Start Time:       Mon, 27 Apr 2026 10:06:13 +0200
+Labels:           app=nanomq
+                  pod-template-hash=756fd88db6
+Annotations:      cni.projectcalico.org/containerID: 82bf8483f17be65c60e0eb64567735fd409becec820630322e1ed5a0055f4833
+                  cni.projectcalico.org/podIP: <pod-ip>/32
+                  cni.projectcalico.org/podIPs: <pod-ip>/32
+Status:           Running
+IP:               <pod-ip>
+IPs:
+  IP:           <pod-ip>
+Controlled By:  ReplicaSet/nanomq-756fd88db6
+Containers:
+  nanomq:
+    Container ID:   containerd://e84184f72b6a154962fb04299fa1c274d11dae895aee180e8a437f1faec802ad
+    Image:          emqx/nanomq:0.21-slim
+    Image ID:       docker.io/emqx/nanomq@sha256:53bea7acb547aced1cc45e08c514628f1e41c4da9ad544fd8c5fa96d3e9eb41b
+    Ports:          1883/TCP (mqtt), 8081/TCP (http)
+    Host Ports:     0/TCP (mqtt), 0/TCP (http)
+    State:          Running
+      Started:      Mon, 27 Apr 2026 10:06:14 +0200
+    Ready:          True
+    Restart Count:  0
+    Limits:
+      cpu:     1
+      memory:  512Mi
+    Requests:
+      cpu:        50m
+      memory:     64Mi
+    Readiness:    tcp-socket :1883 delay=3s timeout=1s period=5s #success=1 #failure=3
+    Environment:  <none>
+    Mounts:
+      /etc/nanomq.conf from config (rw,path="nanomq.conf")
+      /var/run/secrets/kubernetes.io/serviceaccount from kube-api-access-qfw77 (ro)
+Conditions:
+  Type                        Status
+  PodReadyToStartContainers   True 
+  Initialized                 True 
+  Ready                       True 
+  ContainersReady             True 
+  PodScheduled                True 
+Volumes:
+  config:
+    Type:      ConfigMap (a volume populated by a ConfigMap)
+    Name:      nanomq-config
+    Optional:  false
+  kube-api-access-qfw77:
+    Type:                    Projected (a volume that contains injected data from multiple sources)
+    TokenExpirationSeconds:  3607
+    ConfigMapName:           kube-root-ca.crt
+    Optional:                false
+    DownwardAPI:             true
+QoS Class:                   Burstable
+Node-Selectors:              <none>
+Tolerations:                 node.kubernetes.io/not-ready:NoExecute op=Exists for 300s
+                             node.kubernetes.io/unreachable:NoExecute op=Exists for 300s
+Events:
+  Type    Reason     Age   From               Message
+  ----    ------     ----  ----               -------
+  Normal  Scheduled  111s  default-scheduler  Successfully assigned translator-ble/nanomq-756fd88db6-g8kl4 to <pi-host>
+  Normal  Pulled     110s  kubelet            spec.containers{nanomq}: Container image "emqx/nanomq:0.21-slim" already present on machine
+  Normal  Created    110s  kubelet            spec.containers{nanomq}: Created container: nanomq
+  Normal  Started    110s  kubelet            spec.containers{nanomq}: Started container nanomq
+
+
+Name:             omg-ble-5658ff48b9-f9dtx
+Namespace:        translator-ble
+Priority:         0
+Service Account:  default
+Node:             <pi-host>/<pi-ip>
+Start Time:       Mon, 27 Apr 2026 10:06:13 +0200
+Labels:           app=omg-ble
+                  pod-template-hash=5658ff48b9
+Annotations:      <none>
+Status:           Running
+IP:               <pi-ip>
+IPs:
+  IP:           <pi-ip>
+Controlled By:  ReplicaSet/omg-ble-5658ff48b9
+Containers:
+  theengs-gateway:
+    Container ID:  containerd://d330ab3c808193442cfdf669a6d0dfe9266adb97d0a282cad7c9677967d82f7b
+    Image:         theengs/gateway:latest
+    Image ID:      docker.io/theengs/gateway@sha256:c66a847ced586fe307922b1dd0cb7beb7d792c0152f92e23f8b3d9edf8ab0e74
+    Port:          <none>
+    Host Port:     <none>
+    Command:
+      bash
+      -c
+    Args:
+      source /opt/venv/bin/activate
+      # hostNetwork=true means localhost is the Pi host, NOT the
+      # pod. nanomq lives in the cluster — reach it via cluster
+      # DNS (dnsPolicy=ClusterFirstWithHostNet keeps the
+      # cluster resolver visible to host-networked pods).
+      exec python -m TheengsGateway \
+        -H nanomq.translator-ble.svc.cluster.local -P 1883 \
+        -pt bluetooth/BTtoMQTT \
+        -Lt bluetooth/LWT \
+        -D 0 -b 1
+      
+    State:          Running
+      Started:      Mon, 27 Apr 2026 10:06:14 +0200
+    Ready:          True
+    Restart Count:  0
+    Limits:
+      cpu:     500m
+      memory:  256Mi
+    Requests:
+      cpu:        50m
+      memory:     64Mi
+    Environment:  <none>
+    Mounts:
+      /var/run/dbus from dbus (rw)
+      /var/run/secrets/kubernetes.io/serviceaccount from kube-api-access-dqnnv (ro)
+Conditions:
+  Type                        Status
+  PodReadyToStartContainers   True 
+  Initialized                 True 
+  Ready                       True 
+  ContainersReady             True 
+  PodScheduled                True 
+Volumes:
+  dbus:
+    Type:          HostPath (bare host directory volume)
+    Path:          /var/run/dbus
+    HostPathType:  Directory
+  kube-api-access-dqnnv:
+    Type:                    Projected (a volume that contains injected data from multiple sources)
+    TokenExpirationSeconds:  3607
+    ConfigMapName:           kube-root-ca.crt
+    Optional:                false
+    DownwardAPI:             true
+QoS Class:                   Burstable
+Node-Selectors:              hermod.io/bluetooth=true
+Tolerations:                 node.kubernetes.io/not-ready:NoExecute op=Exists for 300s
+                             node.kubernetes.io/unreachable:NoExecute op=Exists for 300s
+Events:
+  Type    Reason     Age   From               Message
+  ----    ------     ----  ----               -------
+  Normal  Scheduled  111s  default-scheduler  Successfully assigned translator-ble/omg-ble-5658ff48b9-f9dtx to <pi-host>
+  Normal  Pulled     110s  kubelet            spec.containers{theengs-gateway}: Container image "theengs/gateway:latest" already present on machine
+  Normal  Created    110s  kubelet            spec.containers{theengs-gateway}: Created container: theengs-gateway
+  Normal  Started    110s  kubelet            spec.containers{theengs-gateway}: Started container theengs-gateway
+
+
+Name:             postgres-0
+Namespace:        translator-ble
+Priority:         0
+Service Account:  default
+Node:             <pi-host>/<pi-ip>
+Start Time:       Mon, 27 Apr 2026 10:06:19 +0200
+Labels:           app=postgres
+                  apps.kubernetes.io/pod-index=0
+                  controller-revision-hash=postgres-848ccb988d
+                  statefulset.kubernetes.io/pod-name=postgres-0
+Annotations:      cni.projectcalico.org/containerID: 0f0e80a9b2fc6d672fa690000c354fc4d2971fdc4c6878a4ec27027943794dea
+                  cni.projectcalico.org/podIP: <pod-ip>/32
+                  cni.projectcalico.org/podIPs: <pod-ip>/32
+Status:           Running
+IP:               <pod-ip>
+IPs:
+  IP:           <pod-ip>
+Controlled By:  StatefulSet/postgres
+Containers:
+  postgres:
+    Container ID:   containerd://a52d47f8c786e35361a1d69403707b1766b9eb4d88b327fa65e53b3c51ad9e92
+    Image:          postgres:17-alpine
+    Image ID:       docker.io/library/postgres@sha256:778d0b486d6daa02b77434d0358ec57a1b21fd8b6d22ac2eef56a33e816928f6
+    Port:           5432/TCP
+    Host Port:      0/TCP
+    State:          Running
+      Started:      Mon, 27 Apr 2026 10:06:19 +0200
+    Ready:          True
+    Restart Count:  0
+    Limits:
+      cpu:     1500m
+      memory:  1536Mi
+    Requests:
+      cpu:      100m
+      memory:   256Mi
+    Readiness:  exec [pg_isready -U postgres] delay=5s timeout=1s period=5s #success=1 #failure=3
+    Environment:
+      POSTGRES_DB:        postgres
+      POSTGRES_USER:      postgres
+      POSTGRES_PASSWORD:  <set to the key 'postgres-superuser-password' in secret 'hermod-secrets'>  Optional: false
+    Mounts:
+      /docker-entrypoint-initdb.d from init (rw)
+      /var/lib/postgresql/data from data (rw)
+      /var/run/secrets/kubernetes.io/serviceaccount from kube-api-access-z5lxp (ro)
+Conditions:
+  Type                        Status
+  PodReadyToStartContainers   True 
+  Initialized                 True 
+  Ready                       True 
+  ContainersReady             True 
+  PodScheduled                True 
+Volumes:
+  data:
+    Type:       PersistentVolumeClaim (a reference to a PersistentVolumeClaim in the same namespace)
+    ClaimName:  data-postgres-0
+    ReadOnly:   false
+  init:
+    Type:      ConfigMap (a volume populated by a ConfigMap)
+    Name:      postgres-init
+    Optional:  false
+  kube-api-access-z5lxp:
+    Type:                    Projected (a volume that contains injected data from multiple sources)
+    TokenExpirationSeconds:  3607
+    ConfigMapName:           kube-root-ca.crt
+    Optional:                false
+    DownwardAPI:             true
+QoS Class:                   Burstable
+Node-Selectors:              <none>
+Tolerations:                 node.kubernetes.io/not-ready:NoExecute op=Exists for 300s
+                             node.kubernetes.io/unreachable:NoExecute op=Exists for 300s
+Events:
+  Type    Reason     Age   From               Message
+  ----    ------     ----  ----               -------
+  Normal  Scheduled  105s  default-scheduler  Successfully assigned translator-ble/postgres-0 to <pi-host>
+  Normal  Pulled     105s  kubelet            spec.containers{postgres}: Container image "postgres:17-alpine" already present on machine
+  Normal  Created    105s  kubelet            spec.containers{postgres}: Created container: postgres
+  Normal  Started    105s  kubelet            spec.containers{postgres}: Started container postgres
+

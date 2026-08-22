@@ -1,0 +1,33 @@
+# Background characterisation: LoRa2MQTT idle on the Pi.
+#
+# We have no paired LoRa peer transmitting at the right SF/frequency
+# during the campaign — actual LoRa radio capacity, airtime ceilings,
+# and SF7..9 latency curves are documented separately by the laptop
+# bench at `tests/lora-bench/` (REPORT-baseline.md, REPORT-bridge.md,
+# HARD-LIMITS.md), which uses two SX1262 modules in known-good
+# back-to-back loopback. Hardware + tech-stack ceilings are therefore
+# already on file.
+#
+# This profile captures only what lora2mqtt emits at idle on the Pi:
+# its own bridge heartbeat, MQTT keepalives, /api/status pulses if
+# anything is polling it, and any cosmic-ray false-positive frames the
+# SX1262 surfaces. The point is to document "the translator is silent
+# at idle on the Pi", not to measure radio.
+name: bg-lora-pi5-live-8gb
+description: Passive 5-min observation of LoRa2MQTT idle bridge chatter on Pi (NO active radio peer; real radio capacity is documented by tests/lora-bench/).
+inherits_from: baseline-pi5-live-8gb
+hardware_target: pi5-live
+claims: [O3]
+
+load:
+  devices: 0
+  rate_per_device_hz: 0
+  ramp_from_msg_per_sec: 0
+
+run:
+  warmup_sec: 30
+  measure_sec: 300
+  cooldown_sec: 30
+  repeats: 1
+  env:
+    HERMOD_MQTT_TRACE: "1"

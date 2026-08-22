@@ -1,0 +1,163 @@
+{
+  "broker": {
+    "cache_size": "32MB",
+    "max_inflight": 1024,
+    "max_mqueue": 8192
+  },
+  "claims": [
+    "O5"
+  ],
+  "description": "Background-rate coord throughput with theengs/gateway BLE listener co-resident.",
+  "features": {
+    "dev_endpoints": true,
+    "device_state_tracking": true,
+    "engine_batch_size": 64,
+    "engine_log_batch_interval_ms": 1000,
+    "engine_log_batch_size": 100,
+    "engine_log_batching": true,
+    "engine_parallelism": 0,
+    "engine_queue_capacity": 10000,
+    "engine_rule_cache_refresh_sec": 5,
+    "message_persistence": true,
+    "metrics_endpoint": true,
+    "mqtt_reconnect_buffer": 1000,
+    "rule_audit_log": true,
+    "rule_cache": true,
+    "seed_devices": false,
+    "seed_rules": false,
+    "stats_rollup": true,
+    "storage_command_timeout_sec": 30,
+    "storage_fast_device_upserts": true,
+    "storage_keepalive_sec": 30,
+    "storage_max_auto_prepare": 20,
+    "storage_max_pool_size": 50,
+    "storage_min_pool_size": 5,
+    "storage_mode": "Postgres",
+    "storage_skip_device_existence_check": true,
+    "storage_write_batch_size": 256,
+    "storage_write_flush_interval_ms": 500,
+    "storage_write_queue_capacity": 50000
+  },
+  "hardware_target": "pi5-live",
+  "load": {
+    "burst": {
+      "enabled": false,
+      "peak_multiplier": 5,
+      "period_sec": 30
+    },
+    "devices": 300,
+    "mix": {
+      "bluetooth": 0.05,
+      "lora": 0.3,
+      "wifi": 0.15,
+      "zigbee": 0.5
+    },
+    "ramp_from_msg_per_sec": 50,
+    "rate_per_device_hz": 0.5,
+    "rule_trigger_ratio": 0.1,
+    "state_change_ratio": 0.3
+  },
+  "logging": {
+    "aspnet_level": "Warning",
+    "hermod_level": "Information"
+  },
+  "name": "bg-theengs-pi5-live-8gb",
+  "observability": {
+    "capture_crashes": true,
+    "capture_errors": true,
+    "capture_metrics": true,
+    "capture_top": true,
+    "latency_probe": true
+  },
+  "resources": {
+    "hermod-coordinator": {
+      "limits": {
+        "cpu": "2000m",
+        "memory": "1Gi"
+      },
+      "requests": {
+        "cpu": "200m",
+        "memory": "256Mi"
+      }
+    },
+    "lora2mqtt": {
+      "limits": {
+        "cpu": "250m",
+        "memory": "256Mi"
+      },
+      "requests": {
+        "cpu": "50m",
+        "memory": "32Mi"
+      }
+    },
+    "nanomq": {
+      "limits": {
+        "cpu": "500m",
+        "memory": "128Mi"
+      },
+      "requests": {
+        "cpu": "100m",
+        "memory": "32Mi"
+      }
+    },
+    "postgres": {
+      "limits": {
+        "cpu": "1500m",
+        "memory": "1Gi"
+      },
+      "requests": {
+        "cpu": "200m",
+        "memory": "256Mi"
+      }
+    },
+    "vault42": {
+      "limits": {
+        "cpu": "200m",
+        "memory": "128Mi"
+      },
+      "requests": {
+        "cpu": "50m",
+        "memory": "32Mi"
+      }
+    },
+    "wifi2mqtt": {
+      "limits": {
+        "cpu": "100m",
+        "memory": "64Mi"
+      },
+      "requests": {
+        "cpu": "14m",
+        "memory": "12Mi"
+      }
+    }
+  },
+  "run": {
+    "cooldown_sec": 15,
+    "measure_sec": 30,
+    "repeats": 1,
+    "warmup_sec": 10
+  },
+  "tests": {
+    "latency_iterations": 100,
+    "rate_ceiling_dur_sec": 30,
+    "rate_ceiling_loss_pct": 5,
+    "rate_ceiling_rates": [
+      10,
+      25,
+      50,
+      100,
+      250,
+      500,
+      1000
+    ],
+    "runners": [
+      "functional",
+      "performance",
+      "e2e"
+    ],
+    "skip_frontend_stats": false,
+    "skip_latency": false,
+    "soak_minutes": 5,
+    "stability_duration_sec": 60
+  }
+}

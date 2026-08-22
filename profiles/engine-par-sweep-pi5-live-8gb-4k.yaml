@@ -1,0 +1,29 @@
+# Engine parallelism sweep on Pi 5 at 4 kmsg/s. The existing engine-par*
+# Pi profiles run at 900 msg/s where the engine is so under-utilised that
+# every variant ties at ~900 msg/s, 0% loss. RQ6 needs a discriminating
+# rate (well over μ/N) — 4 kmsg/s sits just at the Pi engine ceiling.
+name: engine-par-sweep-pi5-live-8gb-4k
+description: Engine-par discrimination probe on Pi5 at 4 kmsg/s flat.
+inherits_from: baseline-pi5-live-8gb
+claims: [C2]
+
+# Flat, near-ceiling rate.
+load:
+  devices: 1000
+  rate_per_device_hz: 4.0
+  ramp_from_msg_per_sec: 4000
+
+run:
+  warmup_sec: 15
+  measure_sec: 30
+  cooldown_sec: 15
+  repeats: 5
+
+# Engine parallelism is set by the runner via override; this profile is
+# the harness, not the assignment. Use as:
+#   for par in 1 2 4 8; do
+#     HERMOD_OVERRIDE_FEATURE_engine_parallelism=$par \
+#       scripts/run-profile-pi.sh engine-par-sweep-pi5-live-8gb-4k --shape flat
+#   done
+features:
+  engine_parallelism: 0   # default; overlay rendering reads HERMOD_OVERRIDE_FEATURE_*

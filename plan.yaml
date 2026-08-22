@@ -1,0 +1,173 @@
+# Machine-readable campaign plan. The orchestrator hashes this file and
+# stamps the hash into state/campaign.json — if the plan changes mid-campaign
+# the orchestrator stops with a hash mismatch error so we never silently mix
+# data across plan revisions.
+
+version: 2
+hardware: pi5-live-8gb
+namespace: hermod-prod      # base = full prod stack via hermod.sh install
+node_ip: <pi-ip>
+nanomq_nodeport: 31883      # prod overlay's stable NodePort
+mosquitto_nodeport: 31884
+max_retries: 3
+idle_holdoff_sec: 60
+flake_cv_threshold_pct: 5.0
+default_reps: 5
+default_warmup_sec: 15
+default_measure_sec: 30
+default_cooldown_sec: 15
+
+# All overlay paths are relative to Tests/kubernetes/overlays/.
+overlays:
+  coord-only:        coord-only          # Coord + NanoMQ + PG + fake-vault42
+  nanomq-only:       nanomq-only         # NanoMQ alone
+  mosquitto-only:    mosquitto-only      # Mosquitto alone
+  pgbench-only:      pgbench-only        # Postgres + a pgbench Job
+  translator-zigbee: translator-zigbee   # ZB2MQTT + NanoMQ
+  translator-lora:   translator-lora     # LoRa2MQTT + NanoMQ
+  translator-wifi:   translator-wifi     # Wi-Fi2MQTT (Mosquitto) + NanoMQ
+  translator-ble:    translator-ble      # BLE2MQTT + NanoMQ (image currently unavailable)
+
+phases:
+  - id: A
+    name: baseline-calibration
+    overlay: coord-only
+    rq: [RQ1]
+    runs:
+      - {tag: A-baseline-500,  profile: baseline-pi5-live-8gb, rate: 500,  shape: flat, reps: 5}
+      - {tag: A-baseline-1k,   profile: baseline-pi5-live-8gb, rate: 1000, shape: flat, reps: 5}
+      - {tag: A-baseline-2k,   profile: baseline-pi5-live-8gb, rate: 2000, shape: flat, reps: 5}
+      - {tag: A-baseline-4k,   profile: baseline-pi5-live-8gb, rate: 4000, shape: flat, reps: 5}
+
+  - id: B
+    name: feature-flag-matrix
+    overlay: coord-only
+    rq: [RQ4, RQ5, RQ6, RQ12]
+    rates: [2000, 4000]
+    profiles:
+      - no-cache-pi5-live-8gb
+      - no-rollup-pi5-live-8gb
+      - no-msg-persistence-pi5-live-8gb
+      - no-device-state-pi5-live-8gb
+      - no-audit-pi5-live-8gb
+      - no-log-batch-pi5-live-8gb
+      - debug-log-pi5-live-8gb
+      - debug-no-log-batch-pi5-live-8gb
+      - engine-seq-pi5-live-8gb
+      - engine-par2-pi5-live-8gb
+      - engine-par4-pi5-live-8gb
+      - engine-par8-pi5-live-8gb
+      - storage-noop-pi5-live-8gb
+    reps: 5
+    shape: flat
+
+  - id: C
+    name: trace-uuid
+    overlay: coord-only
+    rq: [RQ7, RQ8]
+    runs:
+      - {tag: C-trace-500,  profile: trace-baseline-pi5-live-8gb-flat, rate: 500,  shape: flat, reps: 3, env: {HERMOD_UUID_TRACE_ENABLED: "true"}}
+      - {tag: C-trace-2k,   profile: trace-baseline-pi5-live-8gb-flat, rate: 2000, shape: flat, reps: 3, env: {HERMOD_UUID_TRACE_ENABLED: "true"}}
+      - {tag: C-trace-4k,   profile: trace-baseline-pi5-live-8gb-flat, rate: 4000, shape: flat, reps: 3, env: {HERMOD_UUID_TRACE_ENABLED: "true"}}
+
+  - id: D
+    name: soak-rho09-5min
+    overlay: coord-only
+    rq: [RQ9]
+    runs:
+      - {tag: D-soak-rho09, profile: soak-rho09-pi5-live-8gb-5min, shape: flat, reps: 5, measure_sec: 300, cooldown_sec: 30, warmup_sec: 30}
+
+  - id: E
+    name: pgbench
+    overlay: pgbench-only
+    rq: [RQ2]
+    runs:
+      - {tag: E-pgbench, profile: storage-pgbench-pi5-live-8gb, shape: flat, reps: 1}
+
+  - id: F1
+    name: nanomq-only-sweep
+    overlay: nanomq-only
+    rq: [RQ2]
+    runs:
+      - {tag: F1-nanomq-100,   profile: broker-only-pi5-live-8gb, rate: 100,   shape: flat, reps: 5}
+      - {tag: F1-nanomq-500,   profile: broker-only-pi5-live-8gb, rate: 500,   shape: flat, reps: 5}
+      - {tag: F1-nanomq-1k,    profile: broker-only-pi5-live-8gb, rate: 1000,  shape: flat, reps: 5}
+      - {tag: F1-nanomq-2k,    profile: broker-only-pi5-live-8gb, rate: 2000,  shape: flat, reps: 5}
+      - {tag: F1-nanomq-4k,    profile: broker-only-pi5-live-8gb, rate: 4000,  shape: flat, reps: 5}
+      - {tag: F1-nanomq-8k,    profile: broker-only-pi5-live-8gb, rate: 8000,  shape: flat, reps: 5}
+      - {tag: F1-nanomq-16k,   profile: broker-only-pi5-live-8gb, rate: 16000, shape: flat, reps: 5}
+      - {tag: F1-nanomq-32k,   profile: broker-only-pi5-live-8gb, rate: 32000, shape: flat, reps: 5}
+
+  - id: F2
+    name: mosquitto-only-sweep
+    overlay: mosquitto-only
+    rq: [RQ2]
+    runs:
+      - {tag: F2-mosq-1k,    profile: wifi2mqtt-only-pi5-live-8gb, rate: 1000,  shape: flat, reps: 5}
+      - {tag: F2-mosq-2k,    profile: wifi2mqtt-only-pi5-live-8gb, rate: 2000,  shape: flat, reps: 5}
+      - {tag: F2-mosq-4k,    profile: wifi2mqtt-only-pi5-live-8gb, rate: 4000,  shape: flat, reps: 5}
+      - {tag: F2-mosq-8k,    profile: wifi2mqtt-only-pi5-live-8gb, rate: 8000,  shape: flat, reps: 5}
+      - {tag: F2-mosq-16k,   profile: wifi2mqtt-only-pi5-live-8gb, rate: 16000, shape: flat, reps: 5}
+
+  - id: F3
+    name: coord-storage-noop-sweep
+    overlay: coord-only
+    rq: [RQ2]
+    runs:
+      - {tag: F3-coordnoop-1k, profile: coord-storage-noop-pi5-live-8gb, rate: 1000, shape: flat, reps: 5}
+      - {tag: F3-coordnoop-2k, profile: coord-storage-noop-pi5-live-8gb, rate: 2000, shape: flat, reps: 5}
+      - {tag: F3-coordnoop-4k, profile: coord-storage-noop-pi5-live-8gb, rate: 4000, shape: flat, reps: 5}
+      - {tag: F3-coordnoop-8k, profile: coord-storage-noop-pi5-live-8gb, rate: 8000, shape: flat, reps: 5}
+
+  # Per-translator isolation. Real-radio profiles only — the radios have
+  # their own duty cycles, so target rates are per-bench scripts not
+  # MQTT pubs. The orchestrator deploys the overlay and runs the bench,
+  # which writes its own report to the run dir.
+  - id: F4
+    name: translator-zigbee-isolation
+    overlay: translator-zigbee
+    rq: [RQ2]
+    runs:
+      - {tag: F4-zb-bench, profile: zb-bench-loopback-pi5, shape: flat, reps: 3}
+
+  - id: F5
+    name: translator-lora-isolation
+    overlay: translator-lora
+    rq: [RQ2]
+    runs:
+      - {tag: F5-lora-bench, profile: lora-bench-loopback-pi5, shape: flat, reps: 3}
+
+  - id: G
+    name: saturation-curves
+    overlay: coord-only
+    rq: [RQ1, RQ10]
+    runs:
+      - {tag: G-saturate-4k,    profile: saturate-flat-pi5-live-8gb,           shape: flat, reps: 3}
+      - {tag: G-saturate-6k,    profile: saturate-6k-flat-pi5-live-8gb,        shape: flat, reps: 3}
+      - {tag: G-saturate-10k,   profile: saturate-10k-flat-pi5-live-8gb,       shape: flat, reps: 3}
+      - {tag: G-saturate-bbig,  profile: saturate-10k-flat-bigbroker-pi5-live-8gb, shape: flat, reps: 3}
+
+  - id: H
+    name: resource-degradation
+    overlay: coord-only
+    rq: [RQ10]
+    runs:
+      - {tag: H-tight-2k,    profile: tight-pi5-live-8gb,    rate: 2000, shape: flat, reps: 5}
+      - {tag: H-tight-4k,    profile: tight-pi5-live-8gb,    rate: 4000, shape: flat, reps: 5}
+      - {tag: H-breaking-2k, profile: breaking-pi5-live-8gb, rate: 2000, shape: flat, reps: 5}
+      - {tag: H-breaking-4k, profile: breaking-pi5-live-8gb, rate: 4000, shape: flat, reps: 5}
+
+  # Background characterisation. Five-minute passive observations of
+  # each translator/broker at zero applied load, with the MQTT trace
+  # logger on. Output gzipped at <run-dir>/mqtt-trace.jsonl.gz; safe to
+  # delete after analysis. The point is to know what the wire actually
+  # carries when "nothing is happening" so any active-load measurement
+  # has a noise floor to subtract.
+  - id: J
+    name: background-characterisation
+    rq: [O3]
+    runs:
+      - {tag: J-bg-theengs,   profile: bg-theengs-pi5-live-8gb,   shape: flat, reps: 1, overlay: translator-ble,    env: {HERMOD_MQTT_TRACE: "1"}}
+      - {tag: J-bg-zigbee,    profile: bg-zigbee-pi5-live-8gb,    shape: flat, reps: 1, overlay: translator-zigbee, env: {HERMOD_MQTT_TRACE: "1"}}
+      - {tag: J-bg-lora,      profile: bg-lora-pi5-live-8gb,      shape: flat, reps: 1, overlay: translator-lora,   env: {HERMOD_MQTT_TRACE: "1"}}
+      - {tag: J-bg-mosquitto, profile: bg-mosquitto-pi5-live-8gb, shape: flat, reps: 1, overlay: mosquitto-only,    env: {HERMOD_MQTT_TRACE: "1", HERMOD_MQTT_TRACE_PORT: "31884"}}
